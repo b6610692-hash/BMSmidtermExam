@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบฝึกทำข้อสอบอาจารย์บุญเรือง</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Sarabun', sans-serif; background-color: #f0fdfa; } 
+        .hidden { display: none !important; }
+        .radio-custom:checked + div { border-color: #0d9488; background-color: #f0fdfa; }
+        .disabled-label { pointer-events: none; opacity: 0.8; }
+    </style>
+</head>
+<body class="text-gray-800 p-4 md:p-8 min-h-screen flex items-center justify-center">
+
+    <div class="w-full max-w-4xl bg-white rounded-2xl shadow-xl overflow-hidden">
+        
+        <div class="bg-teal-600 text-white p-6 text-center shadow-md relative">
+            <h1 class="text-2xl md:text-3xl font-bold tracking-wide">🎓 ระบบฝึกทำข้อสอบอาจารย์บุญเรือง</h1>
+            <p class="mt-2 text-teal-100 text-sm md:text-base" id="header-subtitle">จัดทำโดยโยโยโย และ Google Gemini</p>
+        </div>
+
+        <div id="setup-screen" class="p-6 md:p-10">
+            <h2 class="text-xl font-bold mb-4 text-teal-800">1. เลือกหมวดวิชาที่ต้องการฝึก (เลือกได้หลายหมวด)</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-8">
+                <label class="flex items-center p-3 border-2 rounded-xl cursor-pointer hover:bg-teal-50 transition">
+                    <input type="checkbox" value="Transmission Line Parameters" class="category-cb w-5 h-5 text-teal-600 rounded focus:ring-teal-500" checked>
+                    <span class="ml-3 font-medium">Transmission Line Parameters</span>
+                </label>
+                <label class="flex items-center p-3 border-2 rounded-xl cursor-pointer hover:bg-teal-50 transition">
+                    <input type="checkbox" value="Power Transmission System" class="category-cb w-5 h-5 text-teal-600 rounded focus:ring-teal-500" checked>
+                    <span class="ml-3 font-medium">ระบบส่งกำลังไฟฟ้า (Power Transmission)</span>
+                </label>
+                <label class="flex items-center p-3 border-2 rounded-xl cursor-pointer hover:bg-teal-50 transition">
+                    <input type="checkbox" value="Electrical Substation" class="category-cb w-5 h-5 text-teal-600 rounded focus:ring-teal-500" checked>
+                    <span class="ml-3 font-medium">สถานีไฟฟ้าย่อย (Substation)</span>
+                </label>
+                <label class="flex items-center p-3 border-2 rounded-xl cursor-pointer hover:bg-teal-50 transition">
+                    <input type="checkbox" value="PDP2018" class="category-cb w-5 h-5 text-teal-600 rounded focus:ring-teal-500" checked>
+                    <span class="ml-3 font-medium">แผนพลังงาน PDP2018</span>
+                </label>
+            </div>
+
+            <h2 class="text-xl font-bold mb-4 text-teal-800">2. เลือกโหมดการทำข้อสอบ</h2>
+            <div class="space-y-3 mb-8">
+                <label class="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:bg-teal-50 transition">
+                    <input type="radio" name="quizMode" value="instant" class="w-5 h-5 text-teal-600 focus:ring-teal-500" checked>
+                    <div class="ml-3">
+                        <p class="font-bold text-gray-800">⚡ เฉลยทันที (Instant Feedback)</p>
+                        <p class="text-sm text-gray-500">เรียงตามลำดับเดิม เลือกคำตอบปุ๊บ ระบบจะเฉลยให้ทันที เหมาะสำหรับฝึกจำ</p>
+                    </div>
+                </label>
+                <label class="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:bg-teal-50 transition">
+                    <input type="radio" name="quizMode" value="end" class="w-5 h-5 text-teal-600 focus:ring-teal-500">
+                    <div class="ml-3">
+                        <p class="font-bold text-gray-800">📝 เฉลยท้ายสุด (Mock Exam)</p>
+                        <p class="text-sm text-gray-500">เรียงตามลำดับเดิม ทำรวดเดียวให้เสร็จ แล้วค่อยดูคะแนนตอนกดส่ง</p>
+                    </div>
+                </label>
+                <label class="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:bg-teal-50 transition">
+                    <input type="radio" name="quizMode" value="random50" class="w-5 h-5 text-teal-600 focus:ring-teal-500">
+                    <div class="ml-3">
+                        <p class="font-bold text-gray-800">🔥 สุ่ม 50 ข้อจากทุกชุด (Ultimate Challenge)</p>
+                        <p class="text-sm text-gray-500">ระบบจะสุ่มดึงข้อสอบจากทุกหมวดมารวมกัน 50 ข้อ แล้วเฉลยตอนท้าย</p>
+                    </div>
+                </label>
+            </div>
+
+            <div class="mt-8 text-center">
+                <button onclick="startQuiz()" class="bg-teal-600 hover:bg-teal-700 text-white font-bold py-4 px-12 rounded-full shadow-lg transition transform hover:scale-105 text-xl">
+                    🚀 เริ่มทำข้อสอบกันเลย!
+                </button>
+            </div>
+        </div>
+
+        <div id="quiz-screen" class="hidden p-6 md:p-8 min-h-[400px] flex flex-col">
+            <div class="mb-6">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-sm font-bold text-teal-600 uppercase tracking-wider" id="current-category">Category</span>
+                    <span class="text-sm font-bold bg-teal-100 text-teal-800 py-1 px-4 rounded-full" id="progress-text">ข้อ 1 / 20</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2.5">
+                    <div class="bg-teal-500 h-2.5 rounded-full transition-all duration-300" id="progress-bar" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <div class="flex-grow">
+                <h3 class="text-xl md:text-2xl font-bold text-gray-800 mb-6 leading-relaxed" id="question-text">คำถามจะแสดงที่นี่?</h3>
+                <div class="space-y-3" id="options-container">
+                    </div>
+                <div id="explanation-box" class="hidden mt-6 p-5 rounded-xl text-md font-medium border shadow-inner"></div>
+            </div>
+
+            <div class="mt-10 pt-6 border-t flex justify-between items-center">
+                <button id="prev-btn" onclick="prevQuestion()" class="px-6 py-3 rounded-xl font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 transition disabled:opacity-50 disabled:cursor-not-allowed">
+                    ◀ ย้อนกลับ
+                </button>
+                <button id="next-btn" onclick="nextQuestion()" class="px-8 py-3 rounded-xl font-bold text-white bg-teal-500 hover:bg-teal-600 transition shadow-md">
+                    ถัดไป ▶
+                </button>
+                <button id="submit-btn" onclick="submitQuiz()" class="hidden px-8 py-3 rounded-xl font-bold text-white bg-blue-600 hover:bg-blue-700 transition shadow-md transform hover:scale-105">
+                    📥 ส่งคำตอบ
+                </button>
+            </div>
+        </div>
+
+        <div id="result-screen" class="hidden p-6 md:p-10 text-center">
+            <div class="mb-8">
+                <h2 class="text-3xl font-bold text-gray-800 mb-2" id="result-greeting">ผลสอบของพี่มาแล้วค่ะ!</h2>
+                <div class="w-36 h-36 mx-auto rounded-full flex items-center justify-center border-4 border-teal-500 mb-4 bg-teal-50 shadow-inner">
+                    <span id="score-display" class="text-5xl font-extrabold text-teal-600">0</span>
+                </div>
+                <p id="feedback-msg" class="text-xl font-medium text-gray-600 mb-2"></p>
+                <p id="score-fraction" class="text-gray-500 text-sm mb-6"></p>
+                
+                <div class="flex justify-center gap-3 mt-6 text-sm md:text-base">
+                    <div class="bg-green-100 text-green-800 px-5 py-3 rounded-xl shadow-sm border border-green-200 flex-1">✅ ถูก<br><span id="stat-correct" class="text-2xl font-bold">0</span></div>
+                    <div class="bg-red-100 text-red-800 px-5 py-3 rounded-xl shadow-sm border border-red-200 flex-1">❌ ผิด<br><span id="stat-wrong" class="text-2xl font-bold">0</span></div>
+                    <div class="bg-gray-100 text-gray-800 px-5 py-3 rounded-xl shadow-sm border border-gray-200 flex-1">⚪ ข้าม<br><span id="stat-skipped" class="text-2xl font-bold">0</span></div>
+                </div>
+            </div>
+
+            <div class="flex flex-col md:flex-row justify-center gap-4 mt-8">
+                <button onclick="showReviewScreen()" class="bg-gray-800 hover:bg-gray-900 text-white font-bold py-4 px-8 rounded-full transition shadow-md">
+                    🔍 ทบทวนเฉลยทั้งหมด
+                </button>
+                <button id="retry-wrong-btn" onclick="retryWrongQuestions()" class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 px-8 rounded-full transition shadow-md hidden">
+                    🎯 ทำเฉพาะข้อที่ผิดซ้ำ
+                </button>
+                <button onclick="location.reload()" class="bg-teal-100 hover:bg-teal-200 text-teal-800 font-bold py-4 px-8 rounded-full transition">
+                    🏠 กลับหน้าแรก
+                </button>
+            </div>
+        </div>
+
+        <div id="review-screen" class="hidden p-6 md:p-8 bg-gray-50">
+            <div class="flex justify-between items-center mb-6 pb-4 border-b border-gray-300">
+                <h2 class="text-2xl font-bold text-gray-800">🔍 ทบทวนเฉลย</h2>
+                <button onclick="backToResult()" class="text-teal-600 hover:text-teal-800 font-bold px-4 py-2 border border-teal-600 rounded-lg">กลับหน้าคะแนน</button>
+            </div>
+            <div id="review-container" class="space-y-6"></div>
+            <div class="mt-8 text-center">
+                <button onclick="backToResult()" class="bg-gray-800 hover:bg-gray-900 text-white font-bold py-3 px-10 rounded-full shadow-lg transition">
+                    กลับหน้าคะแนน
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // -------------------------------------------------------------------------
+        // 📌 พี่สามารถเอา Array ข้อสอบทั้ง 628 ข้อที่น้องทำให้ มาวางต่อกันในนี้ได้เลยค่ะ!
+        // -------------------------------------------------------------------------
+        const allQuestionsDb = [
+            // --- Transmission Line ---
+            { category: "Transmission Line Parameters", q: "หน่วยของค่า Inductance ต่อหน่วยความยาวของสายส่งคืออะไร?", options: ["Henry (H)", "Henry per meter (H/m)", "Farad per meter (F/m)", "Ohm per meter (Ω/m)"], answerText: "Henry per meter (H/m)" },
+            { category: "Transmission Line Parameters", q: "ปัจจัยใดที่มีผลต่อค่า Capacitance ของสายส่งมากที่สุด?", options: ["ความยาวสายส่ง", "ระยะห่างระหว่างตัวนำ", "ความเร็วของคลื่นแม่เหล็กไฟฟ้า", "กระแสที่ไหลผ่านสายส่ง"], answerText: "ระยะห่างระหว่างตัวนำ" },
+            { category: "Transmission Line Parameters", q: "การสูญเสียพลังงานในสายส่งที่เกิดจากกระแสวนในตัวนำเรียกว่าอะไร?", options: ["Ohmic Loss", "Dielectric Loss", "Eddy Current Loss", "Corona Loss"], answerText: "Eddy Current Loss" },
+            { category: "Transmission Line Parameters", q: "ค่าความต้านทานของสายส่งขึ้นอยู่กับปัจจัยใดบ้าง?", options: ["ความยาวและพื้นที่หน้าตัดของตัวนำ", "อุณหภูมิและค่าความจุไฟฟ้า", "การกระจายตัวของสนามไฟฟ้า", "ความถี่และเฟสของแรงดันไฟฟ้า"], answerText: "ความยาวและพื้นที่หน้าตัดของตัวนำ" },
+            { category: "Transmission Line Parameters", q: "หน่วยของค่าความต้านทานต่อหน่วยความยาวของสายส่งคืออะไร?", options: ["Ohm per meter (Ω/m)", "Ohm (Ω)", "Siemens per meter (S/m)", "Farad per meter (F/m)"], answerText: "Ohm per meter (Ω/m)" },
+            { category: "Transmission Line Parameters", q: "Transmission Line ถูกจัดประเภทออกเป็นกี่ประเภทหลัก?", options: ["2 ประเภท", "3 ประเภท", "4 ประเภท", "5 ประเภท"], answerText: "4 ประเภท" },
+            { category: "Transmission Line Parameters", q: "ในสายส่งระยะสั้น (Short Transmission Line) ค่าความจุไฟฟ้าของสายส่งถือว่าเป็นอย่างไร?", options: ["ไม่สามารถละเลยได้", "มีผลต่อแรงดันตกของสายส่ง", "ละเลยได้", "มีค่าคงที่"], answerText: "ละเลยได้" },
+            { category: "Transmission Line Parameters", q: "ใน Medium Transmission Line ค่าความจุไฟฟ้าถูกพิจารณาอย่างไร?", options: ["ค่าความจุไฟฟ้าไม่สำคัญ", "คำนวณโดยใช้ Pi หรือ T Model", "ใช้การประมาณแบบอนุกรม", "ไม่มีผลกระทบต่อแรงดันไฟฟ้า"], answerText: "คำนวณโดยใช้ Pi หรือ T Model" },
+            { category: "Transmission Line Parameters", q: "Transmission Line ประเภทใดที่ต้องใช้ Distributed Parameter Analysis?", options: ["Short Transmission Line", "Medium Transmission Line", "Long Transmission Line", "ทั้งหมด"], answerText: "Long Transmission Line" },
+            { category: "Transmission Line Parameters", q: "สายส่งที่มีความยาวเกิน 250 km มักถูกจัดอยู่ในประเภทใด?", options: ["Short Transmission Line", "Medium Transmission Line", "Long Transmission Line", "Extra Long Transmission Line"], answerText: "Long Transmission Line" },
+            { category: "Transmission Line Parameters", q: "ค่า Characteristic Impedance (Zo) ของสายส่งขึ้นอยู่กับอะไรบ้าง?", options: ["ความต้านทานและรีแอกแตนซ์ของสายส่ง", "ค่า Inductance และ Capacitance ต่อหน่วยความยาว", "ความถี่ของระบบไฟฟ้า", "กระแสที่ไหลผ่านสายส่ง"], answerText: "ค่า Inductance และ Capacitance ต่อหน่วยความยาว" },
+            { category: "Transmission Line Parameters", q: "Propagation Constant (γ) ของสายส่งมีหน่วยเป็นอะไร?", options: ["ไม่มีหน่วย", "Ohm (Ω)", "Neper per meter (Np/m)", "Farad per meter (F/m)"], answerText: "Neper per meter (Np/m)" },
+            { category: "Transmission Line Parameters", q: "ค่า Propagation Constant (γ) คำนวณจากสมการใด?", options: ["γ = (R+jωL)(G+jωC)", "γ = R+jωL", "γ = G+jωC", "γ = V/I"], answerText: "γ = (R+jωL)(G+jωC)" },
+            { category: "Transmission Line Parameters", q: "ค่า Surge Impedance ของสายส่งมักมีค่าอยู่ในช่วงใด?", options: ["1-10 Ω", "10-50 Ω", "50-500 Ω", "500-1000 Ω"], answerText: "50-500 Ω" },
+            { category: "Transmission Line Parameters", q: "สมการ Surge Impedance (Zc) มีรูปแบบใด?", options: ["Zc = √(L/C)", "Zc = L/C", "Zc = R+jX", "Zc = G+jB"], answerText: "Zc = √(L/C)" },
+            { category: "Transmission Line Parameters", q: "ในการวิเคราะห์สายส่งแบบ Long Transmission Line ค่าความต้านทานและรีแอกแตนซ์มีผลกระทบอย่างไร?", options: ["ไม่มีผลกระทบ", "ส่งผลต่อค่าความต้านทานลักษณะเฉพาะ", "ส่งผลเฉพาะค่า Capacitance", "มีผลเฉพาะในสายส่งระยะสั้น"], answerText: "ส่งผลต่อค่าความต้านทานลักษณะเฉพาะ" },
+            { category: "Transmission Line Parameters", q: "Voltage Regulation คืออะไร?", options: ["ความสามารถในการรักษาระดับแรงดันที่โหลด", "ความสามารถของสายส่งในการลดกระแสไฟฟ้า", "การลดลงของค่าความต้านทานของสายส่ง", "การเพิ่มขึ้นของกระแสไฟฟ้าในสายส่ง"], answerText: "ความสามารถในการรักษาระดับแรงดันที่โหลด" },
+            { category: "Transmission Line Parameters", q: "Voltage Regulation ของสายส่งคำนวณจากสมการใด?", options: ["VR = ((V_no-load - V_full-load) / V_full-load) * 100%", "VR = ((V_no-load - V_full-load) / V_no-load) * 100%", "VR = Z × I", "VR = P + jQ"], answerText: "VR = ((V_no-load - V_full-load) / V_full-load) * 100%" },
+            { category: "Transmission Line Parameters", q: "การลดค่า Voltage Regulation ทำให้เกิดผลอย่างไร?", options: ["แรงดันไฟฟ้าตกในสายส่งลดลง", "เพิ่มค่าการสูญเสียพลังงานในสายส่ง", "ลดค่า Impedance ของสายส่ง", "ไม่มีผลต่อประสิทธิภาพของระบบไฟฟ้า"], answerText: "แรงดันไฟฟ้าตกในสายส่งลดลง" },
+            { category: "Transmission Line Parameters", q: "Ferranti Effect มักเกิดขึ้นในสายส่งประเภทใด?", options: ["Short Transmission Line", "Medium Transmission Line", "Long Transmission Line", "ไม่มีผลต่อ Transmission Line"], answerText: "Long Transmission Line" },
+            { category: "Transmission Line Parameters", q: "ค่า Efficiency ของสายส่งถูกกำหนดโดยอะไร?", options: ["อัตราส่วนของกำลังไฟฟ้าที่รับมาที่โหลดต่อกำลังไฟฟ้าที่ป้อนเข้า", "อัตราการสูญเสียพลังงานไฟฟ้า", "การเพิ่มขึ้นของค่า Impedance", "ความสามารถในการรักษาระดับแรงดัน"], answerText: "อัตราส่วนของกำลังไฟฟ้าที่รับมาที่โหลดต่อกำลังไฟฟ้าที่ป้อนเข้า" },
+            { category: "Transmission Line Parameters", q: "ค่า ABCD Parameter ใช้สำหรับอะไร?", options: ["วิเคราะห์พฤติกรรมของสายส่ง", "คำนวณค่าความต้านทาน", "หาค่าความจุไฟฟ้า", "คำนวณค่ากระแสของสายส่ง"], answerText: "วิเคราะห์พฤติกรรมของสายส่ง" },
+            { category: "Transmission Line Parameters", q: "ใน ABCD Parameters ค่า D มีค่าประมาณเท่าไรในสายส่งที่ไม่มี Loss?", options: ["0", "1", "∞", "-1"], answerText: "1" },
+            { category: "Transmission Line Parameters", q: "การชดเชยค่าแรงดันไฟฟ้าในสายส่งทำได้โดยใช้วิธีใด?", options: ["การใช้ตัวเก็บประจุแบบอนุกรม", "การใช้ตัวเก็บประจุแบบขนาน", "การใช้ Reactors", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "Transmission Line Parameters", q: "ในการวิเคราะห์ Fault ในสายส่ง ปริมาณใดที่ต้องพิจารณาเป็นหลัก?", options: ["ค่าแรงดันและกระแสที่จุดเกิด Fault", "ค่าความถี่ของระบบไฟฟ้า", "ค่าพลังงานที่สูญเสียไป", "ค่า Capacitance เท่านั้น"], answerText: "ค่าแรงดันและกระแสที่จุดเกิด Fault" },
+            { category: "Transmission Line Parameters", q: "ค่าความนำไฟฟ้า (Conductance, G) ของสายส่งเกิดจากปัจจัยใดเป็นหลัก?", options: ["ความต้านทานของตัวนำไฟฟ้า", "การรั่วไหลของกระแสผ่านฉนวนระหว่างตัวนำ", "ค่า Inductance ของสายส่ง", "ระยะห่างระหว่างตัวนำ"], answerText: "การรั่วไหลของกระแสผ่านฉนวนระหว่างตัวนำ" },
+            { category: "Transmission Line Parameters", q: "การกระจายของสนามไฟฟ้าระหว่างตัวนำในสายส่งสามารถคำนวณได้โดยใช้หลักการใด?", options: ["กฎของโอห์ม (Ohm's Law)", "สมการลาปลาซ (Laplace Equation)", "สมการของนิวตัน (Newton's Laws)", "กฎของคูลอมบ์ (Coulomb's Law)"], answerText: "สมการลาปลาซ (Laplace Equation)" },
+            { category: "Transmission Line Parameters", q: "ค่า Inductance ของสายส่งขึ้นอยู่กับปัจจัยใดมากที่สุด?", options: ["ขนาดของตัวนำและวัสดุของตัวนำ", "ระยะห่างระหว่างตัวนำและสภาพแวดล้อมทางแม่เหล็ก", "ความถี่ของระบบไฟฟ้า", "ค่าความต้านทานของสายส่ง"], answerText: "ระยะห่างระหว่างตัวนำและสภาพแวดล้อมทางแม่เหล็ก" },
+            { category: "Transmission Line Parameters", q: "การเพิ่มค่าความนำไฟฟ้าของฉนวนระหว่างตัวนำมีผลอย่างไรต่อสายส่ง?", options: ["เพิ่มค่าแรงดันที่ปลายทาง", "ลดค่าความสูญเสียเนื่องจาก Corona Effect", "เพิ่มค่าการสูญเสียพลังงานเนื่องจาก Leakage Current", "ไม่มีผลต่อการทำงานของสายส่ง"], answerText: "เพิ่มค่าการสูญเสียพลังงานเนื่องจาก Leakage Current" },
+            { category: "Transmission Line Parameters", q: "การใช้ตัวนำแบบ Bundled Conductors มีวัตถุประสงค์หลักเพื่ออะไร?", options: ["ลดค่า Inductive Reactance ของสายส่ง", "ลดค่า Corona Loss และแรงดันพังทลาย", "ลดค่า Capacitance ของสายส่ง", "เพิ่มค่าความต้านทานของสายส่ง"], answerText: "ลดค่า Corona Loss และแรงดันพังทลาย" },
+            { category: "Transmission Line Parameters", q: "หน่วยของค่า Capacitance ต่อหน่วยความยาวของสายส่งคืออะไร?", options: ["Ohm (Ω)", "Henry per meter (H/m)", "Farad per meter (F/m)", "Siemens per meter (S/m)"], answerText: "Farad per meter (F/m)" },
+            { category: "Transmission Line Parameters", q: "สายส่งที่ใช้ตัวนำหลายเส้น (Bundled Conductors) ส่งผลต่อค่าความต้านทานลักษณะเฉพาะ (Zo) อย่างไร?", options: ["เพิ่มขึ้น", "ลดลง", "ไม่เปลี่ยนแปลง", "ขึ้นอยู่กับระยะทางของสายส่ง"], answerText: "ลดลง" },
+            { category: "Transmission Line Parameters", q: "การเพิ่มระยะห่างระหว่างตัวนำส่งผลต่อค่า Capacitance ของสายส่งอย่างไร?", options: ["Capacitance เพิ่มขึ้น", "Capacitance ลดลง", "ไม่มีผลต่อค่า Capacitance", "Capacitance จะลดลงเมื่อมีโหลดสูง"], answerText: "Capacitance ลดลง" },
+            { category: "Transmission Line Parameters", q: "สายส่งที่มีค่า Inductance สูงจะมีผลอย่างไรต่อแรงดันไฟฟ้า?", options: ["ทำให้แรงดันไฟฟ้าตกเพิ่มขึ้น", "ทำให้แรงดันไฟฟ้าเพิ่มขึ้น", "ไม่มีผลต่อแรงดันไฟฟ้า", "ลดค่า Voltage Regulation"], answerText: "ทำให้แรงดันไฟฟ้าตกเพิ่มขึ้น" },
+            { category: "Transmission Line Parameters", q: "ค่า Inductance ของสายส่งที่ใช้ตัวนำ Stranded Conductor เปรียบเทียบกับตัวนำแบบ Solid Conductor จะเป็นอย่างไร?", options: ["มากกว่า", "น้อยกว่า", "เท่ากัน", "ไม่สามารถระบุได้"], answerText: "มากกว่า" },
+            { category: "Transmission Line Parameters", q: "การสูญเสียพลังงานที่เกิดจาก Skin Effect มีผลอย่างไรต่อสายส่ง?", options: ["เพิ่มค่า Effective Resistance ของตัวนำ", "ลดค่า Impedance ของสายส่ง", "ไม่มีผลต่อการทำงานของสายส่ง", "ลดค่า Inductance ของสายส่ง"], answerText: "เพิ่มค่า Effective Resistance ของตัวนำ" },
+            { category: "Transmission Line Parameters", q: "Ferranti Effect จะเกิดขึ้นในกรณีใดมากที่สุด?", options: ["สายส่งมีโหลดสูง", "สายส่งมีโหลดต่ำหรือไม่มีโหลด", "ใช้ตัวนำขนาดใหญ่", "ระยะทางสายส่งสั้น"], answerText: "สายส่งมีโหลดต่ำหรือไม่มีโหลด" },
+            { category: "Transmission Line Parameters", q: "การเพิ่มค่าความถี่ของระบบส่งผลต่อค่า Inductive Reactance (XL) อย่างไร?", options: ["XL เพิ่มขึ้น", "XL ลดลง", "ไม่มีผลต่อ XL", "ขึ้นอยู่กับประเภทของตัวนำ"], answerText: "XL เพิ่มขึ้น" },
+            { category: "Transmission Line Parameters", q: "ค่าความนำไฟฟ้า (Conductance) ของฉนวนระหว่างตัวนำของสายส่งมักขึ้นอยู่กับอะไร?", options: ["วัสดุของฉนวน", "ความถี่ของกระแสไฟฟ้า", "อุณหภูมิแวดล้อม", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "Transmission Line Parameters", q: "ความสัมพันธ์ของค่า Propagation Constant (γ) กับค่า Characteristic Impedance (Zo) คืออะไร?", options: ["γ = 1/Zo", "γ = √((R+jωL)(G+jωC))", "γ = R+jX", "γ = V/I"], answerText: "γ = √((R+jωL)(G+jωC))" },
+            { category: "Transmission Line Parameters", q: "สาเหตุหลักที่ต้องใช้ Bundled Conductors ในสายส่งแรงดันสูงคืออะไร?", options: ["ลดค่า Corona Loss", "ลดค่า Inductive Reactance", "เพิ่มค่า Capacitance", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "Transmission Line Parameters", q: "หน่วยของค่า Propagation Constant (γ) คืออะไร?", options: ["Ohm (Ω)", "Henry per meter (H/m)", "Neper per meter (Np/m)", "Siemens per meter (S/m)"], answerText: "Neper per meter (Np/m)" },
+            { category: "Transmission Line Parameters", q: "ในการคำนวณ Inductance ของสายส่ง สาเหตุหลักของ Magnetic Flux เกิดจากอะไร?", options: ["กระแสที่ไหลในตัวนำ", "ค่าความต้านทานของตัวนำ", "ค่าความถี่ของระบบไฟฟ้า", "ความนำไฟฟ้าของตัวนำ"], answerText: "กระแสที่ไหลในตัวนำ" },
+            { category: "Transmission Line Parameters", q: "การเกิด Corona Discharge ในสายส่งแรงดันสูงมีปัจจัยใดเกี่ยวข้องมากที่สุด?", options: ["ค่าความชื้นในอากาศ", "แรงดันไฟฟ้าและรัศมีของตัวนำ", "อุณหภูมิแวดล้อม", "ค่าความถี่ของกระแสไฟฟ้า"], answerText: "แรงดันไฟฟ้าและรัศมีของตัวนำ" },
+            { category: "Transmission Line Parameters", q: "ในระบบส่งกำลังไฟฟ้า การใช้ตัวเก็บประจุแบบขนานมีวัตถุประสงค์หลักเพื่ออะไร?", options: ["ลดค่า Inductive Reactance", "ปรับปรุงค่า Power Factor", "ลดค่า Voltage Drop", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "Transmission Line Parameters", q: "ค่า Corona Loss จะลดลงเมื่อใด?", options: ["เพิ่มรัศมีของตัวนำ", "เพิ่มระยะห่างระหว่างตัวนำ", "ใช้ตัวนำแบบ Bundled Conductors", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "Transmission Line Parameters", q: "ค่า Power Loss ในสายส่งสัมพันธ์กับค่าความต้านทานของตัวนำอย่างไร?", options: ["เพิ่มขึ้นตามค่าความต้านทาน", "ลดลงตามค่าความต้านทาน", "ไม่มีความสัมพันธ์กัน", "ลดลงเมื่อมีโหลดสูง"], answerText: "เพิ่มขึ้นตามค่าความต้านทาน" },
+            { category: "Transmission Line Parameters", q: "การออกแบบสายส่งแรงดันสูงมักคำนึงถึงค่า Inductance และ Capacitance ด้วยเหตุผลใด?", options: ["ป้องกัน Voltage Drop ที่มากเกินไป", "ปรับปรุงค่า Power Factor", "ควบคุมค่า Surge Impedance", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "Transmission Line Parameters", q: "ค่า Surge Impedance Loading (SIL) ใช้ในการคำนวณอะไร?", options: ["ความสามารถในการรับโหลดของสายส่ง", "ค่ากระแสไฟฟ้าที่ไหลในตัวนำ", "ค่า Capacitance ของสายส่ง", "ไม่มีผลในสายส่งแรงดันสูง"], answerText: "ความสามารถในการรับโหลดของสายส่ง" },
+            { category: "Transmission Line Parameters", q: "การเกิด Overvoltage ในสายส่งสามารถป้องกันได้โดยใช้วิธีใด?", options: ["การติดตั้งตัวเก็บประจุแบบอนุกรม", "การติดตั้ง Surge Arresters", "การเพิ่มค่าความต้านทานของสายส่ง", "การลดค่าแรงดันไฟฟ้าที่ต้นทาง"], answerText: "การติดตั้ง Surge Arresters" },
+            { category: "Transmission Line Parameters", q: "ในสายส่งไฟฟ้าแรงสูง ความสัมพันธ์ระหว่างค่า Propagation Constant (γ) และ Wave Impedance (Zw) สามารถกำหนดได้อย่างไร?", options: ["γ = Zw/L", "γ = 1/√(LC)", "γ = √((R+jωL)(G+jωC))", "γ = R+jωL+G+jωC"], answerText: "γ = √((R+jωL)(G+jωC))" },
+            { category: "Transmission Line Parameters", q: "ในกรณีที่ใช้สายส่งแบบ Lossless Line (R=0,G=0) ค่าของ Propagation Constant (γ) จะเป็นอย่างไร?", options: ["γ = jω√(LC)", "γ = √(LG)", "γ = R/L + jωC", "γ = jωRC"], answerText: "γ = jω√(LC)" },
+            { category: "Transmission Line Parameters", q: "ค่า Surge Impedance Loading (SIL) คำนวณได้จากสมการใด?", options: ["SIL = V^2 / Zc", "SIL = VI", "SIL = V / I", "SIL = Zc / V^2"], answerText: "SIL = V^2 / Zc" },
+            { category: "Transmission Line Parameters", q: "หากค่าความถี่ของระบบเพิ่มขึ้นสองเท่า ค่า Inductive Reactance (XL) ของสายส่งจะเป็นอย่างไร?", options: ["ลดลงครึ่งหนึ่ง", "คงที่", "เพิ่มขึ้นสองเท่า", "เพิ่มขึ้นสี่เท่า"], answerText: "เพิ่มขึ้นสองเท่า" },
+            { category: "Transmission Line Parameters", q: "สายส่งที่มีระยะทางยาวมาก จะต้องพิจารณาผลของ Distributed Parameters เนื่องจากสาเหตุใด?", options: ["ลดทอนแรงดันไฟฟ้าตามระยะทาง", "เพิ่มค่า Corona Effect", "ลดค่า Resistance ของตัวนำ", "ลดค่า Capacitance ของสายส่ง"], answerText: "ลดทอนแรงดันไฟฟ้าตามระยะทาง" },
+            { category: "Transmission Line Parameters", q: "ค่าความนำไฟฟ้า (G) ของฉนวนในสายส่งส่งผลต่อพฤติกรรมของสายส่งอย่างไร?", options: ["เพิ่มค่า Voltage Regulation", "ลดค่าการสูญเสียพลังงาน", "เพิ่มค่า Leakage Current", "ลดค่า Inductive Reactance"], answerText: "เพิ่มค่า Leakage Current" },
+            { category: "Transmission Line Parameters", q: "Transmission Line Model ใดที่ใช้พิจารณาผลของ Distributed Parameters ได้ดีที่สุด?", options: ["Lumped Parameter Model", "π Model", "T Model", "Distributed Parameter Model"], answerText: "Distributed Parameter Model" },
+            { category: "Transmission Line Parameters", q: "ค่าของ Surge Impedance (Zc) มีความสำคัญต่ออะไรในการออกแบบสายส่ง?", options: ["การลดค่า Power Loss", "การควบคุม Overvoltage", "การออกแบบ SIL", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "Transmission Line Parameters", q: "เมื่อมีการเพิ่มระยะห่างระหว่างตัวนำ ค่า Mutual Inductance ของสายส่งจะเป็นอย่างไร?", options: ["เพิ่มขึ้น", "ลดลง", "คงที่", "แปรผันตามค่า Capacitance"], answerText: "ลดลง" },
+            { category: "Transmission Line Parameters", q: "ในสายส่งแบบ Short Transmission Line ค่า Voltage Drop ส่วนใหญ่มาจากอะไร?", options: ["Capacitance", "Resistance", "Inductance", "Conductance"], answerText: "Resistance" },
+            { category: "Transmission Line Parameters", q: "การเกิด Overvoltage ในสายส่งอาจเกิดขึ้นได้จากสาเหตุใดบ้าง?", options: ["Lightning Surge", "Switching Transients", "Ferranti Effect", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "Transmission Line Parameters", q: "หากต้องการลด Corona Loss ในสายส่ง สามารถใช้วิธีการใด?", options: ["ใช้ตัวนำที่มีรัศมีใหญ่ขึ้น", "เพิ่มระยะห่างระหว่างตัวนำ", "ใช้ตัวนำแบบ Bundled Conductors", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "Transmission Line Parameters", q: "ปรากฏการณ์ Skin Effect ส่งผลต่อสายส่งในลักษณะใด?", options: ["เพิ่มค่า Effective Resistance", "ลดค่า Inductive Reactance", "เพิ่มค่า Capacitance", "ลดค่า Voltage Drop"], answerText: "เพิ่มค่า Effective Resistance" },
+            { category: "Transmission Line Parameters", q: "ค่า Characteristic Impedance (Zc) ของสายส่งขึ้นอยู่กับอะไร?", options: ["ความต้านทานของตัวนำ", "Inductance และ Capacitance", "ค่าความถี่ของระบบ", "ความนำไฟฟ้าของฉนวน"], answerText: "Inductance และ Capacitance" },
+            { category: "Transmission Line Parameters", q: "วิธีการใดที่ใช้ในการลด Voltage Drop ของสายส่งได้อย่างมีประสิทธิภาพที่สุด?", options: ["การใช้ตัวเก็บประจุแบบชดเชย", "การใช้ตัวนำขนาดใหญ่ขึ้น", "การใช้ Transformer Boosting", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "Transmission Line Parameters", q: "กรณีที่สายส่งมีค่าความต้านทานและค่าความเหนี่ยวนำสูง ควรใช้วิธีใดเพื่อลดการสูญเสียพลังงาน?", options: ["ใช้ตัวนำที่มีความต้านทานต่ำ", "ใช้ตัวเก็บประจุอนุกรม", "ใช้สายส่งแรงดันสูงขึ้น", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "Transmission Line Parameters", q: "การสะท้อนของคลื่นในสายส่งมักเกิดขึ้นเมื่อใด?", options: ["เมื่อ Load Impedance แตกต่างจาก Characteristic Impedance", "เมื่อใช้แรงดันไฟฟ้าสูงเกินพิกัด", "เมื่อค่าความถี่ของกระแสไฟฟ้าเปลี่ยนแปลง", "เมื่อใช้สายส่งแบบ Bundled Conductors"], answerText: "เมื่อ Load Impedance แตกต่างจาก Characteristic Impedance" },
+            { category: "Transmission Line Parameters", q: "ความยาวของสายส่งที่ทำให้เกิด Resonance Effect สามารถคำนวณได้จากอะไร?", options: ["Quarter-Wavelength Condition", "Surge Impedance Formula", "Ohm's Law", "Load Flow Analysis"], answerText: "Quarter-Wavelength Condition" },
+            { category: "Transmission Line Parameters", q: "การใช้ Series Capacitor ในสายส่งช่วยลดอะไร?", options: ["ลดค่า Inductive Reactance", "ลดค่า Capacitance", "ลดค่า Propagation Constant", "เพิ่มค่า Resistance"], answerText: "ลดค่า Inductive Reactance" },
+            { category: "Transmission Line Parameters", q: "การเกิด Ferranti Effect ส่งผลให้แรงดันที่ปลายสายเป็นอย่างไร?", options: ["แรงดันที่ปลายสูงกว่าที่ต้นสาย", "แรงดันที่ปลายต่ำกว่าที่ต้นสาย", "ไม่มีผลต่อแรงดัน", "แรงดันจะลดลงแบบไม่สัมพันธ์กัน"], answerText: "แรงดันที่ปลายสูงกว่าที่ต้นสาย" },
+            { category: "Transmission Line Parameters", q: "วัสดุหลักที่ใช้ในการก่อสร้าง Transmission Line Tower ส่วนใหญ่คืออะไร?", options: ["อลูมิเนียม", "เหล็กชุบสังกะสี (Galvanized Steel)", "คาร์บอนไฟเบอร์", "ไม้เนื้อแข็ง"], answerText: "เหล็กชุบสังกะสี (Galvanized Steel)" },
+            { category: "Transmission Line Parameters", q: "ปัจจัยหลักที่ต้องพิจารณาในการออกแบบ Transmission Line Tower คืออะไร?", options: ["แรงลม แรงดึงสาย และน้ำหนักของตัวนำ", "ความสูงของเสาไฟฟ้า", "วัสดุของตัวนำ", "ปริมาณไฟฟ้าที่ส่งผ่านสายส่ง"], answerText: "แรงลม แรงดึงสาย และน้ำหนักของตัวนำ" },
+            { category: "Transmission Line Parameters", q: "จุดประสงค์ของการใช้ Tower Footing Resistance (TFR) ต่ำ คืออะไร?", options: ["ลดความต้านทานของตัวนำ", "เพิ่มความสามารถในการรองรับแรงกระแทก", "ป้องกันแรงดันไฟฟ้าเกินจากฟ้าผ่า", "เพิ่มระยะทางของสายส่ง"], answerText: "ป้องกันแรงดันไฟฟ้าเกินจากฟ้าผ่า" },
+            { category: "Transmission Line Parameters", q: "Transmission Line Tower สามารถแบ่งประเภทตามลักษณะการใช้งานได้เป็นกี่ประเภทหลัก?", options: ["2 ประเภท", "3 ประเภท", "4 ประเภท", "5 ประเภท"], answerText: "4 ประเภท" },
+            { category: "Transmission Line Parameters", q: "วัตถุประสงค์ของการใช้ Transposition Tower ในสายส่งคืออะไร?", options: ["ลดแรงดึงของตัวนำ", "ปรับเปลี่ยนตำแหน่งตัวนำเพื่อลด Unbalance Effect", "ลดค่า Inductance ของสายส่ง", "ป้องกันแรงลมพายุ"], answerText: "ปรับเปลี่ยนตำแหน่งตัวนำเพื่อลด Unbalance Effect" },
+            { category: "Transmission Line Parameters", q: "ค่าความสูงของ Transmission Line Tower โดยทั่วไปขึ้นอยู่กับปัจจัยใด?", options: ["ระยะห่างของตัวนำ", "ระดับแรงดันไฟฟ้า", "ปริมาณการไหลของกระแสไฟฟ้า", "ขนาดของฉนวนไฟฟ้า"], answerText: "ระดับแรงดันไฟฟ้า" },
+            { category: "Transmission Line Parameters", q: "การเลือกใช้ Suspension Tower ควรใช้กับกรณีใด?", options: ["ใช้ในจุดเปลี่ยนทิศทางของสายส่ง", "ใช้รองรับตัวนำในแนวเส้นตรง", "ใช้สำหรับสถานีไฟฟ้าย่อย", "ใช้ในกรณีที่ต้องการลดค่า Resistance"], answerText: "ใช้รองรับตัวนำในแนวเส้นตรง" },
+            { category: "Transmission Line Parameters", q: "เหตุใด Tension Tower จึงมีโครงสร้างแข็งแรงกว่าประเภทอื่น?", options: ["รองรับแรงดึงของตัวนำไฟฟ้าที่สูงขึ้น", "รองรับตัวนำในแนวเส้นตรง", "ใช้สำหรับแรงดันต่ำ", "ลดค่าความนำไฟฟ้าของระบบ"], answerText: "รองรับแรงดึงของตัวนำไฟฟ้าที่สูงขึ้น" },
+            { category: "Transmission Line Parameters", q: "วัสดุของฉนวนไฟฟ้าที่ใช้ใน Transmission Line Tower ส่วนใหญ่คืออะไร?", options: ["แก้ว (Glass)", "โพลิเมอร์ (Polymer)", "เซรามิก (Ceramic)", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "Transmission Line Parameters", q: "การออกแบบเสาไฟฟ้าแรงสูงให้ทนต่อแรงลมต้องพิจารณาปัจจัยใดเป็นหลัก?", options: ["ความสูงของเสา", "พื้นที่รับลมของตัวนำ", "ความแข็งแรงของฐานราก", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "Transmission Line Parameters", q: "ค่ามาตรฐานของ Grounding Resistance สำหรับ Transmission Line Tower ควรอยู่ในช่วงใด?", options: ["1-5 Ω", "10-20 Ω", "20-50 Ω", "50-100 Ω"], answerText: "1-5 Ω" },
+            { category: "Transmission Line Parameters", q: "การใช้ Bundled Conductors ในสายส่งแรงดันสูงมีผลอย่างไรต่อ Transmission Line Tower?", options: ["เพิ่มแรงดึงของตัวนำ", "ลด Corona Effect", "ต้องใช้ Tower ที่แข็งแรงขึ้น", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "Transmission Line Parameters", q: "วัตถุประสงค์ของการใช้ Shield Wire บน Transmission Line Tower คืออะไร?", options: ["ลดค่าความนำไฟฟ้า", "ป้องกันฟ้าผ่า", "เพิ่มแรงดึงของตัวนำ", "ลดค่า Inductance"], answerText: "ป้องกันฟ้าผ่า" },
+            { category: "Transmission Line Parameters", q: "Transmission Line Tower ควรมีระยะห่างจากสิ่งก่อสร้างอย่างน้อยเท่าใด?", options: ["1 เมตร", "3 เมตร", "10 เมตร", "15 เมตร"], answerText: "10 เมตร" },
+            { category: "Transmission Line Parameters", q: "หน้าที่หลักของ Cross Arm ใน Transmission Line Tower คืออะไร?", options: ["รองรับน้ำหนักของสายส่ง", "ป้องกันแรงลม", "ลดค่าแรงดึงของสายส่ง", "เพิ่มแรงดันไฟฟ้า"], answerText: "รองรับน้ำหนักของสายส่ง" },
+            { category: "Transmission Line Parameters", q: "วิธีการลดการสั่นสะเทือนของตัวนำใน Transmission Line Tower คืออะไร?", options: ["ใช้ Spacer Dampers", "เพิ่มแรงดึงของตัวนำ", "ใช้ตัวนำที่หนาขึ้น", "ใช้ฉนวนที่มีความแข็งแรงสูง"], answerText: "ใช้ Spacer Dampers" },
+            { category: "Transmission Line Parameters", q: "ในการออกแบบเสาไฟฟ้าแรงสูง แรงดึงของตัวนำมักเกิดขึ้นมากที่สุดที่จุดใด?", options: ["บริเวณกลางช่วงสาย", "บริเวณจุดยึดสายของ Tension Tower", "บริเวณสถานีไฟฟ้า", "ไม่มีจุดที่แรงดึงมากกว่ากัน"], answerText: "บริเวณจุดยึดสายของ Tension Tower" },
+            { category: "Transmission Line Parameters", q: "การเลือกใช้ Foundation Type ของ Transmission Line Tower ขึ้นอยู่กับปัจจัยใด?", options: ["ชนิดของดิน", "น้ำหนักของ Tower", "ความสูงของ Tower", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "Transmission Line Parameters", q: "การใช้ Ground Wire หรือ Shield Wire มีข้อดีหลักในการป้องกันอะไร?", options: ["ลดค่าแรงดึงของตัวนำ", "ป้องกันการเกิด Corona Effect", "ลด Overvoltage จากฟ้าผ่า", "ลดค่าความต้านทานของตัวนำ"], answerText: "ลด Overvoltage จากฟ้าผ่า" },
+            { category: "Transmission Line Parameters", q: "สาเหตุที่ทำให้ Transmission Line Tower ล้มได้ง่ายที่สุดคืออะไร?", options: ["การกัดกร่อนของเหล็ก", "แรงลมพายุรุนแรง", "ฐานรากอ่อนแอ", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "Transmission Line Parameters", q: "ปัจจัยใดมีผลต่อค่าความต้านทานของตัวนำในสายส่งไฟฟ้าแรงสูงมากที่สุด?", options: ["เส้นผ่านศูนย์กลางของตัวนำ", "วัสดุของตัวนำ", "อุณหภูมิของตัวนำ", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "Transmission Line Parameters", q: "ตัวนำที่ใช้ในสายส่งไฟฟ้าควรมีคุณสมบัติใดเป็นหลัก?", options: ["มีค่าความต้านทานต่ำและน้ำหนักเบา", "มีค่าความต้านทานสูงเพื่อลดการสูญเสีย", "สามารถรองรับแรงดันไฟฟ้าได้สูง", "มีค่าความเหนี่ยวนำต่ำ"], answerText: "มีค่าความต้านทานต่ำและน้ำหนักเบา" },
+            { category: "Transmission Line Parameters", q: "วัสดุที่นิยมใช้เป็นตัวนำไฟฟ้าแรงสูงมากที่สุดคืออะไร?", options: ["ทองแดง (Copper)", "อะลูมิเนียมเสริมเหล็ก (ACSR)", "ทองคำ (Gold)", "เงิน (Silver)"], answerText: "อะลูมิเนียมเสริมเหล็ก (ACSR)" },
+            { category: "Transmission Line Parameters", q: "ข้อใดเป็นข้อเสียของการใช้ทองแดงเป็นตัวนำในสายส่งแรงสูง?", options: ["มีค่าความต้านทานต่ำ", "มีน้ำหนักมาก", "มีค่าความเหนี่ยวนำสูง", "ไม่สามารถใช้ในแรงดันสูงได้"], answerText: "มีน้ำหนักมาก" },
+            { category: "Transmission Line Parameters", q: "การใช้ Bundled Conductors มีจุดประสงค์หลักเพื่ออะไร?", options: ["ลด Corona Effect", "ลดค่าความต้านทาน", "เพิ่มแรงดึงของสายส่ง", "ลดค่าแรงดันไฟฟ้า"], answerText: "ลด Corona Effect" },
+            { category: "Transmission Line Parameters", q: "สาเหตุที่ทำให้เกิด Skin Effect ในตัวนำไฟฟ้าคืออะไร?", options: ["การไหลของกระแสไฟฟ้าความถี่สูง", "ความต้านทานของตัวนำ", "อุณหภูมิของตัวนำ", "ระยะห่างของสายส่ง"], answerText: "การไหลของกระแสไฟฟ้าความถี่สูง" },
+            { category: "Transmission Line Parameters", q: "วิธีการลด Skin Effect ในตัวนำคืออะไร?", options: ["ใช้ตัวนำที่มีเส้นผ่านศูนย์กลางเล็กลง", "ใช้ตัวนำแบบกลวง (Hollow Conductor)", "ใช้ตัวนำแบบ Bundled Conductors", "ใช้ตัวนำที่ทำจากทองแดงแทนอะลูมิเนียม"], answerText: "ใช้ตัวนำแบบกลวง (Hollow Conductor)" },
+            { category: "Transmission Line Parameters", q: "ปัจจัยใดที่มีผลต่อ Corona Effect ในตัวนำของสายส่งมากที่สุด?", options: ["ระยะห่างระหว่างตัวนำ", "ขนาดของตัวนำ", "ความชื้นในอากาศ", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "Transmission Line Parameters", q: "การใช้ Spacer Dampers ในสายส่งมีจุดประสงค์เพื่ออะไร?", options: ["ลดการสั่นสะเทือนของตัวนำ", "ป้องกันไฟฟ้าลัดวงจร", "เพิ่มแรงดึงของสายส่ง", "ลดค่าความต้านทานของตัวนำ"], answerText: "ลดการสั่นสะเทือนของตัวนำ" },
+            { category: "Transmission Line Parameters", q: "ความสามารถในการรับกระแสของตัวนำ (Current Carrying Capacity) ขึ้นอยู่กับปัจจัยใด?", options: ["วัสดุของตัวนำ", "ขนาดของตัวนำ", "สภาวะแวดล้อมของสายส่ง", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "Transmission Line Parameters", q: "ชนิดของตัวนำใดเหมาะสำหรับสายส่งไฟฟ้าแรงสูงที่มีระยะทางไกลและต้องการลดการสูญเสียพลังงานมากที่สุด?", options: ["Copper Conductor", "ACSR", "AAAC", "High Temperature Low Sag (HTLS)"], answerText: "High Temperature Low Sag (HTLS)" },
+            { category: "Transmission Line Parameters", q: "ตัวนำแบบ AAC (All Aluminium Conductor) มีข้อดีข้อเสียอย่างไร?", options: ["น้ำหนักเบาแต่รับแรงดึงต่ำ", "รับแรงดึงสูงแต่น้ำหนักมาก", "ต้านทานสูงแต่ราคาถูก", "ใช้ได้เฉพาะในแรงดันไฟฟ้าต่ำ"], answerText: "น้ำหนักเบาแต่รับแรงดึงต่ำ" },
+            { category: "Transmission Line Parameters", q: "การเพิ่มระยะห่างระหว่างตัวนำในสายส่งจะมีผลอย่างไร?", options: ["ลดค่า Capacitance", "ลดค่า Inductance", "เพิ่มค่าแรงดันไฟฟ้า", "ลด Corona Loss"], answerText: "ลด Corona Loss" },
+            { category: "Transmission Line Parameters", q: "ข้อเสียของการใช้ ACSR เป็นตัวนำในสายส่งคืออะไร?", options: ["มีค่าความต้านทานสูง", "มีค่าความเหนี่ยวนำสูง", "มีค่าความนำไฟฟ้าต่ำกว่า Copper", "ไม่ทนต่อสภาพอากาศ"], answerText: "มีค่าความนำไฟฟ้าต่ำกว่า Copper" },
+            { category: "Transmission Line Parameters", q: "ปรากฏการณ์ Eddy Current ในตัวนำมีผลเสียอย่างไร?", options: ["ทำให้เกิดการสูญเสียพลังงาน", "ลดความสามารถในการรับกระแส", "ทำให้เกิดความร้อนสะสม", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "Transmission Line Parameters", q: "ความต้านทานของตัวนำจะเปลี่ยนแปลงตามอุณหภูมิอย่างไร?", options: ["เพิ่มขึ้นเมื่ออุณหภูมิเพิ่มขึ้น", "ลดลงเมื่ออุณหภูมิเพิ่มขึ้น", "คงที่ตลอดช่วงอุณหภูมิ", "ขึ้นอยู่กับชนิดของวัสดุตัวนำ"], answerText: "เพิ่มขึ้นเมื่ออุณหภูมิเพิ่มขึ้น" },
+            { category: "Transmission Line Parameters", q: "การใช้ตัวนำที่มีชั้นฉนวนเคลือบ (Insulated Conductor) มีข้อดีหลักคืออะไร?", options: ["ป้องกันการเกิด Flashover", "ลดค่า Inductance ของสายส่ง", "ลดการสูญเสียพลังงานจาก Corona", "ถูกทุกข้อ"], answerText: "ป้องกันการเกิด Flashover" },
+            { category: "Transmission Line Parameters", q: "ตัวนำแบบ High Voltage Direct Current (HVDC) ใช้เพื่อวัตถุประสงค์ใด?", options: ["ลดการสูญเสียพลังงานในสายส่งระยะไกล", "ป้องกันไฟฟ้าลัดวงจร", "เพิ่มค่าแรงดันไฟฟ้า", "ลดค่าความต้านทานของตัวนำ"], answerText: "ลดการสูญเสียพลังงานในสายส่งระยะไกล" },
+            { category: "Transmission Line Parameters", q: "การเกิด Corona Discharge มีแนวโน้มเกิดขึ้นที่จุดใดของตัวนำมากที่สุด?", options: ["บริเวณที่มีรอยต่อของตัวนำ", "บริเวณที่ตัวนำมีเส้นผ่านศูนย์กลางเล็ก", "บริเวณที่ตัวนำมีความโค้งสูง", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "Transmission Line Parameters", q: "หากต้องการลด Corona Loss ในสายส่งไฟฟ้า ควรทำอย่างไร?", options: ["ใช้ตัวนำที่มีเส้นผ่านศูนย์กลางใหญ่ขึ้น", "เพิ่มระยะห่างระหว่างตัวนำ", "ใช้ Bundled Conductors", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "Transmission Line Parameters", q: "วัตถุประสงค์หลักของฉนวนไฟฟ้า (Insulator) ในสายส่งไฟฟ้าแรงสูงคืออะไร?", options: ["ป้องกันไฟฟ้าลัดวงจรระหว่างตัวนำกับโครงสร้าง", "ลดค่าความต้านทานของสายส่ง", "เพิ่มค่าความนำไฟฟ้าให้ตัวนำ", "ลดแรงดันตกคร่อมสายส่ง"], answerText: "ป้องกันไฟฟ้าลัดวงจรระหว่างตัวนำกับโครงสร้าง" },
+            { category: "Transmission Line Parameters", q: "วัสดุใดที่ใช้ทำฉนวนไฟฟ้าในสายส่งแรงสูงได้ดีที่สุด?", options: ["แก้ว (Glass)", "โพลิเมอร์ (Polymer)", "พอร์ซเลน (Porcelain)", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "Transmission Line Parameters", q: "การออกแบบฉนวนไฟฟ้าสำหรับสายส่งแรงสูงต้องคำนึงถึงปัจจัยใดมากที่สุด?", options: ["แรงดันไฟฟ้าและสภาพแวดล้อม", "ความต้านทานของสายส่ง", "อุณหภูมิของตัวนำ", "ระยะห่างของตัวนำ"], answerText: "แรงดันไฟฟ้าและสภาพแวดล้อม" },
+            { category: "Transmission Line Parameters", q: "ปรากฏการณ์ Flashover ในฉนวนเกิดขึ้นเมื่อใด?", options: ["ความชื้นสะสมบนผิวฉนวน", "มีแรงดันเกินพิกัด (Overvoltage)", "มีมลภาวะสะสมบนฉนวน", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "Transmission Line Parameters", q: "ฉนวนแบบพอร์ซเลน (Porcelain Insulator) มีข้อดีข้อเสียอย่างไร?", options: ["ทนต่อแรงดันสูงแต่เปราะแตกง่าย", "น้ำหนักเบาแต่ทนต่อแรงดึงต่ำ", "ราคาถูกแต่เสื่อมสภาพเร็ว", "มีค่าความต้านทานสูงแต่ต้องบำรุงรักษาบ่อย"], answerText: "ทนต่อแรงดันสูงแต่เปราะแตกง่าย" },
+            { category: "Transmission Line Parameters", q: "การเพิ่มจำนวน Disc ใน Suspension Insulator Chain มีผลอย่างไร?", options: ["เพิ่มค่าความสามารถในการรับแรงดันไฟฟ้า", "ลดค่าความจุของสายส่ง", "ลดค่าความเหนี่ยวนำของระบบ", "เพิ่มแรงดึงที่สายส่งสามารถรับได้"], answerText: "เพิ่มค่าความสามารถในการรับแรงดันไฟฟ้า" },
+            { category: "Transmission Line Parameters", q: "สาเหตุที่ทำให้เกิด Corona Discharge บนฉนวนไฟฟ้าคืออะไร?", options: ["แรงดันสูงเกินพิกัด", "การสะสมของสิ่งสกปรกและความชื้น", "ขนาดของฉนวนไม่เหมาะสม", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "Transmission Line Parameters", q: "วิธีการลดการเกิด Flashover บนฉนวนไฟฟ้าคืออะไร?", options: ["ใช้ฉนวนที่มีระยะ Creepage Distance มากขึ้น", "ทำความสะอาดฉนวนเป็นระยะ", "ใช้ Polymer Insulator แทน Porcelain Insulator", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "Transmission Line Parameters", q: "Suspension Insulator Chain ใช้เพื่อลดผลกระทบของอะไร?", options: ["แรงดึงที่เกิดขึ้นในตัวนำ", "การเกิด Flashover", "การสะสมของประจุไฟฟ้า", "การสูญเสียพลังงาน"], answerText: "แรงดึงที่เกิดขึ้นในตัวนำ" },
+            { category: "Transmission Line Parameters", q: "สาเหตุหลักที่ทำให้ฉนวนไฟฟ้าเสื่อมสภาพคืออะไร?", options: ["การเปลี่ยนแปลงของอุณหภูมิ", "มลภาวะและสภาพอากาศ", "การใช้งานเกินพิกัด", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "Transmission Line Parameters", q: "Polluted Insulator จะทำให้เกิดปัญหาใดในระบบสายส่ง?", options: ["ลด Breakdown Voltage ของฉนวน", "เพิ่มโอกาสเกิด Flashover", "เพิ่มค่า Leakage Current", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "Transmission Line Parameters", q: "Polymer Insulator มีข้อดีเหนือกว่า Porcelain Insulator อย่างไร?", options: ["มีน้ำหนักเบากว่า", "ทนต่อมลภาวะได้ดีกว่า", "ไม่เปราะแตกง่าย", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "Transmission Line Parameters", q: "พารามิเตอร์ใดที่สำคัญที่สุดในการเลือกฉนวนสำหรับสายส่งแรงสูงในพื้นที่ที่มีมลภาวะสูง?", options: ["Creepage Distance", "Breakdown Voltage", "Permittivity", "Dielectric Strength"], answerText: "Creepage Distance" },
+            { category: "Transmission Line Parameters", q: "Cap and Pin Insulator ใช้กับสายส่งแบบใดมากที่สุด?", options: ["สายส่งแรงดันต่ำ", "สายส่งแรงดันปานกลาง", "สายส่งแรงดันสูง", "ใช้ได้กับทุกระดับแรงดัน"], answerText: "สายส่งแรงดันสูง" },
+            { category: "Transmission Line Parameters", q: "Pin Insulator นิยมใช้กับแรงดันไฟฟ้าประมาณเท่าใด?", options: ["ต่ำกว่า 11 kV", "11-33 kV", "33-132 kV", "132-500 kV"], answerText: "11-33 kV" },
+            { category: "Transmission Line Parameters", q: "การใช้ Fog Type Insulator มีจุดประสงค์เพื่ออะไร?", options: ["ป้องกันผลกระทบจากมลภาวะ", "ลดค่าแรงดันตกคร่อม", "ลดค่าความต้านทานของสายส่ง", "ลดแรงดึงของตัวนำ"], answerText: "ป้องกันผลกระทบจากมลภาวะ" },
+            { category: "Transmission Line Parameters", q: "วัสดุฉนวนแบบ Hydrophobic มีคุณสมบัติพิเศษอย่างไร?", options: ["ลดการสะสมของน้ำบนฉนวน", "เพิ่ม Creepage Distance", "เพิ่ม Breakdown Voltage", "ป้องกันการเกิด Flashover"], answerText: "ลดการสะสมของน้ำบนฉนวน" },
+            { category: "Transmission Line Parameters", q: "Overhead Ground Wire (OHGW) มีบทบาทอย่างไรกับฉนวนในสายส่ง?", options: ["ป้องกันแรงดันเกินจากฟ้าผ่า", "ลดค่า Inductance ของสายส่ง", "ลด Corona Loss", "ป้องกัน Flashover"], answerText: "ป้องกันแรงดันเกินจากฟ้าผ่า" },
+            { category: "Transmission Line Parameters", q: "หน้าที่หลักของ Grading Ring ที่ใช้กับฉนวนไฟฟ้าแรงสูงคืออะไร?", options: ["ควบคุมการกระจายแรงดันบนฉนวน", "ลด Corona Effect", "ลด Flashover Voltage", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "Transmission Line Parameters", q: "ปัจจัยที่ส่งผลกระทบต่อ Leakage Current ในฉนวนคืออะไร?", options: ["ความชื้นและฝุ่นละออง", "Creepage Distance ของฉนวน", "ประเภทของวัสดุฉนวน", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            
+            // --- Power Transmission ---
+            { category: "Power Transmission System", q: "ข้อใดไม่ใช่ส่วนประกอบหลักของเสาส่งกำลังไฟฟ้า (Transmission Tower)?", options: ["ส่วนยอด (Peak)", "แขนขวาง (Cross Arm)", "ตัวนำ (Conductor)", "แผ่นฐานยึดเสา (Baseplate)"], answerText: "ตัวนำ (Conductor)" }, // [cite: 4057, 4058, 4059, 4060, 4061, 4062]
+            { category: "Power Transmission System", q: "หน้าที่หลักของเสาส่งกำลังไฟฟ้าคืออะไร?", options: ["ลดการสูญเสียพลังงานไฟฟ้า", "รองรับสายส่งไฟฟ้าและรักษาความปลอดภัย", "เปลี่ยนแรงดันไฟฟ้าในระบบส่งกำลัง", "ป้องกันฟ้าผ่าในระบบส่งกำลัง"], answerText: "รองรับสายส่งไฟฟ้าและรักษาความปลอดภัย" }, // [cite: 4063, 4064, 4065, 4066, 4067, 4068]
+            { category: "Power Transmission System", q: "เสาส่งกำลังประเภทใดที่ใช้ในบริเวณที่ต้องการลดผลกระทบต่อสิ่งแวดล้อม?", options: ["เสากายด์-V (Guyed-V Tower)", "เสาเหล็กกลม (Tubular Steel Pole)", "เสาแขวน (Suspension Tower)", "เสา Dead-End"], answerText: "เสาเหล็กกลม (Tubular Steel Pole)" }, // [cite: 4069, 4070, 4071, 4072, 4073, 4074]
+            { category: "Power Transmission System", q: "สายส่งไฟฟ้าที่ใช้ตัวนำหลายมัด (Bundle Conductors) มีข้อดีหลักคืออะไร?", options: ["ลดแรงต้านลม", "ลดความสูญเสียจากโคโรนา", "ลดน้ำหนักของสายส่ง", "เพิ่มแรงดันไฟฟ้าในสายส่ง"], answerText: "ลดความสูญเสียจากโคโรนา" }, // [cite: 4075, 4076, 4077, 4078, 4079, 4080]
+            { category: "Power Transmission System", q: "องค์ประกอบใดในเสาส่งไฟฟ้าที่ใช้เพื่อป้องกันการเกิดโคโรนา?", options: ["Cross Arm", "Insulator", "Corona Ring", "Baseplate"], answerText: "Corona Ring" }, // [cite: 4081, 4082, 4083, 4084, 4085, 4087]
+            { category: "Power Transmission System", q: "ระบบส่งกำลังไฟฟ้าของประเทศไทยมีกี่ระดับแรงดันหลัก?", options: ["3 ระดับ (115 kV, 230 kV, 500 kV)", "4 ระดับ (69 kV, 115 kV, 230 kV, 500 kV)", "5 ระดับ (33 kV, 69 kV, 115 kV, 230 kV, 500 kV)", "6 ระดับ (22 kV, 33 kV, 69 kV, 115 kV, 230 kV, 500 kV)"], answerText: "3 ระดับ (115 kV, 230 kV, 500 kV)" }, // [cite: 4088, 4089, 4090, 4091, 4092, 4094]
+            { category: "Power Transmission System", q: "วัสดุใดที่นิยมใช้ทำสายส่งไฟฟ้าแรงสูงมากที่สุด?", options: ["ทองแดงบริสุทธิ์", "อะลูมิเนียมเสริมแกนเหล็ก (ACSR)", "สแตนเลส", "ไทเทเนียม"], answerText: "อะลูมิเนียมเสริมแกนเหล็ก (ACSR)" }, // [cite: 4095, 4096, 4097, 4098, 4099, 4100]
+            { category: "Power Transmission System", q: "วัตถุประสงค์ของการใช้ “สายดิน” บนเสาส่งไฟฟ้าคืออะไร?", options: ["ป้องกันฟ้าผ่าและลดกระแสลัดวงจร", "ลดแรงดันของสายส่ง", "เพิ่มประสิทธิภาพของฉนวน", "ลดการเกิดโคโรนา"], answerText: "ป้องกันฟ้าผ่าและลดกระแสลัดวงจร" }, // [cite: 4101, 4102, 4103, 4104, 4105, 4106]
+            { category: "Power Transmission System", q: "เสาส่งไฟฟ้าประเภทใดที่ออกแบบให้รับแรงดึงสูงสุด?", options: ["เสาแขวน (Suspension Tower)", "เสา Dead-End", "เสามุม (Angle Tower)", "เสากายด์-V (Guyed-V Tower)"], answerText: "เสา Dead-End" }, // [cite: 4107, 4108, 4109, 4110, 4111, 4112]
+            { category: "Power Transmission System", q: "หน้าที่หลักของลูกถ้วยฉนวนไฟฟ้า (Insulator) คืออะไร?", options: ["ลดการสูญเสียพลังงานไฟฟ้า", "รองรับตัวนำและป้องกันการลัดวงจร", "ควบคุมแรงดันไฟฟ้า", "ช่วยระบายความร้อนของสายส่ง"], answerText: "รองรับตัวนำและป้องกันการลัดวงจร" }, // [cite: 4113, 4114, 4115, 4116, 4117, 4118]
+            { category: "Power Transmission System", q: "เสาส่งไฟฟ้าประเภทใดที่ใช้สำหรับเปลี่ยนตำแหน่งสายไฟฟ้าในระบบหลายเฟส?", options: ["เสาแขวน (Suspension Tower)", "เสาเปลี่ยนตำแหน่ง (Transposition Tower)", "เสา Dead-End", "เสาต้านทานสูง (High Impedance Tower)"], answerText: "เสาเปลี่ยนตำแหน่ง (Transposition Tower)" }, // [cite: 4119, 4120, 4121, 4122, 4123, 4124]
+            { category: "Power Transmission System", q: "อุปกรณ์ใดที่ใช้ลดแรงสั่นสะเทือนของสายส่งไฟฟ้า?", options: ["Vibration Damper", "Corona Ring", "Spacer Damper", "Detuning Pendulum"], answerText: "Vibration Damper" }, // [cite: 4125, 4126, 4127, 4128, 4129, 4131]
+            { category: "Power Transmission System", q: "วัสดุที่ใช้ทำลูกถ้วยฉนวนไฟฟ้ามีอะไรบ้าง?", options: ["พลาสติก, ไม้, ยาง", "เซรามิก, แก้ว, โพลิเมอร์", "เหล็ก, ทองแดง, อะลูมิเนียม", "กระจก, ไม้, พอลิเมอร์"], answerText: "เซรามิก, แก้ว, โพลิเมอร์" }, // [cite: 4132, 4133, 4134, 4135, 4136, 4137]
+            { category: "Power Transmission System", q: "วัสดุที่นิยมใช้ทำโครงสร้างของเสาส่งไฟฟ้าคืออะไร?", options: ["คอนกรีต", "ไม้", "เหล็กกล้า", "ไทเทเนียม"], answerText: "เหล็กกล้า" }, // [cite: 4138, 4139, 4140, 4141, 4142, 4144]
+            { category: "Power Transmission System", q: "เสาส่งไฟฟ้าประเภทใดเหมาะกับพื้นที่มีพายุรุนแรง?", options: ["เสากายด์-V (Guyed-V Tower)", "เสาเหล็กกลม (Tubular Steel Pole)", "เสาแขวน (Suspension Tower)", "เสา Dead-End"], answerText: "เสา Dead-End" }, // [cite: 4145, 4146, 4147, 4148, 4149, 4151]
+            { category: "Power Transmission System", q: "หน้าที่ของ Spacer Damper คืออะไร?", options: ["ลดโคโรนา", "ลดแรงสั่นสะเทือนของสายไฟหลายมัด", "ป้องกันไฟฟ้ากระโชก", "เพิ่มระยะห่างระหว่างเสา"], answerText: "ลดแรงสั่นสะเทือนของสายไฟหลายมัด" }, // [cite: 4152, 4153, 4154, 4155, 4156, 4157]
+            { category: "Power Transmission System", q: "เสาส่งไฟฟ้าในระบบส่งกำลังใช้แรงดันไฟฟ้าขั้นต่ำกี่กิโลโวลต์?", options: ["33 kV", "69 kV", "115 kV", "230 kV"], answerText: "115 kV" }, // [cite: 4158, 4159, 4160, 4161, 4162, 4163]
+            { category: "Power Transmission System", q: "สายดินติดตั้งบนเสาส่งไฟฟ้าทำจากอะไร?", options: ["ทองแดง", "อะลูมิเนียม", "เหล็กชุบสังกะสี", "พอลิเมอร์"], answerText: "เหล็กชุบสังกะสี" }, // [cite: 4164, 4165, 4166, 4167, 4168, 4170]
+            { category: "Power Transmission System", q: "อะไรเป็นสาเหตุหลักของ Galloping ในสายส่งไฟฟ้า?", options: ["ลมแรงและน้ำแข็งเกาะสาย", "การเกิดโคโรนา", "กระแสไฟฟ้าเกินพิกัด", "การเกิดฟ้าผ่า"], answerText: "ลมแรงและน้ำแข็งเกาะสาย" }, // [cite: 4171, 4172, 4173, 4174, 4175, 4177]
+            { category: "Power Transmission System", q: "ACSR ย่อมาจากอะไร?", options: ["Aluminum Composite Steel Reinforced", "Aluminum Conductor Steel Reinforced", "Alloy Conductor Steel Resistant", "Advanced Composite Steel Reinforced"], answerText: "Aluminum Conductor Steel Reinforced" }, // [cite: 4178, 4179, 4180, 4181, 4182, 4184]
+            { category: "Power Transmission System", q: "องค์ประกอบใดในสายส่งไฟฟ้าที่ช่วยลดความเค้นเชิงกลจากแรงลม?", options: ["Corona Ring", "Spacer Damper", "Vibration Damper", "Detuning Pendulum"], answerText: "Vibration Damper" }, // [cite: 4185, 4186, 4187, 4188, 4189, 4191]
+            { category: "Power Transmission System", q: "วัสดุที่นิยมใช้ในสายตัวนำไฟฟ้าแรงสูงเนื่องจากความแข็งแรงและน้ำหนักเบาคืออะไร?", options: ["ทองแดง", "อะลูมิเนียม", "อะลูมิเนียมเสริมแกนเหล็ก (ACSR)", "เหล็กชุบสังกะสี"], answerText: "อะลูมิเนียมเสริมแกนเหล็ก (ACSR)" }, // [cite: 4192, 4193, 4194, 4195, 4196, 4198]
+            { category: "Power Transmission System", q: "หน้าที่ของ Arcing Horn ในระบบส่งกำลังไฟฟ้าคืออะไร?", options: ["ลดแรงต้านลมของสายส่ง", "ป้องกันการเกิดโคโรนา", "ป้องกันฉนวนจากความเสียหายเนื่องจากฟ้าผ่า", "ลดแรงดันไฟฟ้าของสายส่ง"], answerText: "ป้องกันฉนวนจากความเสียหายเนื่องจากฟ้าผ่า" }, // [cite: 4199, 4200, 4201, 4202, 4203, 4205]
+            { category: "Power Transmission System", q: "ข้อใดเป็นข้อเสียของลูกถ้วยฉนวนแบบแขวน (Suspension Insulator)?", options: ["ราคาแพง", "มีน้ำหนักมาก", "ทำความสะอาดยาก", "อายุการใช้งานสั้น"], answerText: "ทำความสะอาดยาก" }, // [cite: 4206, 4207, 4208, 4209, 4210, 4212]
+            { category: "Power Transmission System", q: "สายส่งไฟฟ้าประเภทใดเหมาะสำหรับการใช้งานในพื้นที่มีมลภาวะสูง?", options: ["AAC (All Aluminum Conductor)", "ACSR (Aluminum Conductor Steel Reinforced)", "ACSS (Aluminum Conductor Steel Supported)", "AAAC (All Aluminum Alloy Conductor)"], answerText: "AAAC (All Aluminum Alloy Conductor)" }, // [cite: 4213, 4214, 4215, 4216, 4217, 4219]
+            { category: "Power Transmission System", q: "เหตุผลสำคัญที่ต้องมี Ground Wire ในระบบส่งกำลังไฟฟ้าคืออะไร?", options: ["ลดแรงดันไฟฟ้าในระบบ", "ป้องกันแรงกระแทกของสายส่ง", "ป้องกันฟ้าผ่าและลดการลัดวงจร", "ลดความต้านทานของตัวนำ"], answerText: "ป้องกันฟ้าผ่าและลดการลัดวงจร" }, // [cite: 4220, 4221, 4222, 4223, 4224, 4225]
+            { category: "Power Transmission System", q: "สายส่งไฟฟ้าแรงสูงที่ใช้ ACSR มีคุณสมบัติเด่นด้านใด?", options: ["ทนทานต่อแรงดึงสูง", "นำไฟฟ้าได้ดีที่สุด", "น้ำหนักเบาที่สุด", "ไม่มีการสูญเสียพลังงาน"], answerText: "ทนทานต่อแรงดึงสูง" }, // [cite: 4226, 4227, 4228, 4229, 4230, 4231]
+            { category: "Power Transmission System", q: "หน้าที่ของ Corona Ring คืออะไร?", options: ["ลดแรงสั่นสะเทือนของสายไฟ", "ป้องกันไฟฟ้ากระโชก", "ลดการเกิดโคโรนา", "เพิ่มแรงดันของสายไฟ"], answerText: "ลดการเกิดโคโรนา" }, // [cite: 4232, 4233, 4234, 4235, 4236, 4238]
+            { category: "Power Transmission System", q: "อะไรเป็นปัจจัยสำคัญในการออกแบบความสูงของเสาส่งไฟฟ้า?", options: ["ระยะห่างระหว่างตัวนำ", "ระยะห่างจากพื้นดิน", "ขนาดของสายตัวนำ", "ทุกข้อที่กล่าวมา"], answerText: "ทุกข้อที่กล่าวมา" }, // [cite: 4239, 4240, 4241, 4242, 4243, 4244]
+            { category: "Power Transmission System", q: "สายส่งไฟฟ้าที่ใช้ Insulator แบบ Long Rod มีข้อดีอย่างไร?", options: ["ทนทานต่อมลภาวะได้ดี", "น้ำหนักเบาและติดตั้งง่าย", "ทนต่อแรงดึงสูง", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" }, // [cite: 4245, 4246, 4247, 4248, 4249, 4250]
+            { category: "Power Transmission System", q: "ระบบส่งกำลังไฟฟ้าของประเทศไทยมีกี่โซนหลัก?", options: ["3 โซน", "4 โซน", "5 โซน", "6 โซน"], answerText: "5 โซน" }, // [cite: 4251, 4252, 4253, 4254, 4255, 4256]
+            { category: "Power Transmission System", q: "ข้อใดเป็นหน้าที่ของ Detuning Pendulum?", options: ["ลดแรงสั่นสะเทือนจากลมแรง", "ลดการเกิดโคโรนา", "ลดการสูญเสียพลังงานในระบบ", "เพิ่มความสามารถในการนำไฟฟ้า"], answerText: "ลดแรงสั่นสะเทือนจากลมแรง" }, // [cite: 4257, 4258, 4259, 4260, 4261, 4262]
+            { category: "Power Transmission System", q: "สายส่งไฟฟ้าแรงสูงสามารถแบ่งออกเป็นกี่ประเภทหลักตามมุมเบี่ยงเบน?", options: ["2 ประเภท", "3 ประเภท", "4 ประเภท", "5 ประเภท"], answerText: "4 ประเภท" }, // [cite: 4263, 4264, 4265, 4266, 4267, 4268]
+            { category: "Power Transmission System", q: "สายส่งไฟฟ้าแรงสูงใช้แรงดันไฟฟ้าสูงสุดเท่าใด?", options: ["230 kV", "400 kV", "500 kV", "765 kV"], answerText: "500 kV" }, // [cite: 4269, 4270, 4271, 4272, 4273, 4275]
+            { category: "Power Transmission System", q: "องค์ประกอบของ Transmission Line Tower ที่สำคัญคืออะไร?", options: ["Cross Arm", "Peak", "Cage", "ทุกข้อที่กล่าวมา"], answerText: "ทุกข้อที่กล่าวมา" }, // [cite: 4276, 4277, 4278, 4279, 4280, 4281]
+            { category: "Power Transmission System", q: "ข้อใดไม่ใช่ชนิดของสายส่งไฟฟ้าแรงสูง?", options: ["AAC", "ACSR", "ACSS", "ACMS"], answerText: "ACMS" }, // [cite: 4282, 4283, 4284, 4285, 4286, 4287]
+            { category: "Power Transmission System", q: "ลูกถ้วยฉนวนประเภทใดมีคุณสมบัติดีที่สุดในการทนต่อแรงดึง?", options: ["Long Rod Insulator", "Suspension Insulator", "Glass Insulator", "Polymer Insulator"], answerText: "Long Rod Insulator" }, // [cite: 4288, 4289, 4290, 4291, 4292, 4293]
+            { category: "Power Transmission System", q: "Transmission Tower แบบไหนที่มีขนาดเล็กที่สุด?", options: ["Waist-Type Tower", "Guyed-V Tower", "Tubular Steel Pole", "Double-Circuit Tower"], answerText: "Tubular Steel Pole" }, // [cite: 4294, 4295, 4296, 4297, 4298, 4300]
+            { category: "Power Transmission System", q: "ทำไมต้องใช้ Spacer Damper ในสายส่งไฟฟ้าแบบ Bundle Conductors?", options: ["ลดแรงสั่นสะเทือนของสายไฟ", "ลดความสูญเสียจากโคโรนา", "ป้องกันไฟฟ้ากระโชก", "ป้องกันการเกิดลัดวงจร"], answerText: "ลดแรงสั่นสะเทือนของสายไฟ" }, // [cite: 4301, 4302, 4303, 4304, 4305, 4307]
+            { category: "Power Transmission System", q: "วัสดุชนิดใดมีคุณสมบัติเป็นตัวนำไฟฟ้าที่ดีที่สุด?", options: ["ทองแดง", "อะลูมิเนียม", "อะลูมิเนียมเสริมแกนเหล็ก", "เหล็กกล้า"], answerText: "ทองแดง" }, // [cite: 4308, 4309, 4310, 4311, 4312, 4314]
+            { category: "Power Transmission System", q: "การออกแบบระยะห่างระหว่างตัวนำ (Conductor Spacing) มีปัจจัยสำคัญใดเกี่ยวข้องมากที่สุด?", options: ["อุณหภูมิของตัวนำและกระแสโหลด", "แรงดันไฟฟ้าของระบบและเอฟเฟกต์โคโรนา", "ความเร็วลมและแรงดึงเชิงกลของสายส่ง", "มลภาวะทางอากาศและระยะห่างจากดิน"], answerText: "แรงดันไฟฟ้าของระบบและเอฟเฟกต์โคโรนา" }, // [cite: 4315, 4316, 4317, 4318, 4319, 4321]
+            { category: "Power Transmission System", q: "ฟ้าผ่าที่โดนสายส่งไฟฟ้าแรงสูงมีผลอย่างไรต่อระบบ?", options: ["ทำให้เกิดการลัดวงจรในสายส่งและแรงดันไฟฟ้าตก", "เพิ่มแรงดันไฟฟ้าของระบบชั่วขณะ", "เพิ่มค่าความต้านทานของตัวนำ", "ทำให้เกิดสัญญาณรบกวนในระบบ SCADA"], answerText: "ทำให้เกิดการลัดวงจรในสายส่งและแรงดันไฟฟ้าตก" }, // [cite: 4322, 4323, 4324, 4325, 4326, 4327]
+            { category: "Power Transmission System", q: "ข้อใดเป็นปัจจัยที่มีผลต่อ Corona Loss มากที่สุด?", options: ["ความถี่ของระบบไฟฟ้า", "ความชื้นและแรงดันไฟฟ้า", "ขนาดของตัวนำและมุมการติดตั้ง", "ระยะห่างของตัวนำและรูปแบบการติดตั้ง"], answerText: "ความชื้นและแรงดันไฟฟ้า" }, // [cite: 4328, 4329, 4330, 4331, 4332, 4333]
+            { category: "Power Transmission System", q: "สาเหตุหลักของการเกิด Ferroresonance ในสายส่งไฟฟ้าคืออะไร?", options: ["กระแสไฟฟ้าเกินพิกัด", "การลัดวงจรที่เกิดขึ้นชั่วขณะ", "ความไม่สมดุลของแรงดันไฟฟ้าในระบบ 3 เฟส", "การมีตัวเหนี่ยวนำและตัวเก็บประจุที่ไม่มีโหลด"], answerText: "การมีตัวเหนี่ยวนำและตัวเก็บประจุที่ไม่มีโหลด" }, // [cite: 4334, 4335, 4336, 4337, 4338, 4339]
+            { category: "Power Transmission System", q: "วัสดุของตัวนำที่มีค่า Skin Effect ต่ำที่สุดคืออะไร?", options: ["อะลูมิเนียม", "ทองแดง", "อะลูมิเนียมเสริมแกนเหล็ก (ACSR)", "สแตนเลส"], answerText: "ทองแดง" }, // [cite: 4340, 4341, 4342, 4343, 4344, 4346]
+            { category: "Power Transmission System", q: "ปัจจัยใดที่มีผลมากที่สุดต่อการออกแบบ Grounding ของเสาส่งไฟฟ้า?", options: ["ค่าความต้านทานของดินในบริเวณนั้น", "ประเภทของเสาส่งไฟฟ้าที่ใช้", "อุณหภูมิของดิน", "ค่าแรงดันไฟฟ้าของสายส่ง"], answerText: "ค่าความต้านทานของดินในบริเวณนั้น" }, // [cite: 4347, 4348, 4349, 4350, 4351, 4353]
+            { category: "Power Transmission System", q: "สาเหตุหลักที่ทำให้ต้องใช้สายส่งแบบ Bundle Conductors ในระบบไฟฟ้าแรงสูงคืออะไร?", options: ["เพิ่มแรงดันไฟฟ้าของระบบ", "ลด Corona Loss และเพิ่มความสามารถในการนำกระแส", "ลดความต้านทานของตัวนำ", "ลดค่าใช้จ่ายในการก่อสร้างระบบส่งกำลัง"], answerText: "ลด Corona Loss และเพิ่มความสามารถในการนำกระแส" }, // [cite: 4354, 4355, 4356, 4357, 4358]
+            { category: "Power Transmission System", q: "ปรากฏการณ์ Galloping ของสายส่งไฟฟ้าแรงสูงสามารถควบคุมได้โดยการใช้?", options: ["Arcing Horn", "Spacer Damper", "Detuning Pendulum", "Corona Ring"], answerText: "Detuning Pendulum" }, // [cite: 4359, 4360, 4361, 4362, 4363, 4365]
+            { category: "Power Transmission System", q: "Transmission Tower ประเภทใดที่ออกแบบมาเพื่อลดการใช้พื้นที่ก่อสร้าง?", options: ["Tubular Steel Pole", "Double-Circuit Tower", "Guyed-V Tower", "Waist-Type Tower"], answerText: "Guyed-V Tower" }, // [cite: 4366, 4367, 4368, 4369, 4370, 4372]
+            { category: "Power Transmission System", q: "หน้าที่ของ Grading Ring ในระบบส่งกำลังไฟฟ้าคืออะไร?", options: ["ปรับสมดุลแรงดันไฟฟ้าตามแนวของฉนวน", "ลดการสูญเสียพลังงานในสายส่ง", "ลดแรงกระแทกของสายส่งที่เกิดจากแรงลม", "ป้องกันฟ้าผ่าที่เกิดกับตัวนำ"], answerText: "ปรับสมดุลแรงดันไฟฟ้าตามแนวของฉนวน" }, // [cite: 4373, 4374, 4375, 4376, 4377, 4378]
+            { category: "Power Transmission System", q: "ความสูงของ Transmission Tower ขึ้นอยู่กับปัจจัยใดเป็นหลัก?", options: ["แรงดันไฟฟ้าของระบบ", "มุมการวางสายส่ง", "ความเร็วลมสูงสุดในพื้นที่", "จำนวนสายดินที่ติดตั้ง"], answerText: "แรงดันไฟฟ้าของระบบ" }, // [cite: 4379, 4380, 4381, 4382, 4383, 4384]
+            { category: "Power Transmission System", q: "Transmission Line ที่ใช้ DC มีข้อดีหลักอย่างไรเมื่อเทียบกับ AC?", options: ["มีค่า Loss ต่ำกว่า", "มีค่า Inductance สูงกว่า", "ค่า Skin Effect สูงกว่า", "ค่าแรงดันตกสูงกว่า"], answerText: "มีค่า Loss ต่ำกว่า" }, // [cite: 4385, 4386, 4387, 4388, 4389, 4391]
+            { category: "Power Transmission System", q: "ปัจจัยใดส่งผลต่อความถี่ของ Aeolian Vibration มากที่สุด?", options: ["ขนาดตัวนำและความเร็วลม", "แรงดันไฟฟ้าและขนาดของสายส่ง", "มุมการติดตั้งของฉนวน", "ระยะห่างของเสาส่งไฟฟ้า"], answerText: "ขนาดตัวนำและความเร็วลม" }, // [cite: 4392, 4393, 4394, 4395, 4396, 4398]
+            { category: "Power Transmission System", q: "Transmission Tower ประเภทใดออกแบบมาเพื่อรองรับแรงดึงสูงสุด?", options: ["Suspension Tower", "Dead-End Tower", "Transposition Tower", "Tangent Tower"], answerText: "Dead-End Tower" }, // [cite: 4399, 4400, 4401, 4402, 4403, 4405]
+            { category: "Power Transmission System", q: "ในกรณีที่ต้องการลดการสูญเสียพลังงานไฟฟ้าในสายส่ง ควรทำอย่างไร?", options: ["ใช้ตัวนำขนาดใหญ่ขึ้น", "เพิ่มแรงดันไฟฟ้า", "ใช้ตัวนำที่มีค่าความต้านทานต่ำ", "ทุกข้อที่กล่าวมา"], answerText: "ทุกข้อที่กล่าวมา" }, // [cite: 4406, 4407, 4408, 4409, 4410, 4411]
+            { category: "Power Transmission System", q: "Transmission Line ที่ใช้ HVDC เหมาะกับการใช้งานแบบใดมากที่สุด?", options: ["การเชื่อมโยงระบบไฟฟ้าต่างความถี่", "ระบบส่งกำลังระยะสั้น", "การใช้งานในพื้นที่ที่มีแรงลมสูง", "ระบบไฟฟ้าขนาดเล็ก"], answerText: "การเชื่อมโยงระบบไฟฟ้าต่างความถี่" }, // [cite: 4412, 4413, 4414, 4415, 4416, 4417]
+            { category: "Power Transmission System", q: "ปัจจัยที่มีผลต่อค่าความต้านทานของดินมากที่สุดคืออะไร?", options: ["ความลึกของสายดิน", "ปริมาณน้ำในดิน", "อุณหภูมิของดิน", "ทุกข้อที่กล่าวมา"], answerText: "ทุกข้อที่กล่าวมา" }, // [cite: 4418, 4419, 4420, 4421, 4422, 4423]
+            { category: "Power Transmission System", q: "วัสดุของ Spacer Damper ที่นิยมใช้มากที่สุดคืออะไร?", options: ["ทองแดง", "อะลูมิเนียมอัลลอย", "สแตนเลส", "เหล็กกล้า"], answerText: "อะลูมิเนียมอัลลอย" }, // [cite: 4424, 4425, 4426, 4427, 4428, 4430]
+            { category: "Power Transmission System", q: "สายส่งแบบ Multi-Bundle Conductors จะถูกใช้กับระบบไฟฟ้าที่มีแรงดันไฟฟ้าเท่าใดขึ้นไป?", options: ["69 kV", "115 kV", "230 kV", "500 kV"], answerText: "230 kV" }, // [cite: 4431, 4432, 4433, 4434, 4435, 4437]
+            { category: "Power Transmission System", q: "ข้อใดเป็นข้อเสียของระบบ HVDC?", options: ["ค่าใช้จ่ายเริ่มต้นสูง", "มีค่า Loss สูงกว่า HVAC", "การควบคุมแรงดันทำได้ยากกว่า", "ใช้ตัวนำที่มีความต้านทานสูงกว่า"], answerText: "ค่าใช้จ่ายเริ่มต้นสูง" }, // [cite: 4438, 4439, 4440, 4441, 4442, 4443]
+            { category: "Power Transmission System", q: "ชั้นป้องกันภายนอกสุดของสายเคเบิลแรงสูงเรียกว่าอะไร?", options: ["ตัวนำ (Conductor)", "ฉนวนไฟฟ้า (Insulation)", "เกราะป้องกัน (Shielding)", "เปลือกหุ้ม (Sheath)"], answerText: "เปลือกหุ้ม (Sheath)" }, // [cite: 4444, 4445, 4446, 4447, 4448, 4449]
+            { category: "Power Transmission System", q: "สายเคเบิลไฟฟ้าแรงสูงที่ใช้สำหรับงานใต้ดินต้องมีคุณสมบัติเด่นด้านใด?", options: ["ทนความร้อนสูง", "ทนต่อแรงดันและการกัดกร่อนของดิน", "มีค่าความนำไฟฟ้าสูงสุด", "สามารถรองรับแรงดึงสูง"], answerText: "ทนต่อแรงดันและการกัดกร่อนของดิน" }, // [cite: 4450, 4451, 4452, 4453, 4454, 4455]
+            { category: "Power Transmission System", q: "วัสดุที่นิยมใช้เป็นตัวนำในสายเคเบิลแรงสูงมากที่สุดคืออะไร?", options: ["ทองแดง", "อะลูมิเนียม", "เหล็กชุบสังกะสี", "ทองแดงชุบเงิน"], answerText: "ทองแดง" }, // [cite: 4456, 4457, 4458, 4459, 4460, 4462]
+            { category: "Power Transmission System", q: "ข้อใดเป็นหน้าที่หลักของชั้นฉนวนในสายเคเบิล?", options: ["ลดการสูญเสียพลังงาน", "ป้องกันการลัดวงจรและไฟฟ้ารั่ว", "เพิ่มความแข็งแรงทางกลของสาย", "ป้องกันการเกิดโคโรนา"], answerText: "ป้องกันการลัดวงจรและไฟฟ้ารั่ว" }, // [cite: 4463, 4464, 4465, 4466, 4467, 4469]
+            { category: "Power Transmission System", q: "สายเคเบิลที่ใช้ในระบบไฟฟ้าแรงสูงต้องมีค่าความเป็นฉนวนสูงเพื่อป้องกันอะไร?", options: ["การเกิดไฟฟ้าสถิต", "การลัดวงจรและ Breakdown", "การเกิดแรงดันเกินพิกัด", "การสูญเสียพลังงานไฟฟ้า"], answerText: "การลัดวงจรและ Breakdown" }, // [cite: 4470, 4471, 4472, 4473, 4474, 4475]
+            { category: "Power Transmission System", q: "XLPE เป็นฉนวนที่ใช้ในสายเคเบิลไฟฟ้า มีคุณสมบัติเด่นอะไร?", options: ["ทนความร้อนและแรงดันสูง", "ทนแรงดึงสูง", "นำไฟฟ้าได้ดี", "ป้องกันฟ้าผ่าได้"], answerText: "ทนความร้อนและแรงดันสูง" }, // [cite: 4476, 4477, 4478, 4479, 4480, 4481]
+            { category: "Power Transmission System", q: "ระบบป้องกันฟ้าผ่าในสายเคเบิลใต้ดินใช้หลักการใด?", options: ["ใช้สายดิน (Grounding) และชั้นโลหะป้องกัน", "ใช้ตัวนำเสริมแรงสูง", "ใช้สารป้องกันโคโรนา", "ใช้ฉนวนแบบพิเศษ"], answerText: "ใช้สายดิน (Grounding) และชั้นโลหะป้องกัน" }, // [cite: 4482, 4483, 4484, 4485, 4486, 4487]
+            { category: "Power Transmission System", q: "ข้อใดเป็นสาเหตุหลักของความเสียหายต่อสายเคเบิลใต้ดิน?", options: ["ความชื้นและการกัดกร่อนของดิน", "การสั่นสะเทือนของดิน", "คลื่นแม่เหล็กไฟฟ้า", "อุณหภูมิภายนอกที่เปลี่ยนแปลง"], answerText: "ความชื้นและการกัดกร่อนของดิน" }, // [cite: 4488, 4489, 4490, 4491, 4492, 4493]
+            { category: "Power Transmission System", q: "ข้อใดเป็นข้อดีของสายเคเบิลแบบ Oil-Filled Cable?", options: ["ทนความร้อนสูง", "ลดการเกิด Partial Discharge", "มีต้นทุนต่ำ", "ติดตั้งง่ายกว่าสายเคเบิลทั่วไป"], answerText: "ลดการเกิด Partial Discharge" }, // [cite: 4494, 4495, 4496, 4497, 4498, 4499]
+            { category: "Power Transmission System", q: "สายเคเบิลประเภทไหนที่เหมาะสำหรับการใช้งานในพื้นที่เสี่ยงไฟไหม้?", options: ["PVC Cable", "XLPE Cable", "LSZH (Low Smoke Zero Halogen) Cable", "ACSR Cable"], answerText: "LSZH (Low Smoke Zero Halogen) Cable" }, // [cite: 4500, 4501, 4502, 4503, 4504, 4506]
+            { category: "Power Transmission System", q: "การลด Skin Effect ในสายเคเบิลทำได้โดยใช้ตัวนำชนิดใด?", options: ["ตัวนำกลวง", "ตัวนำแบบแบ่งส่วน (Stranded Conductor)", "ตัวนำแบบตัน", "ตัวนำที่มีค่าความต้านทานสูง"], answerText: "ตัวนำแบบแบ่งส่วน (Stranded Conductor)" }, // [cite: 4507, 4508, 4509, 4510, 4511, 4512]
+            { category: "Power Transmission System", q: "อุณหภูมิสูงสุดที่สายเคเบิล XLPE สามารถทนได้ในการใช้งานปกติคือเท่าใด?", options: ["70°C", "90°C", "105°C", "250°C"], answerText: "90°C" }, // [cite: 4513, 4514, 4515, 4516, 4517, 4518]
+            { category: "Power Transmission System", q: "วัตถุประสงค์ของการใช้ Armored Cable คืออะไร?", options: ["ป้องกันแรงดันไฟฟ้าเกินพิกัด", "ป้องกันความเสียหายจากแรงกระแทก", "เพิ่มค่าความเป็นฉนวนของสาย", "ลดค่าความต้านทานของตัวนำ"], answerText: "ป้องกันความเสียหายจากแรงกระแทก" }, // [cite: 4519, 4520, 4521, 4522, 4523, 4524]
+            { category: "Power Transmission System", q: "Partial Discharge เกิดขึ้นกับสายเคเบิลได้เมื่อใด?", options: ["เมื่อสายเคเบิลมีรอยแตกของฉนวน", "เมื่ออุณหภูมิเกินพิกัด", "เมื่อสายเคเบิลมีแรงดันต่ำเกินไป", "เมื่อมีความชื้นในฉนวน"], answerText: "เมื่อสายเคเบิลมีรอยแตกของฉนวน" }, // [cite: 4525, 4526, 4527, 4528, 4529, 4530]
+            { category: "Power Transmission System", q: "ค่าความจุไฟฟ้า (Capacitance) ของสายเคเบิลขึ้นอยู่กับอะไร?", options: ["ขนาดของตัวนำและระยะห่างของฉนวน", "ความเร็วลมที่ผ่านสายเคเบิล", "ค่าแรงดันไฟฟ้า", "น้ำหนักของสายเคเบิล"], answerText: "ขนาดของตัวนำและระยะห่างของฉนวน" }, // [cite: 4531, 4532, 4533, 4534, 4535, 4536]
+            { category: "Power Transmission System", q: "วัสดุใดที่นิยมใช้เป็นชั้นเกราะป้องกัน (Armour) ในสายเคเบิลแรงสูง?", options: ["อะลูมิเนียม", "ทองแดง", "เหล็กกล้า", "พอลิเมอร์"], answerText: "เหล็กกล้า" }, // [cite: 1]
+            { category: "Power Transmission System", q: "ข้อใดเป็นข้อเสียหลักของ PVC Insulation ในสายเคเบิลไฟฟ้า?", options: ["มีความต้านทานสูง", "เสี่ยงต่อการลุกไหม้และปล่อยควันพิษ", "รองรับแรงดันไฟฟ้าสูงได้ดี", "อายุการใช้งานยาวนานกว่า XLPE"], answerText: "เสี่ยงต่อการลุกไหม้และปล่อยควันพิษ" }, // [cite: 1]
+            { category: "Power Transmission System", q: "วัตถุประสงค์ของการใช้เซมิ-คอนดักติ้ง เลเยอร์ (Semi-conducting Layer) ในสายเคเบิลแรงสูงคืออะไร?", options: ["ป้องกันไฟฟ้าลัดวงจร", "ควบคุมสนามไฟฟ้าเพื่อลดความเค้นในฉนวน", "ป้องกันความเสียหายจากแรงดึง", "ลดความร้อนในตัวนำ"], answerText: "ควบคุมสนามไฟฟ้าเพื่อลดความเค้นในฉนวน" }, // [cite: 1]
+            { category: "Power Transmission System", q: "ข้อใดเป็นลักษณะสำคัญของ OF (Oil-Filled) Cable?", options: ["ใช้สำหรับระบบไฟฟ้าแรงต่ำ", "ใช้น้ำมันเป็นตัวระบายความร้อนและฉนวน", "มีความต้านทานสูงกว่าสายเคเบิลทั่วไป", "มีขนาดเล็กกว่าสายเคเบิล XLPE"], answerText: "ใช้น้ำมันเป็นตัวระบายความร้อนและฉนวน" }, // [cite: 1]
+            { category: "Power Transmission System", q: "ข้อใดเป็นข้อได้เปรียบหลักของ XLPE Cable เมื่อเทียบกับ Paper Insulated Cable?", options: ["ติดตั้งได้ง่ายกว่า", "ทนต่อความชื้นได้ดีกว่า", "ทนความร้อนได้สูงกว่า", "ทุกข้อที่กล่าวมา"], answerText: "ทุกข้อที่กล่าวมา" }, // [cite: 1]
+            { category: "Power Transmission System", q: "การสูญเสียพลังงานในสายเคเบิลเกิดจากอะไรเป็นหลัก?", options: ["ความต้านทานของตัวนำ", "การสะสมของฝุ่นบนฉนวน", "แรงดันไฟฟ้าเกินพิกัด", "การสั่นสะเทือนของตัวนำ"], answerText: "ความต้านทานของตัวนำ" }, // [cite: 1]
+            { category: "Power Transmission System", q: "สายเคเบิลแรงสูงที่ใช้ในระบบไฟฟ้าใต้ดินมักใช้ฉนวนประเภทใด?", options: ["PVC", "XLPE", "Paper Oil-Impregnated", "Rubber"], answerText: "XLPE" }, // [cite: 1]
+            { category: "Power Transmission System", q: "Partial Discharge ที่เกิดขึ้นในสายเคเบิลแรงสูงมีผลเสียอย่างไร?", options: ["ลดค่าความเป็นฉนวนของสายเคเบิล", "เพิ่มค่าความต้านทานของตัวนำ", "ทำให้สายเคเบิลนำไฟฟ้าได้ดีขึ้น", "ไม่มีผลกระทบต่อสายเคเบิล"], answerText: "ลดค่าความเป็นฉนวนของสายเคเบิล" }, // [cite: 1]
+            { category: "Power Transmission System", q: "สายเคเบิลที่ใช้ในโรงงานอุตสาหกรรมที่ต้องการความปลอดภัยจากไฟไหม้ควรเป็นสายประเภทใด?", options: ["XLPE", "PVC", "LSZH (Low Smoke Zero Halogen)", "Paper Insulated Cable"], answerText: "LSZH (Low Smoke Zero Halogen)" }, // [cite: 1]
+            { category: "Power Transmission System", q: "การเดินสายเคเบิลแรงสูงแบบ Buried Cable (ฝังดิน) ต้องมีการออกแบบอะไรเป็นพิเศษ?", options: ["ระบบระบายความร้อนของดิน", "การป้องกันกระแสไฟฟ้ารั่วไหล", "ระบบระบายน้ำและความชื้น", "ทุกข้อที่กล่าวมา"], answerText: "ทุกข้อที่กล่าวมา" }, // [cite: 1]
+            { category: "Power Transmission System", q: "สายเคเบิลที่ใช้สำหรับการส่งกำลังไฟฟ้าใต้ทะเลต้องมีคุณสมบัติใดเป็นพิเศษ?", options: ["ทนแรงดันน้ำและป้องกันการรั่วซึมของฉนวน", "นำไฟฟ้าได้ดีเป็นพิเศษ", "น้ำหนักเบาและมีขนาดเล็ก", "ไม่มีความจำเป็นต้องออกแบบพิเศษ"], answerText: "ทนแรงดันน้ำและป้องกันการรั่วซึมของฉนวน" }, // [cite: 1]
+            { category: "Power Transmission System", q: "การทดสอบสายเคเบิลไฟฟ้าแรงสูงเพื่อตรวจสอบความสมบูรณ์ของฉนวนเรียกว่าอะไร?", options: ["Resistance Test", "High Voltage Test (HV Test)", "Conductor Test", "Grounding Test"], answerText: "High Voltage Test (HV Test)" }, // [cite: 1]
+            { category: "Power Transmission System", q: "วัสดุที่นิยมใช้เป็นตัวนำของสายเคเบิลแรงสูงมากที่สุดคืออะไร?", options: ["ทองแดงบริสุทธิ์", "อะลูมิเนียมอัลลอย", "ทองแดงชุบเงิน", "สแตนเลส"], answerText: "ทองแดงบริสุทธิ์" }, // [cite: 1]
+            { category: "Power Transmission System", q: "ทำไมสายเคเบิลแรงสูงจึงต้องมีชั้น Shielding?", options: ["เพื่อป้องกันการรบกวนทางแม่เหล็กไฟฟ้า", "เพื่อลดแรงดันไฟฟ้าเกินพิกัด", "เพื่อช่วยนำความร้อนออกจากตัวนำ", "เพื่อป้องกันการลัดวงจรระหว่างเฟส"], answerText: "เพื่อป้องกันการรบกวนทางแม่เหล็กไฟฟ้า" }, // [cite: 1]
+            { category: "Power Transmission System", q: "การเลือกขนาดของสายเคเบิลไฟฟ้าต้องคำนึงถึงปัจจัยใดบ้าง?", options: ["กระแสไฟฟ้าสูงสุดที่ใช้งาน", "อุณหภูมิแวดล้อมและรูปแบบการติดตั้ง", "ระยะทางการส่งกำลังไฟฟ้า", "ทุกข้อที่กล่าวมา"], answerText: "ทุกข้อที่กล่าวมา" }, // [cite: 1]
+            { category: "Power Transmission System", q: "วัสดุใดที่นิยมใช้เป็นตัวนำไฟฟ้าในสายส่งไฟฟ้าแรงสูงมากที่สุด?", options: ["ทองแดง", "อะลูมิเนียม", "อะลูมิเนียมเสริมแกนเหล็ก (ACSR)", "ทองแดงชุบเงิน"], answerText: "อะลูมิเนียมเสริมแกนเหล็ก (ACSR)" }, // [cite: 1]
+            { category: "Power Transmission System", q: "คุณสมบัติที่สำคัญของตัวนำไฟฟ้าที่ดีคืออะไร?", options: ["มีความต้านทานสูง", "มีน้ำหนักมาก", "มีค่าการนำไฟฟ้าสูงและทนทานต่อสภาพอากาศ", "เปราะและแตกหักง่าย"], answerText: "มีค่าการนำไฟฟ้าสูงและทนทานต่อสภาพอากาศ" }, // [cite: 1]
+            { category: "Power Transmission System", q: "ข้อใดเป็นข้อเสียของการใช้ตัวนำทองแดงแทนอะลูมิเนียมในสายส่งไฟฟ้า?", options: ["มีค่าความนำไฟฟ้าต่ำกว่า", "มีน้ำหนักมากกว่าและราคาสูงกว่า", "ไม่สามารถใช้ในสายส่งไฟฟ้าแรงสูงได้", "มีค่าความต้านทานสูง"], answerText: "มีน้ำหนักมากกว่าและราคาสูงกว่า" }, // [cite: 1]
+            { category: "Power Transmission System", q: "ทำไม ACSR (Aluminum Conductor Steel Reinforced) จึงได้รับความนิยมในระบบส่งกำลังไฟฟ้า?", options: ["มีค่าความต้านทานต่ำที่สุด", "มีน้ำหนักเบาที่สุด", "มีความแข็งแรงทางกลสูงและนำไฟฟ้าได้ดี", "ใช้งานได้เฉพาะในระบบไฟฟ้าแรงต่ำ"], answerText: "มีความแข็งแรงทางกลสูงและนำไฟฟ้าได้ดี" }, // [cite: 1]
+            { category: "Power Transmission System", q: "ข้อใดไม่ใช่ชนิดของตัวนำไฟฟ้าในสายส่งไฟฟ้า?", options: ["AAC (All Aluminum Conductor)", "ACSS (Aluminum Conductor Steel Supported)", "ACSR (Aluminum Conductor Steel Reinforced)", "ABS (Aluminum Bimetallic System)"], answerText: "ABS (Aluminum Bimetallic System)" }, // [cite: 1]
+            { category: "Power Transmission System", q: "ข้อดีหลักของ AAC (All Aluminum Conductor) คืออะไร?", options: ["มีความแข็งแรงสูงสุด", "มีค่าการนำไฟฟ้าสูงสุด", "ทนต่อแรงดึงสูง", "ทนต่ออุณหภูมิสูง"], answerText: "มีค่าการนำไฟฟ้าสูงสุด" }, // [cite: 1]
+            { category: "Power Transmission System", q: "องค์ประกอบหลักของ ACAR (Aluminum Conductor Alloy Reinforced) คืออะไร?", options: ["อะลูมิเนียมและทองแดง", "อะลูมิเนียมบริสุทธิ์", "อะลูมิเนียมผสมกับโลหะเสริมแรง", "อะลูมิเนียมและแกนเหล็ก"], answerText: "อะลูมิเนียมผสมกับโลหะเสริมแรง" }, // [cite: 1]
+            { category: "Power Transmission System", q: "ข้อใดเป็นข้อดีของการใช้ AAAC (All Aluminum Alloy Conductor)?", options: ["ทนต่อการกัดกร่อนได้ดีกว่า ACSR", "มีค่าความต้านทานสูงกว่า ACSR", "มีน้ำหนักมากกว่า ACSR", "ใช้สำหรับระบบไฟฟ้าแรงต่ำเท่านั้น"], answerText: "ทนต่อการกัดกร่อนได้ดีกว่า ACSR" }, // [cite: 1]
+            { category: "Power Transmission System", q: "ทำไมสายตัวนำ ACSR จึงใช้แกนเหล็ก?", options: ["เพื่อเพิ่มความสามารถในการนำไฟฟ้า", "เพื่อเพิ่มความแข็งแรงทางกลของตัวนำ", "เพื่อเพิ่มค่าความต้านทาน", "เพื่อป้องกันการเกิดโคโรนา"], answerText: "เพื่อเพิ่มความแข็งแรงทางกลของตัวนำ" }, // [cite: 1]
+            { category: "Power Transmission System", q: "หน่วยที่ใช้วัดค่าการนำไฟฟ้าของตัวนำคืออะไร?", options: ["โอห์ม (Ω)", "ซีเมนส์ (S)", "วัตต์ (W)", "แอมแปร์ (A)"], answerText: "ซีเมนส์ (S)" }, // [cite: 1]
+            { category: "Power Transmission System", q: "ตัวนำแบบ ACSS (Aluminum Conductor Steel Supported) เหมาะสำหรับใช้งานในกรณีใด?", options: ["ระบบไฟฟ้าที่มีแรงดันไฟฟ้าต่ำ", "ระบบที่ต้องการทนต่ออุณหภูมิสูง", "ระบบไฟฟ้าในเขตชุมชนเท่านั้น", "ระบบไฟฟ้าที่มีระยะทางสั้น"], answerText: "ระบบที่ต้องการทนต่ออุณหภูมิสูง" }, // [cite: 1]
+            { category: "Power Transmission System", q: "ทำไมต้องใช้ Spacer Damper กับสายตัวนำแบบ Bundle Conductors?", options: ["ลดแรงสั่นสะเทือนของสายไฟ", "ลดความสูญเสียจากโคโรนา", "ป้องกันไฟฟ้ากระโชก", "ป้องกันการเกิดลัดวงจร"], answerText: "ลดแรงสั่นสะเทือนของสายไฟ" }, // [cite: 1]
+            { category: "Power Transmission System", q: "การเลือกขนาดของตัวนำต้องพิจารณาปัจจัยใดเป็นหลัก?", options: ["กระแสไฟฟ้าที่รองรับได้", "อุณหภูมิของสภาพแวดล้อม", "ค่าความต้านทานของตัวนำ", "ทุกข้อที่กล่าวมา"], answerText: "ทุกข้อที่กล่าวมา" }, // [cite: 1]
+            { category: "Power Transmission System", q: "ตัวนำไฟฟ้าที่มีค่าความนำไฟฟ้าสูงสุดคืออะไร?", options: ["ทองแดง", "อะลูมิเนียม", "อะลูมิเนียมเสริมเหล็ก", "เหล็กชุบสังกะสี"], answerText: "ทองแดง" }, // [cite: 1]
+            { category: "Power Transmission System", q: "การเพิ่มแรงดันไฟฟ้าในสายส่งมีผลอย่างไรต่อการสูญเสียพลังงานในตัวนำ?", options: ["เพิ่มการสูญเสีย", "ลดการสูญเสีย", "ไม่มีผล", "ขึ้นอยู่กับประเภทของตัวนำ"], answerText: "ลดการสูญเสีย" }, // [cite: 1]
+            { category: "Power Transmission System", q: "อะไรเป็นสาเหตุหลักที่ทำให้เกิด Skin Effect ในตัวนำไฟฟ้าแรงสูง?", options: ["แรงดันไฟฟ้าสูง", "กระแสไฟฟ้ากระจายไม่สม่ำเสมอในตัวนำ", "อุณหภูมิของตัวนำสูงขึ้น", "ความต้านทานของตัวนำเปลี่ยนแปลง"], answerText: "กระแสไฟฟ้ากระจายไม่สม่ำเสมอในตัวนำ" }, // [cite: 1]
+            { category: "Power Transmission System", q: "วัสดุใดที่ใช้ในตัวนำเพื่อลด Skin Effect?", options: ["เหล็กชุบสังกะสี", "อะลูมิเนียมอัลลอย", "ทองแดงแบบกลวงหรือแบ่งชั้น (Stranded Conductor)", "ทองแดงชุบเงิน"], answerText: "ทองแดงแบบกลวงหรือแบ่งชั้น (Stranded Conductor)" }, // [cite: 1]
+            { category: "Power Transmission System", q: "สายตัวนำประเภทใดเหมาะกับการใช้งานในพื้นที่ที่มีลมแรงและการสั่นสะเทือนสูง?", options: ["ACSR", "ACSS", "ACCC", "AAC"], answerText: "ACCC" }, // [cite: 1]
+            { category: "Power Transmission System", q: "วัตถุประสงค์ของการใช้ \"Grease Coating\" ในตัวนำ ACSR คืออะไร?", options: ["ป้องกันการกัดกร่อนของเหล็กแกนกลาง", "ลดความต้านทานของตัวนำ", "เพิ่มความสามารถในการนำไฟฟ้า", "ลดการสูญเสียจากโคโรนา"], answerText: "ป้องกันการกัดกร่อนของเหล็กแกนกลาง" }, // [cite: 1]
+            { category: "Power Transmission System", q: "เหตุใดสายตัวนำไฟฟ้าจึงต้องมีการปรับตำแหน่ง (Transposition) ตามระยะทาง?", options: ["ลดการสูญเสียพลังงานไฟฟ้า", "ลดความไม่สมดุลของแรงดันไฟฟ้าและกระแสไฟฟ้า", "เพิ่มประสิทธิภาพในการป้องกันฟ้าผ่า", "ลดการสะสมของประจุไฟฟ้า"], answerText: "ลดความไม่สมดุลของแรงดันไฟฟ้าและกระแสไฟฟ้า" }, // [cite: 1]
+            { category: "Power Transmission System", q: "ตัวนำแบบ ACSS (Aluminum Conductor Steel Supported) แตกต่างจาก ACSR อย่างไร?", options: ["ACSS ทนอุณหภูมิสูงกว่า", "ACSS มีค่าความนำไฟฟ้าต่ำกว่า", "ACSS มีแกนกลางเป็นอะลูมิเนียมแทนเหล็ก", "ACSS มีน้ำหนักมากกว่า ACSR"], answerText: "ACSS ทนอุณหภูมิสูงกว่า" }, // [cite: 1]
+            { category: "Power Transmission System", q: "ตัวนำประเภทใดที่ใช้ในการส่งกำลังไฟฟ้าระยะไกลและลดค่าความสูญเสียพลังงานได้ดีที่สุด?", options: ["AAC", "ACSR", "ACCC", "AAAC"], answerText: "ACCC" }, // [cite: 1]
+            { category: "Power Transmission System", q: "ตัวนำไฟฟ้าที่ใช้ในระบบส่งกำลังไฟฟ้าแรงสูงต้องมีค่าความต้านทานต่อการล้าของวัสดุ (Fatigue Resistance) สูงเพื่อป้องกันอะไร?", options: ["การแตกหักจากแรงดึง", "การเสื่อมสภาพของฉนวน", "การสูญเสียจากโคโรนา", "การเหนี่ยวนำแม่เหล็กไฟฟ้า"], answerText: "การแตกหักจากแรงดึง" }, // [cite: 1]
+            { category: "Power Transmission System", q: "ปรากฏการณ์ Aeolian Vibration ที่เกิดขึ้นกับสายตัวนำมีสาเหตุจากอะไร?", options: ["การเปลี่ยนแปลงอุณหภูมิอย่างรวดเร็ว", "แรงลมที่พัดผ่านตัวนำอย่างสม่ำเสมอ", "กระแสไฟฟ้าเกินพิกัด", "การเกิดฟ้าผ่าใกล้สายตัวนำ"], answerText: "แรงลมที่พัดผ่านตัวนำอย่างสม่ำเสมอ" }, // [cite: 1]
+            { category: "Power Transmission System", q: "ปัจจัยใดที่มีผลต่อค่าความเหนี่ยวนำของตัวนำสายส่งไฟฟ้า?", options: ["วัสดุของตัวนำ", "รูปแบบการจัดเรียงของตัวนำ", "อุณหภูมิของสายส่ง", "ทุกข้อที่กล่าวมา"], answerText: "ทุกข้อที่กล่าวมา" }, // [cite: 1]
+            { category: "Power Transmission System", q: "วัตถุประสงค์หลักของ Corona Ring ที่ติดตั้งที่ปลายตัวนำคืออะไร?", options: ["ป้องกันการเกิดโคโรนาและลดการสูญเสียพลังงาน", "เพิ่มแรงดันไฟฟ้าให้ตัวนำ", "ลดค่าความต้านทานของตัวนำ", "ช่วยป้องกันสายไฟฟ้าจากฟ้าผ่า"], answerText: "ป้องกันการเกิดโคโรนาและลดการสูญเสียพลังงาน" }, // [cite: 1]
+            { category: "Power Transmission System", q: "ข้อใดเป็นข้อเสียหลักของการใช้ตัวนำทองแดงแทนอะลูมิเนียมในสายส่งไฟฟ้าแรงสูง?", options: ["ความต้านทานของทองแดงสูงกว่าอะลูมิเนียม", "น้ำหนักของทองแดงมากกว่าทำให้ต้องใช้เสาขนาดใหญ่ขึ้น", "ทองแดงมีค่าการนำไฟฟ้าต่ำกว่าอะลูมิเนียม", "ทองแดงไม่สามารถใช้ในระบบไฟฟ้าแรงสูงได้"], answerText: "น้ำหนักของทองแดงมากกว่าทำให้ต้องใช้เสาขนาดใหญ่ขึ้น" }, // [cite: 1]
+            { category: "Power Transmission System", q: "ทำไมตัวนำ ACSR จึงต้องมีสัดส่วนของอะลูมิเนียมและเหล็กที่เหมาะสม?", options: ["เพื่อให้มีค่าการนำไฟฟ้าและความแข็งแรงที่เหมาะสม", "เพื่อให้มีน้ำหนักมากขึ้น", "เพื่อลดความสามารถในการนำไฟฟ้า", "เพื่อลดการสูญเสียจากโคโรนา"], answerText: "เพื่อให้มีค่าการนำไฟฟ้าและความแข็งแรงที่เหมาะสม" }, // [cite: 1]
+            { category: "Power Transmission System", q: "หน่วยวัดค่าความต้านทานของตัวนำในระบบส่งกำลังไฟฟ้าคืออะไร?", options: ["โอห์มต่อลูกบาศก์เมตร (Ω/m³)", "โอห์มต่อเมตร (Ω/m)", "โอห์มต่อตารางเมตร (Ω/m²)", "โอห์มต่อวัตต์ (Ω/W)"], answerText: "โอห์มต่อเมตร (Ω/m)" }, // [cite: 1]
+            { category: "Power Transmission System", q: "วัตถุประสงค์ของการใช้ Spacer Damper กับตัวนำสายส่งแบบ Bundle Conductors คืออะไร?", options: ["ลดแรงสั่นสะเทือนและป้องกันการเกิด Galloping", "ลดการเกิด Partial Discharge", "ป้องกันไฟฟ้ากระโชก", "เพิ่มค่าความต้านทานของตัวนำ"], answerText: "ลดแรงสั่นสะเทือนและป้องกันการเกิด Galloping" }, // [cite: 1]
+            { category: "Power Transmission System", q: "ปัจจัยใดมีผลต่อค่า Skin Depth ของตัวนำไฟฟ้าแรงสูงมากที่สุด?", options: ["ขนาดของตัวนำ", "ความถี่ของกระแสไฟฟ้า", "ค่าความนำไฟฟ้าของวัสดุตัวนำ", "ทุกข้อที่กล่าวมา"], answerText: "ทุกข้อที่กล่าวมา" }, // [cite: 1]
+            { category: "Power Transmission System", q: "ทำไมตัวนำไฟฟ้าประเภท ACCC จึงสามารถลดค่าการสูญเสียพลังงานในสายส่งไฟฟ้าได้มากกว่า ACSR?", options: ["ใช้คาร์บอนไฟเบอร์แทนเหล็กในแกนกลางเพื่อลดการสูญเสีย I²R", "มีค่าความนำไฟฟ้าสูงกว่า ACSR", "ไม่มีผลกระทบจาก Skin Effect", "ลดปรากฏการณ์ Ferranti Effect ได้มากกว่า"], answerText: "ใช้คาร์บอนไฟเบอร์แทนเหล็กในแกนกลางเพื่อลดการสูญเสีย I²R" }, // [cite: 1]
+            { category: "Power Transmission System", q: "ปรากฏการณ์ Proximity Effect ในตัวนำไฟฟ้าเกิดจากอะไร?", options: ["แรงแม่เหล็กที่เหนี่ยวนำระหว่างตัวนำที่อยู่ใกล้กัน", "การสะสมของประจุไฟฟ้าสถิตที่ผิวของตัวนำ", "การสั่นสะเทือนของตัวนำที่เกิดจากแรงลม", "การเกิด Corona Loss บริเวณจุดเชื่อมต่อ"], answerText: "แรงแม่เหล็กที่เหนี่ยวนำระหว่างตัวนำที่อยู่ใกล้กัน" }, // [cite: 1]
+            { category: "Power Transmission System", q: "วัสดุตัวนำชนิดใดที่สามารถทำงานได้ที่อุณหภูมิสูงสุดโดยไม่เสื่อมสภาพ?", options: ["ACSR", "ACSS", "ACCC", "AAAC"], answerText: "ACSS" }, // [cite: 1]
+            { category: "Power Transmission System", q: "ตัวนำไฟฟ้าที่ใช้ในระบบส่งกำลังไฟฟ้าแรงสูงต้องมีค่าความทนทานต่อการล้าของวัสดุ (Fatigue Strength) สูงเพื่อป้องกันอะไร?", options: ["การแตกหักของตัวนำจากการสั่นสะเทือน", "การเสื่อมสภาพของฉนวนไฟฟ้า", "การสูญเสียพลังงานจาก Eddy Current", "การเกิดฟ้าผ่า"], answerText: "การแตกหักของตัวนำจากการสั่นสะเทือน" }, // [cite: 1]
+            { category: "Power Transmission System", q: "การใช้ Bundle Conductors ในสายส่งไฟฟ้ามีข้อดีหลักคืออะไร?", options: ["ลดแรงต้านลมและเพิ่มเสถียรภาพทางกล", "ลด Corona Loss และเพิ่มความสามารถในการนำกระแส", "ลดค่าความต้านทานของตัวนำ", "เพิ่มความสามารถในการป้องกันฟ้าผ่า"], answerText: "ลด Corona Loss และเพิ่มความสามารถในการนำกระแส" }, // [cite: 1]
+            { category: "Power Transmission System", q: "ทำไมการใช้ตัวนำแบบ Hollow Conductor จึงสามารถลด Skin Effect ได้?", options: ["เพิ่มพื้นที่สัมผัสของตัวนำ", "กระแสไฟฟ้าถูกกระจายไปที่ผิวของตัวนำมากขึ้น", "ลดมวลของตัวนำและลดแรงดึง", "ทำให้ตัวนำสามารถระบายความร้อนได้ดียิ่งขึ้น"], answerText: "กระแสไฟฟ้าถูกกระจายไปที่ผิวของตัวนำมากขึ้น" }, // [cite: 1]
+            { category: "Power Transmission System", q: "ตัวนำที่มีค่า Sag ต่ำที่สุด ในระยะทางเท่ากันคืออะไร?", options: ["AAC", "ACSR", "ACSS", "ACCC"], answerText: "ACCC" }, // [cite: 1]
+            { category: "Power Transmission System", q: "สายตัวนำที่ออกแบบมาเพื่อลดความสูญเสียจาก Hysteresis และ Eddy Current ในระบบ HVDC คืออะไร?", options: ["ACSR", "ACSS", "ACCC", "Superconducting Conductor"], answerText: "Superconducting Conductor" }, // [cite: 1]
+            { category: "Power Transmission System", q: "อะไรเป็นปัจจัยสำคัญที่ต้องพิจารณาเมื่อเลือกใช้ตัวนำไฟฟ้าสำหรับสายส่งแรงสูงระยะไกล?", options: ["ความสามารถในการทนต่ออุณหภูมิสูง", "ความสามารถในการรับแรงดึงสูง", "ค่าความนำไฟฟ้าสูง", "ทุกข้อที่กล่าวมา"], answerText: "ทุกข้อที่กล่าวมา" }, // [cite: 1]
+            { category: "Power Transmission System", q: "อะไรเป็นปัจจัยหลักที่ทำให้ตัวนำ ACSR ได้รับความนิยมมากกว่าตัวนำชนิดอื่นในระบบส่งกำลังไฟฟ้า?", options: ["ราคาถูกและมีความแข็งแรงสูง", "มีค่าความนำไฟฟ้าสูงสุด", "มีค่าความต้านทานต่ำสุด", "ไม่มีปัญหาเรื่องโคโรนา"], answerText: "ราคาถูกและมีความแข็งแรงสูง" }, // [cite: 1]
+            { category: "Power Transmission System", q: "Ferranti Effect มีผลกระทบต่อสายส่งไฟฟ้าในลักษณะใด?", options: ["เพิ่มแรงดันปลายทางของสายส่งเมื่อโหลดต่ำ", "ลดแรงดันไฟฟ้าเมื่อโหลดเพิ่มขึ้น", "ลดค่าความต้านทานของตัวนำ", "ลดค่าความเหนี่ยวนำของตัวนำ"], answerText: "เพิ่มแรงดันปลายทางของสายส่งเมื่อโหลดต่ำ" }, // [cite: 1]
+            { category: "Power Transmission System", q: "ข้อใดเป็นข้อเสียหลักของตัวนำ ACSR เมื่อเทียบกับ ACSS?", options: ["ไม่สามารถทำงานที่อุณหภูมิสูงได้ดีเท่า ACSS", "มีค่าความนำไฟฟ้าสูงกว่า", "มีค่าความต้านทานสูงกว่า", "ไม่มีความทนทานต่อการกัดกร่อน"], answerText: "ไม่สามารถทำงานที่อุณหภูมิสูงได้ดีเท่า ACSS" }, // [cite: 1]
+            { category: "Power Transmission System", q: "อะไรเป็นข้อดีหลักของตัวนำไฟฟ้าแบบ HTLS (High Temperature Low Sag)?", options: ["สามารถรองรับกระแสไฟฟ้าได้มากขึ้นโดยไม่เพิ่มขนาดตัวนำ", "ลดค่าความสูญเสียจาก Skin Effect", "ลดแรงต้านลมของตัวนำ", "ป้องกันฟ้าผ่าได้ดีกว่า"], answerText: "สามารถรองรับกระแสไฟฟ้าได้มากขึ้นโดยไม่เพิ่มขนาดตัวนำ" }, // [cite: 1]
+            { category: "Power Transmission System", q: "Superconducting Conductor มีข้อดีหลักอะไรเมื่อเทียบกับตัวนำทั่วไป?", options: ["ไม่มีค่าความต้านทานไฟฟ้า", "น้ำหนักเบากว่า", "สามารถใช้ได้กับไฟฟ้ากระแสสลับเท่านั้น", "ราคาถูกกว่าตัวนำทั่วไป"], answerText: "ไม่มีค่าความต้านทานไฟฟ้า" }, // [cite: 1]
+            { category: "Power Transmission System", q: "ตัวนำประเภทใดที่สามารถใช้ในการส่งกำลังไฟฟ้าแรงสูงแบบ HVDC ได้ดีที่สุด?", options: ["ACSR", "ACCC", "ACSS", "Superconducting Conductor"], answerText: "Superconducting Conductor" }, // [cite: 1]
+            { category: "Power Transmission System", q: "การเพิ่มระยะห่างระหว่างตัวนำไฟฟ้าในสายส่งจะมีผลอย่างไร?", options: ["ลดค่าความเหนี่ยวนำร่วม (Mutual Inductance)", "เพิ่มค่า Skin Effect", "ลดค่าความต้านทานของตัวนำ", "เพิ่มค่า Corona Loss"], answerText: "ลดค่าความเหนี่ยวนำร่วม (Mutual Inductance)" }, // [cite: 1]
+            { category: "Power Transmission System", q: "ปรากฏการณ์ที่เกิดจากการเปลี่ยนแปลงกระแสไฟฟ้าอย่างรวดเร็วภายในตัวนำไฟฟ้าแรงสูงเรียกว่าอะไร?", options: ["Skin Effect", "Proximity Effect", "Transposition Effect", "Eddy Current Loss"], answerText: "Eddy Current Loss" }, // [cite: 1]
+            { category: "Power Transmission System", q: "ค่า Surge Impedance ของสายส่งไฟฟ้าขึ้นอยู่กับปัจจัยใด?", options: ["ค่าความเหนี่ยวนำและค่าความจุของสายส่ง", "ค่าความต้านทานของตัวนำ", "ค่าความถี่ของระบบ", "ความสูงของเสาส่งไฟฟ้า"], answerText: "ค่าความเหนี่ยวนำและค่าความจุของสายส่ง" }, // [cite: 1]
+            { category: "Power Transmission System", q: "วัตถุประสงค์หลักของการใช้ Transposition Tower ในสายส่งไฟฟ้าคืออะไร?", options: ["ลดความไม่สมดุลของแรงดันไฟฟ้าในแต่ละเฟส", "ลดค่าความต้านทานของตัวนำ", "ลดแรงดันตกในระบบ", "ป้องกันการเกิดฟ้าผ่า"], answerText: "ลดความไม่สมดุลของแรงดันไฟฟ้าในแต่ละเฟส" }, // [cite: 1]
+            { category: "Power Transmission System", q: "การเพิ่มเส้นผ่านศูนย์กลางของตัวนำจะมีผลอย่างไรต่อค่า Skin Depth?", options: ["ทำให้ค่า Skin Depth เพิ่มขึ้น", "ทำให้ค่า Skin Depth ลดลง", "ไม่มีผลต่อค่า Skin Depth", "ลดค่าความเหนี่ยวนำของตัวนำ"], answerText: "ทำให้ค่า Skin Depth ลดลง" }, // [cite: 1]
+            { category: "Power Transmission System", q: "ข้อใดเป็นข้อดีของตัวนำแบบ ACCC เมื่อเทียบกับ ACSR?", options: ["สามารถรองรับกระแสไฟฟ้าได้มากขึ้นโดยไม่เพิ่มขนาด", "ทนต่อการกัดกร่อนได้ดีขึ้น", "มีค่าความต้านทานต่ำกว่า", "ทุกข้อที่กล่าวมา"], answerText: "ทุกข้อที่กล่าวมา" }, // [cite: 1]
+            { category: "Power Transmission System", q: "ทำไมตัวนำที่ใช้ในระบบส่งกำลังไฟฟ้าแรงสูงจึงต้องมีค่าความต้านทานต่อการกัดกร่อนสูง?", options: ["ป้องกันการเกิดออกไซด์บนพื้นผิวตัวนำ", "ลดค่าความต้านทานของตัวนำ", "ลดการสูญเสียพลังงานในรูปของความร้อน", "ป้องกันผลกระทบจากฟ้าผ่า"], answerText: "ป้องกันการเกิดออกไซด์บนพื้นผิวตัวนำ" }, // [cite: 1]
+            { category: "Power Transmission System", q: "วัสดุใดเหมาะสมที่สุดสำหรับตัวนำในสายส่งไฟฟ้าแรงสูงในบริเวณที่มีมลภาวะสูง?", options: ["AAC", "ACSR", "AAAC", "ACCC"], answerText: "AAAC" }, // [cite: 1]
+            { category: "Power Transmission System", q: "ข้อใดเป็นผลกระทบของ Proximity Effect ในตัวนำของสายส่งไฟฟ้าแรงสูง?", options: ["ทำให้กระแสไฟฟ้ากระจายตัวไม่สม่ำเสมอในตัวนำที่อยู่ใกล้กัน", "ลดค่าความต้านทานของตัวนำ", "ทำให้เกิดการสูญเสียพลังงานต่ำลง", "ไม่มีผลต่อการทำงานของระบบส่งกำลังไฟฟ้า"], answerText: "ทำให้กระแสไฟฟ้ากระจายตัวไม่สม่ำเสมอในตัวนำที่อยู่ใกล้กัน" }, // [cite: 1]
+            { category: "Power Transmission System", q: "ตัวนำที่ใช้ในระบบ HVDC ควรมีคุณสมบัติอย่างไรเพื่อเพิ่มประสิทธิภาพสูงสุด?", options: ["ค่าความต้านทานต่ำและมีความสามารถในการนำไฟฟ้าสูง", "ทนต่อแรงดึงสูงและมีค่าความเหนี่ยวนำต่ำ", "สามารถลดค่า Corona Loss ได้ดี", "ทุกข้อที่กล่าวมา"], answerText: "ทุกข้อที่กล่าวมา" }, // [cite: 1]
+            { category: "Power Transmission System", q: "ค่า Critical Voltage ของ Corona Effect ขึ้นอยู่กับปัจจัยใด?", options: ["เส้นผ่านศูนย์กลางของตัวนำและระยะห่างระหว่างตัวนำ", "ค่าความต้านทานของตัวนำ", "ค่าความเหนี่ยวนำของระบบ", "อุณหภูมิของตัวนำ"], answerText: "เส้นผ่านศูนย์กลางของตัวนำและระยะห่างระหว่างตัวนำ" }, // [cite: 1]
+            { category: "Power Transmission System", q: "การใช้ตัวนำแบบ Hollow Conductor ช่วยลดการสูญเสียพลังงานได้อย่างไร?", options: ["ลด Skin Effect ทำให้กระแสกระจายตัวได้ดีขึ้น", "เพิ่มค่าความต้านทานของตัวนำ", "ป้องกันการเกิด Corona Effect", "ลดค่า Proximity Effect"], answerText: "ลด Skin Effect ทำให้กระแสกระจายตัวได้ดีขึ้น" }, // [cite: 1]
+            { category: "Power Transmission System", q: "ปรากฏการณ์ Galloping ในตัวนำไฟฟ้าเกิดจากสาเหตุใด?", options: ["การสะสมของน้ำแข็งบนตัวนำทำให้เกิดแรงลมปะทะและสั่นสะเทือน", "แรงลมที่พัดผ่านตัวนำอย่างต่อเนื่อง", "การเกิด Eddy Current ภายในตัวนำ", "การเปลี่ยนแปลงความถี่ของกระแสไฟฟ้า"], answerText: "การสะสมของน้ำแข็งบนตัวนำทำให้เกิดแรงลมปะทะและสั่นสะเทือน" }, // [cite: 1]
+            { category: "Power Transmission System", q: "สาเหตุหลักที่ตัวนำไฟฟ้าต้องมีการพันเป็นเกลียว (Stranded Conductor) คืออะไร?", options: ["ลดความแข็งกระด้างและเพิ่มความยืดหยุ่นของตัวนำ", "ลดค่าความต้านทานของตัวนำ", "ป้องกันการเกิดโคโรนา", "เพิ่มค่าความนำไฟฟ้าของตัวนำ"], answerText: "ลดความแข็งกระด้างและเพิ่มความยืดหยุ่นของตัวนำ" }, // [cite: 1]
+            
+            // --- Substation ---
+
+            { category: "Electrical Substation", q: "อุปกรณ์ใดในสถานีไฟฟ้ามีหน้าที่ควบคุมการไหลของกระแสไฟฟ้าเมื่อเกิด Fault?", options: ["Lightning Arrester", "Circuit Breaker", "Current Transformer", "Disconnect Switch"], answerText: "Circuit Breaker" },
+            { category: "Electrical Substation", q: "GIS (Gas Insulated Substation) เหมาะสมที่สุดสำหรับสถานีไฟฟ้าในพื้นที่ใด?", options: ["ชนบทที่มีพื้นที่กว้าง", "เมืองใหญ่ที่มีข้อจำกัดด้านพื้นที่", "กลางทะเลทราย", "ภูเขาสูง"], answerText: "เมืองใหญ่ที่มีข้อจำกัดด้านพื้นที่" },
+            { category: "Electrical Substation", q: "ข้อดีหลักของ SF6 Circuit Breaker เมื่อเทียบกับ Oil Circuit Breaker คืออะไร?", options: ["ราคาถูกกว่า", "ไม่ต้องการการบำรุงรักษาบ่อย", "ใช้พื้นที่น้อยกว่า", "ปลอดภัยจากไฟไหม้"], answerText: "ปลอดภัยจากไฟไหม้" },
+            { category: "Electrical Substation", q: "Lightning Arrester ประเภทใดที่เหมาะกับการป้องกัน Surge Voltage จากฟ้าผ่าในระบบแรงดันสูง?", options: ["Rod Gap", "Expulsion Type", "Metal-Oxide (ZnO)", "Horn Gap"], answerText: "Metal-Oxide (ZnO)" },
+            { category: "Electrical Substation", q: "Busbar Configuration แบบใดที่มีความน่าเชื่อถือสูงสุดเมื่อเกิด Fault?", options: ["Single Bus", "Ring Bus", "Double Breaker Double Bus", "Sectionalized Bus"], answerText: "Double Breaker Double Bus" },
+            { category: "Electrical Substation", q: "ข้อใดคือหน้าที่หลักของ Transformer ในสถานีไฟฟ้า?", options: ["ควบคุมความถี่ของระบบ", "แปลงระดับแรงดันไฟฟ้า", "วัดค่ากระแสไฟฟ้า", "ระบายความร้อน"], answerText: "แปลงระดับแรงดันไฟฟ้า" },
+            { category: "Electrical Substation", q: "อุปกรณ์ใดทำหน้าที่เป็นฉนวนและระบายความร้อนใน Oil Circuit Breaker?", options: ["SF6 Gas", "น้ำมันทรานส์ฟอร์เมอร์", "แก๊สไนโตรเจน", "ฉนวนพอร์ซเลน"], answerText: "น้ำมันทรานส์ฟอร์เมอร์" },
+            { category: "Electrical Substation", q: "ข้อเสียหลักของ Air Insulated Substation (AIS) คืออะไร?", options: ["ใช้พื้นที่มาก", "ต้นทุนสูง", "ต้องการการบำรุงรักษาบ่อย", "ไม่สามารถใช้ในระบบแรงดันสูง"], answerText: "ใช้พื้นที่มาก" },
+            { category: "Electrical Substation", q: "วงจรใดในสถานีไฟฟ้าที่รับผิดชอบการกระจายไฟฟ้าไปยังผู้ใช้ปลายทาง?", options: ["Transmission", "Subtransmission", "Distribution", "Generation"], answerText: "Distribution" },
+            { category: "Electrical Substation", q: "อุปกรณ์ใดใช้สำหรับวัดกระแสไฟฟ้าในระบบแรงดันสูง?", options: ["Potential Transformer", "Current Transformer", "Voltage Regulator", "Shunt Reactor"], answerText: "Current Transformer" },
+            { category: "Electrical Substation", q: "ข้อใดคือความแตกต่างหลักระหว่าง GIS และ AIS?", options: ["GIS ใช้ SF6 Gas เป็นฉนวน, AIS ใช้อากาศ", "GIS ใช้พื้นที่มากกว่า AIS", "AIS เหมาะกับเมืองใหญ่", "GIS ใช้ Oil เป็นฉนวน"], answerText: "GIS ใช้ SF6 Gas เป็นฉนวน, AIS ใช้อากาศ" },
+            { category: "Electrical Substation", q: "หน้าที่ของ Lightning Arrester คืออะไร?", options: ["วัดแรงดันไฟฟ้า", "ระบายความร้อน", "ป้องกันอุปกรณ์จาก Surge Voltage", "ควบคุมความถี่"], answerText: "ป้องกันอุปกรณ์จาก Surge Voltage" },
+            { category: "Electrical Substation", q: "ข้อใดไม่ใช่ประเภทของ Circuit Breaker?", options: ["Vacuum", "Oil", "SF6", "Copper"], answerText: "Copper" },
+            { category: "Electrical Substation", q: "อุปกรณ์ใดใช้สำหรับตัดต่อวงจรเมื่อไม่มีกระแสไหล?", options: ["Circuit Breaker", "Disconnect Switch", "Lightning Arrester", "Transformer"], answerText: "Disconnect Switch" },
+            { category: "Electrical Substation", q: "ข้อดีของ Vacuum Circuit Breaker คืออะไร?", options: ["ราคาถูก", "ไม่สร้างมลพิษ", "ใช้ SF6 Gas", "เหมาะกับระบบแรงดันสูง"], answerText: "ไม่สร้างมลพิษ" },
+            { category: "Electrical Substation", q: "ข้อใดคือข้อเสียของ GIS?", options: ["ต้นทุนสูง", "ใช้พื้นที่มาก", "ต้องการการบำรุงรักษาบ่อย", "ไม่เหมาะกับระบบแรงดันสูง"], answerText: "ต้นทุนสูง" },
+            { category: "Electrical Substation", q: "ระบบ Grounding ในสถานีไฟฟ้ามีวัตถุประสงค์หลักเพื่ออะไร?", options: ["เพิ่มแรงดันไฟฟ้า", "ป้องกันอันตรายจากไฟฟ้าช็อต", "ลดความถี่", "ควบคุมกระแสไฟฟ้า"], answerText: "ป้องกันอันตรายจากไฟฟ้าช็อต" },
+            { category: "Electrical Substation", q: "ข้อใดไม่ใช่องค์ประกอบของ Gas Insulated Substation?", options: ["Circuit Breaker", "Transformer", "Overhead Lines", "Busbar"], answerText: "Overhead Lines" },
+            { category: "Electrical Substation", q: "การออกแบบ Busbar แบบ Ring Bus เหมาะสมกับระบบไฟฟ้าใด?", options: ["ระบบที่มีความน่าเชื่อถือสูง", "ระบบขนาดเล็ก", "ระบบที่ต้องการประหยัดพื้นที่", "ระบบที่ไม่ต้องการการขยาย"], answerText: "ระบบที่มีความน่าเชื่อถือสูง" },
+            { category: "Electrical Substation", q: "ข้อใดคือหน้าที่ของ Shunt Reactor?", options: ["ดูดซับ Reactive Power", "เพิ่มแรงดันไฟฟ้า", "วัดกระแสไฟฟ้า", "ควบคุมความถี่"], answerText: "ดูดซับ Reactive Power" },
+            { category: "Electrical Substation", q: "ข้อใดไม่ใช่ประเภทของ Lightning Arrester?", options: ["Rod Gap", "Metal-Oxide", "Horn Gap", "Circuit Switcher"], answerText: "Circuit Switcher" },
+            { category: "Electrical Substation", q: "ข้อใดคือความเสี่ยงหลักของ Oil Circuit Breaker?", options: ["เกิดไฟไหม้", "ใช้พื้นที่มาก", "ราคาสูง", "ต้องการ SF6 Gas"], answerText: "เกิดไฟไหม้" },
+            { category: "Electrical Substation", q: "ข้อใดคือแรงดันไฟฟ้าที่ใช้ในระบบ Subtransmission?", options: ["13.8 kV", "69 kV", "345 kV", "765 kV"], answerText: "69 kV" },
+            { category: "Electrical Substation", q: "ข้อใดไม่ใช่หน้าที่ของ Substation?", options: ["แปลงระดับแรงดัน", "ควบคุมกำลังไฟฟ้า", "สร้างพลังงานไฟฟ้า", "กระจายพลังงานไฟฟ้า"], answerText: "สร้างพลังงานไฟฟ้า" },
+            { category: "Electrical Substation", q: "อุปกรณ์ใดใช้สำหรับเชื่อมต่อสายส่งไฟฟ้าเข้ากับ Busbar?", options: ["Disconnect Switch", "Circuit Breaker", "Bushing", "Lightning Arrester"], answerText: "Bushing" },
+            { category: "Electrical Substation", q: "ข้อใดคือข้อดีของ Metal-Oxide Lightning Arrester?", options: ["ราคาถูก", "ไม่ต้องการการบำรุงรักษา", "ใช้พื้นที่น้อย", "ทำงานได้เฉพาะระบบแรงดันต่ำ"], answerText: "ไม่ต้องการการบำรุงรักษา" },
+            { category: "Electrical Substation", q: "ข้อใดคือหลักการทำงานของ Vacuum Circuit Breaker?", options: ["ใช้ SF6 Gas ดับอาร์ค", "ใช้น้ำมันดับอาร์ค", "ใช้สุญญากาศดับอาร์ค", "ใช้อากาศดับอาร์ค"], answerText: "ใช้สุญญากาศดับอาร์ค" },
+            { category: "Electrical Substation", q: "ข้อใดไม่ใช่ส่วนประกอบของ GIS?", options: ["Circuit Breaker", "Overhead Lines", "Busbar", "Transformer"], answerText: "Overhead Lines" },
+            { category: "Electrical Substation", q: "ระบบใดใช้สำหรับป้องกันสถานีไฟฟ้าจากฟ้าผ่าโดยใช้ Rolling Sphere Method?", options: ["Grounding System", "Lightning Protection System", "Busbar Configuration", "Circuit Breaker System"], answerText: "Lightning Protection System" },
+            { category: "Electrical Substation", q: "ข้อใดคือหน้าที่ของ Current Transformer?", options: ["วัดแรงดันไฟฟ้า", "วัดกระแสไฟฟ้า", "ควบคุมความถี่", "ระบายความร้อน"], answerText: "วัดกระแสไฟฟ้า" },
+            { category: "Electrical Substation", q: "ข้อใดไม่ใช่ประเภทของ Substation ตาม Construction?", options: ["Air Insulated", "Gas Insulated", "Hybrid", "Water Insulated"], answerText: "Water Insulated" },
+            { category: "Electrical Substation", q: "ข้อใดคือแรงดันไฟฟ้าที่ใช้ในระบบ Distribution?", options: ["13.8 kV", "69 kV", "230 kV", "500 kV"], answerText: "13.8 kV" },
+            { category: "Electrical Substation", q: "ข้อใดคือข้อเสียของ GIS เมื่อเทียบกับ AIS?", options: ["ใช้พื้นที่มาก", "ต้นทุนสูง", "ต้องการการบำรุงรักษาบ่อย", "ไม่เหมาะกับระบบแรงดันสูง"], answerText: "ต้นทุนสูง" },
+            { category: "Electrical Substation", q: "ข้อใดคือหน้าที่หลักของ Capacitor Bank ในสถานีไฟฟ้า?", options: ["ดูดซับ Reactive Power", "จ่าย Reactive Power", "วัดกระแสไฟฟ้า", "ควบคุมแรงดันไฟฟ้า"], answerText: "จ่าย Reactive Power" },
+            { category: "Electrical Substation", q: "ข้อใดไม่ใช่องค์ประกอบของ Control Room ในสถานีไฟฟ้า?", options: ["Protective Relay", "Backup Battery", "Circuit Breaker", "Voltage Regulator"], answerText: "Circuit Breaker" },
+            { category: "Electrical Substation", q: "ข้อใดคือหน้าที่ของ Voltage Regulator?", options: ["ควบคุมแรงดันไฟฟ้า", "วัดกระแสไฟฟ้า", "ระบายความร้อน", "ป้องกันฟ้าผ่า"], answerText: "ควบคุมแรงดันไฟฟ้า" },
+            { category: "Electrical Substation", q: "ข้อใดคือความแตกต่างระหว่าง Earthing และ Grounding?", options: ["Earthing ใช้ในยุโรป, Grounding ใช้ในอเมริกา", "Earthing ใช้สำหรับระบบแรงดันสูง", "Grounding ใช้สำหรับระบบแรงดันต่ำ", "ไม่มีความแตกต่าง"], answerText: "Earthing ใช้ในยุโรป, Grounding ใช้ในอเมริกา" },
+            { category: "Electrical Substation", q: "ข้อใดคือวัตถุประสงค์ของ Exothermic Welding ในระบบ Grounding?", options: ["เชื่อมต่อสายดินอย่างถาวร", "วัดค่าความต้านทาน", "ระบายความร้อน", "ป้องกันการกัดกร่อน"], answerText: "เชื่อมต่อสายดินอย่างถาวร" },
+            { category: "Electrical Substation", q: "ข้อใดคือข้อดีของ Air-Core Dry-Type Shunt Reactor?", options: ["ราคาถูก", "ไม่ต้องการน้ำมัน", "ใช้พื้นที่มาก", "ต้องการการบำรุงรักษาบ่อย"], answerText: "ไม่ต้องการน้ำมัน" },
+            { category: "Electrical Substation", q: "ข้อใดคือหน้าที่ของ Wave Trap?", options: ["ป้องกัน Surge Voltage", "วัดกระแสไฟฟ้า", "กรองสัญญาณความถี่สูง", "ควบคุมแรงดันไฟฟ้า"], answerText: "กรองสัญญาณความถี่สูง" },
+            { category: "Electrical Substation", q: "ข้อใดคือหลักการทำงานของ Circuit Switcher?", options: ["ใช้ SF6 Gas ดับอาร์ค", "ใช้สุญญากาศดับอาร์ค", "ใช้น้ำมันดับอาร์ค", "ใช้ Spring Mechanism"], answerText: "ใช้ Spring Mechanism" },
+            { category: "Electrical Substation", q: "ข้อใดคือประเภทของ Disconnector?", options: ["Centre-Break", "Ring Bus", "Double Breaker", "Gas Insulated"], answerText: "Centre-Break" },
+            { category: "Electrical Substation", q: "ข้อใดไม่ใช่ประเภทของ Potential Transformer?", options: ["Inductive", "Capacitive", "Resistive", "Hybrid"], answerText: "Resistive" },
+            { category: "Electrical Substation", q: "ข้อใดคือหน้าที่ของ Protective Relay?", options: ["วัดกระแสไฟฟ้า", "ตรวจจับ Fault และสั่งตัดวงจร", "ควบคุมแรงดันไฟฟ้า", "ระบายความร้อน"], answerText: "ตรวจจับ Fault และสั่งตัดวงจร" },
+            { category: "Electrical Substation", q: "ข้อใดคือข้อดีของ Metal-Clad Switchgear?", options: ["ราคาถูก", "ปลอดภัยสูง", "ใช้พื้นที่มาก", "บำรุงรักษาง่าย"], answerText: "ปลอดภัยสูง" },
+            { category: "Electrical Substation", q: "ข้อใดคือข้อเสียของ Pellet Type Lightning Arrester?", options: ["ต้องการการบำรุงรักษาบ่อย", "ใช้ได้เฉพาะระบบแรงดันต่ำ", "ราคาสูง", "ไม่มีข้อเสีย"], answerText: "ใช้ได้เฉพาะระบบแรงดันต่ำ" },
+            { category: "Electrical Substation", q: "ข้อใดคือหน้าที่ของ Coupling Capacitor?", options: ["วัดแรงดันไฟฟ้า", "กรองสัญญาณความถี่สูง", "ควบคุมกระแสไฟฟ้า", "ระบายความร้อน"], answerText: "กรองสัญญาณความถี่สูง" },
+            { category: "Electrical Substation", q: "ข้อใดคือแรงดันไฟฟ้าที่ใช้ในระบบ Transmission?", options: ["13.8 kV", "69 kV", "230 kV", "34.5 kV"], answerText: "230 kV" },
+            { category: "Electrical Substation", q: "ข้อใดคือหลักการทำงานของ Horn Gap Lightning Arrester?", options: ["ใช้ช่องว่างอากาศดับอาร์ค", "ใช้ SF6 Gas ดับอาร์ค", "ใช้สุญญากาศดับอาร์ค", "ใช้น้ำมันดับอาร์ค"], answerText: "ใช้ช่องว่างอากาศดับอาร์ค" },
+            { category: "Electrical Substation", q: "ข้อใดคือวัตถุประสงค์ของ Control House ในสถานีไฟฟ้า?", options: ["ควบคุมการทำงานของอุปกรณ์", "ผลิตพลังงานไฟฟ้า", "ระบายความร้อน", "วัดค่าความต้านทาน"], answerText: "ควบคุมการทำงานของอุปกรณ์" },
+            { category: "Electrical Substation", q: "หน้าที่หลักของสถานีไฟฟ้าย่อยคืออะไร?", options: ["ผลิตไฟฟ้าให้กับโรงงานอุตสาหกรรม", "ควบคุมและกระจายกำลังไฟฟ้าจากแรงดันสูงไปยังแรงดันต่ำ", "เพิ่มแรงดันไฟฟ้าของอุปกรณ์ไฟฟ้าให้ทำงานได้ดีขึ้น", "ลดความต้านทานของสายไฟฟ้า"], answerText: "ควบคุมและกระจายกำลังไฟฟ้าจากแรงดันสูงไปยังแรงดันต่ำ" },
+            { category: "Electrical Substation", q: "สถานีไฟฟ้าย่อยแบ่งออกเป็นกี่ประเภทหลักตามหน้าที่การทำงาน?", options: ["2 ประเภท", "3 ประเภท", "4 ประเภท", "5 ประเภท"], answerText: "3 ประเภท" },
+            { category: "Electrical Substation", q: "อุปกรณ์ใดในสถานีไฟฟ้าย่อยที่ใช้สำหรับลดแรงดันไฟฟ้าให้เหมาะสมกับการใช้งานของผู้ใช้ไฟฟ้า?", options: ["Circuit Breaker", "Transformer", "Lightning Arrester", "Disconnect Switch"], answerText: "Transformer" },
+            { category: "Electrical Substation", q: "อุปกรณ์ใดช่วยป้องกันแรงดันไฟฟ้าเกินจากฟ้าผ่าในสถานีไฟฟ้าย่อย?", options: ["Circuit Breaker", "Transformer", "Lightning Arrester", "Busbar"], answerText: "Lightning Arrester" },
+            { category: "Electrical Substation", q: "ข้อใดเป็นข้อดีของ Gas Insulated Substation (GIS) เมื่อเทียบกับ Air Insulated Substation (AIS)?", options: ["ใช้พื้นที่ติดตั้งน้อยกว่า", "มีค่าติดตั้งถูกกว่า", "ทนต่อแรงดันไฟฟ้าเกินได้น้อยกว่า", "ต้องบำรุงรักษาบ่อยกว่า"], answerText: "ใช้พื้นที่ติดตั้งน้อยกว่า" },
+            { category: "Electrical Substation", q: "ค่าของแรงดันไฟฟ้าในสถานีไฟฟ้าย่อยประเภท Generating Substation โดยทั่วไปอยู่ที่เท่าใด?", options: ["230-500 kV", "15-23 kV", "69-115 kV", "500-765 kV"], answerText: "15-23 kV" },
+            { category: "Electrical Substation", q: "อุปกรณ์ใดทำหน้าที่ตัดกระแสไฟฟ้าในกรณีเกิดความผิดปกติในระบบ?", options: ["Circuit Breaker", "Transformer", "Voltage Regulator", "Busbar"], answerText: "Circuit Breaker" },
+            { category: "Electrical Substation", q: "ข้อใดไม่ใช่ประเภทของสถานีไฟฟ้าย่อย?", options: ["Transmission Substation", "Distribution Substation", "Protection Substation", "Collector Substation"], answerText: "Protection Substation" },
+            { category: "Electrical Substation", q: "อุปกรณ์ที่ใช้ในการเชื่อมต่อสายไฟฟ้าต่าง ๆ ในสถานีไฟฟ้าเรียกว่าอะไร?", options: ["Circuit Breaker", "Busbar", "Transformer", "Disconnect Switch"], answerText: "Busbar" },
+            { category: "Electrical Substation", q: "Gas ที่ใช้เป็นฉนวนใน Gas Insulated Substation (GIS) คืออะไร?", options: ["Oxygen (O2)", "Sulfur Hexafluoride (SF6)", "Nitrogen (N2)", "Carbon Dioxide (CO2)"], answerText: "Sulfur Hexafluoride (SF6)" },
+            { category: "Electrical Substation", q: "สถานีไฟฟ้าย่อยประเภทใดที่ออกแบบมาเพื่อเชื่อมต่อแหล่งพลังงานหมุนเวียน เช่น พลังงานแสงอาทิตย์ และพลังงานลม?", options: ["Transmission Substation", "Collector Substation", "Switching Station", "Protection Substation"], answerText: "Collector Substation" },
+            { category: "Electrical Substation", q: "อุปกรณ์ชนิดใดใช้สำหรับตรวจจับและป้องกันกระแสไฟฟ้าเกินในสถานีไฟฟ้าย่อย?", options: ["Circuit Breaker", "Transformer", "Surge Arrestor", "Busbar"], answerText: "Surge Arrestor" },
+            { category: "Electrical Substation", q: "อุปกรณ์ใดในสถานีไฟฟ้าทำหน้าที่วัดแรงดันไฟฟ้า?", options: ["Current Transformer", "Potential Transformer", "Circuit Breaker", "Disconnect Switch"], answerText: "Potential Transformer" },
+            { category: "Electrical Substation", q: "สถานีไฟฟ้าย่อยชนิดใดที่ใช้สำหรับควบคุมและเปลี่ยนแรงดันไฟฟ้าในระบบส่งกำลังไฟฟ้าแรงสูง?", options: ["Switching Substation", "Generating Substation", "Transmission Substation", "Distribution Substation"], answerText: "Transmission Substation" },
+            { category: "Electrical Substation", q: "แรงดันไฟฟ้าที่ใช้ในสถานีไฟฟ้าย่อยแบบ Distribution Substation โดยทั่วไปอยู่ที่เท่าใด?", options: ["4.16-34.5 kV", "115-230 kV", "500-765 kV", "69-115 kV"], answerText: "4.16-34.5 kV" },
+            { category: "Electrical Substation", q: "หน้าที่ของ Circuit Breakerในสถานีไฟฟ้าย่อยคืออะไร?", options: ["ป้องกันฟ้าผ่า", "วัดแรงดันไฟฟ้า", "ตัดกระแสไฟฟ้าเมื่อเกิดความผิดปกติ", "เปลี่ยนแรงดันไฟฟ้า"], answerText: "ตัดกระแสไฟฟ้าเมื่อเกิดความผิดปกติ" },
+            { category: "Electrical Substation", q: "สถานีไฟฟ้าย่อยที่ใช้สำหรับควบคุมและป้องกันแรงดันไฟฟ้าในระบบส่งไฟฟ้า เรียกว่าอะไร?", options: ["Distribution Substation", "Transmission Substation", "Switching Station", "Collector Substation"], answerText: "Switching Station" },
+            { category: "Electrical Substation", q: "Air Insulated Substation (AIS) มีข้อเสียเปรียบข้อใดเมื่อเทียบกับ GIS?", options: ["ต้องใช้พื้นที่มากกว่า", "มีต้นทุนสูงกว่า", "ซ่อมบำรุงยากกว่า", "มีความเสี่ยงต่อการรั่วไหลของก๊าซ"], answerText: "ต้องใช้พื้นที่มากกว่า" },
+            { category: "Electrical Substation", q: "ข้อใดเป็นข้อดีของ SF6 Circuit Breaker?", options: ["มีขนาดใหญ่กว่าประเภทอื่น ๆ", "ใช้แรงดันอากาศสูงในการตัดกระแส", "ไม่มีการเกิดอาร์คหลังการตัดวงจร", "ต้องมีการบำรุงรักษาบ่อย"], answerText: "ไม่มีการเกิดอาร์คหลังการตัดวงจร" },
+            { category: "Electrical Substation", q: "Single Bus Configuration มีข้อเสียเปรียบอย่างไร?", options: ["ติดตั้งและขยายระบบได้ยาก", "มีความซับซ้อนในการเดินสายไฟ", "ถ้า Bus เกิดปัญหาจะทำให้สถานีไฟฟ้าทั้งหมดไม่สามารถทำงานได้", "ใช้พื้นที่ติดตั้งมากเกินไป"], answerText: "ถ้า Bus เกิดปัญหาจะทำให้สถานีไฟฟ้าทั้งหมดไม่สามารถทำงานได้" },
+            { category: "Electrical Substation", q: "อุปกรณ์ใดใช้สำหรับตัดการเชื่อมต่อวงจรไฟฟ้าเมื่อมีการบำรุงรักษาหรือซ่อมแซมอุปกรณ์?", options: ["Circuit Breaker", "Busbar", "Disconnect Switch", "Transformer"], answerText: "Disconnect Switch" },
+            { category: "Electrical Substation", q: "อุปกรณ์ใดทำหน้าที่เปลี่ยนแปลงกระแสไฟฟ้าให้เหมาะสมกับการใช้งาน เช่น การแปลงแรงดันสูงเป็นแรงดันต่ำ?", options: ["Busbar", "Transformer", "Circuit Breaker", "Surge Arrester"], answerText: "Transformer" },
+            { category: "Electrical Substation", q: "หน้าที่หลักของ Lightning Arrester คืออะไร?", options: ["ควบคุมแรงดันไฟฟ้าให้คงที่", "ป้องกันฟ้าผ่าและแรงดันเกิน", "ลดการสูญเสียพลังงานไฟฟ้า", "ปรับปรุงคุณภาพไฟฟ้า"], answerText: "ป้องกันฟ้าผ่าและแรงดันเกิน" },
+            { category: "Electrical Substation", q: "สถานีไฟฟ้าย่อยที่ออกแบบมาเพื่อเปลี่ยนพลังงานไฟฟ้ากระแสตรงเป็นกระแสสลับเรียกว่าอะไร?", options: ["Transmission Substation", "Distribution Substation", "Converter Substation", "Switching Substation"], answerText: "Converter Substation" },
+            { category: "Electrical Substation", q: "อุปกรณ์ชนิดใดที่ใช้ในการวัดกระแสไฟฟ้าในระบบสถานีไฟฟ้าย่อย?", options: ["Potential Transformer (PT)", "Circuit Breaker", "Current Transformer (CT)", "Lightning Arrester"], answerText: "Current Transformer (CT)" },
+            { category: "Electrical Substation", q: "ระบบ Busbar ใดที่มีความซับซ้อนและความยืดหยุ่นมากที่สุด?", options: ["Single Bus", "Ring Bus", "Breaker-and-a-Half", "Sectionalized Bus"], answerText: "Breaker-and-a-Half" }, // [cite: 1]
+            { category: "Electrical Substation", q: "ข้อใดเป็นข้อเสียของ Gas Insulated Substation (GIS)?", options: ["ใช้พื้นที่มากเกินไป", "มีต้นทุนสูง", "ไม่สามารถติดตั้งในอาคารได้", "มีการสูญเสียพลังงานสูง"], answerText: "มีต้นทุนสูง" }, // [cite: 1]
+            { category: "Electrical Substation", q: "ข้อใดเป็นข้อดีของ Air Insulated Substation (AIS) เมื่อเทียบกับ GIS?", options: ["ใช้พื้นที่น้อยกว่า", "มีต้นทุนต่ำกว่า", "ต้องบำรุงรักษามากกว่า", "มีความเสี่ยงต่อแรงดันไฟฟ้าเกินสูงกว่า"], answerText: "มีต้นทุนต่ำกว่า" }, // [cite: 1]
+            { category: "Electrical Substation", q: "อุปกรณ์ใดใช้สำหรับตัดกระแสไฟฟ้าในสถานีไฟฟ้าแรงสูงโดยไม่เกิดอาร์คไฟฟ้าสูง?", options: ["Oil Circuit Breaker", "Vacuum Circuit Breaker", "Air Circuit Breaker", "Load Break Switch"], answerText: "Vacuum Circuit Breaker" }, // [cite: 1]
+            { category: "Electrical Substation", q: "ประเภทของสถานีไฟฟ้าย่อยที่ใช้สำหรับควบคุมและเปลี่ยนแรงดันไฟฟ้าในระดับแรงดันต่ำเพื่อกระจายสู่ผู้ใช้ปลายทางคืออะไร?", options: ["Transmission Substation", "Collector Substation", "Distribution Substation", "Switching Substation"], answerText: "Distribution Substation" }, // [cite: 1]
+            { category: "Electrical Substation", q: "ข้อใดคือข้อเสียของ SF6 Circuit Breaker?", options: ["ไม่สามารถใช้กับระบบไฟฟ้าแรงสูงได้", "ต้องบำรุงรักษาบ่อยมาก", "มีค่าใช้จ่ายสูงและต้องตรวจสอบการรั่วไหลของก๊าซ", "ไม่สามารถตัดกระแสไฟฟ้าสูงได้"], answerText: "มีค่าใช้จ่ายสูงและต้องตรวจสอบการรั่วไหลของก๊าซ" }, // [cite: 1]
+            { category: "Electrical Substation", q: "สถานีไฟฟ้าย่อยประเภทใดที่ออกแบบมาเพื่อเชื่อมต่อระบบไฟฟ้าของลูกค้าโดยตรง?", options: ["Transmission Substation", "Customer Substation", "Distribution Substation", "Collector Substation"], answerText: "Customer Substation" }, // [cite: 1]
+            { category: "Electrical Substation", q: "ระบบ Busbar แบบใดมีการออกแบบให้สามารถทำงานต่อได้แม้ว่ามีอุปกรณ์บางส่วนเสียหาย?", options: ["Single Bus", "Sectionalized Bus", "Ring Bus", "Breaker-and-a-Half"], answerText: "Breaker-and-a-Half" }, // [cite: 1]
+            { category: "Electrical Substation", q: "อุปกรณ์ใดในสถานีไฟฟ้าทำหน้าที่ควบคุมและบันทึกค่าพารามิเตอร์ไฟฟ้า เช่น กระแสและแรงดันไฟฟ้า?", options: ["Relay", "Transformer", "Supervisory Control and Data Acquisition (SCADA)", "Disconnect Switch"], answerText: "Supervisory Control and Data Acquisition (SCADA)" }, // [cite: 1]
+            { category: "Electrical Substation", q: "ข้อใดเป็นหน้าที่หลักของ Circuit Breaker ในสถานีไฟฟ้า?", options: ["ปรับระดับแรงดันไฟฟ้า", "ตัดวงจรเมื่อเกิดความผิดปกติ", "ป้องกันฟ้าผ่า", "ควบคุมทิศทางของพลังงานไฟฟ้า"], answerText: "ตัดวงจรเมื่อเกิดความผิดปกติ" }, // [cite: 1]
+            { category: "Electrical Substation", q: "ระบบ Busbar แบบใดที่ใช้ต้นทุนต่ำที่สุดแต่มีความน่าเชื่อถือต่ำสุด?", options: ["Ring Bus", "Single Bus", "Sectionalized Bus", "Breaker-and-a-Half"], answerText: "Single Bus" }, // [cite: 1]
+            { category: "Electrical Substation", q: "อุปกรณ์ใดในสถานีไฟฟ้าย่อยใช้สำหรับควบคุมและป้องกันการลัดวงจรของระบบ?", options: ["Disconnect Switch", "Transformer", "Circuit Breaker", "Voltage Regulator"], answerText: "Circuit Breaker" }, // [cite: 1]
+            { category: "Electrical Substation", q: "อุปกรณ์ Surge Arrester ทำหน้าที่อะไร?", options: ["ป้องกันแรงดันไฟฟ้าเกินจากฟ้าผ่า", "ตัดกระแสไฟฟ้าในกรณีลัดวงจร", "ควบคุมแรงดันไฟฟ้าให้คงที่", "ลดกระแสไฟฟ้ารั่วไหลในระบบ"], answerText: "ป้องกันแรงดันไฟฟ้าเกินจากฟ้าผ่า" }, // [cite: 1]
+            { category: "Electrical Substation", q: "ระบบ Busbar แบบ Breaker-and-a-Half มีข้อดีอย่างไร?", options: ["มีความยืดหยุ่นสูงและสามารถทำงานต่อได้แม้มีปัญหากับอุปกรณ์บางส่วน", "มีต้นทุนต่ำกว่าระบบอื่น", "ใช้พื้นที่ติดตั้งน้อยที่สุด", "ไม่ต้องใช้ Circuit Breaker"], answerText: "มีความยืดหยุ่นสูงและสามารถทำงานต่อได้แม้มีปัญหากับอุปกรณ์บางส่วน" }, // [cite: 1]
+            { category: "Electrical Substation", q: "ทำไมสถานีไฟฟ้าย่อยแบบ GIS จึงเหมาะสมสำหรับเมืองใหญ่?", options: ["มีต้นทุนการติดตั้งต่ำ", "ต้องการพื้นที่ติดตั้งน้อย", "ไม่ต้องใช้ฉนวนไฟฟ้า", "ไม่มีการใช้แรงดันไฟฟ้าสูง"], answerText: "ต้องการพื้นที่ติดตั้งน้อย" }, // [cite: 1]
+            { category: "Electrical Substation", q: "ในระบบ Busbar แบบ Double Breaker Double Bus มีข้อดีสำคัญประการใด?", options: ["ลดต้นทุนอุปกรณ์ Circuit Breaker", "สามารถแยกวงจรออกเป็นอิสระโดยไม่กระทบระบบโดยรวม", "ใช้พื้นที่ติดตั้งน้อยกว่า Single Bus", "ลดการสูญเสียพลังงานของสายส่ง"], answerText: "สามารถแยกวงจรออกเป็นอิสระโดยไม่กระทบระบบโดยรวม" }, // [cite: 1]
+            { category: "Electrical Substation", q: "อุปกรณ์ใดในสถานีไฟฟ้าย่อยที่ทำหน้าที่ลดผลกระทบของฟ้าผ่าต่ออุปกรณ์ไฟฟ้าแรงสูง?", options: ["Circuit Breaker", "Lightning Arrester", "Surge Capacitor", "Load Break Switch"], answerText: "Lightning Arrester" }, // [cite: 1]
+            { category: "Electrical Substation", q: "ทำไม SF6 Gas ใน Gas Insulated Switchgear (GIS) ต้องมีการตรวจสอบความบริสุทธิ์และความดันอยู่เสมอ?", options: ["เพื่อลดความเสี่ยงของ Arc Flash ที่อาจเกิดขึ้น", "ป้องกันการรั่วไหลของก๊าซที่เป็นอันตราย", "ควบคุมค่าฉนวนของอุปกรณ์ให้เหมาะสม", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" }, // [cite: 1]
+            { category: "Electrical Substation", q: "สถานีไฟฟ้าย่อยแบบใดที่ใช้ในระบบ HVDC สำหรับการเปลี่ยนพลังงานไฟฟ้ากระแสตรงเป็นกระแสสลับ?", options: ["Switching Substation", "HVDC Converter Station", "Distribution Substation", "Collector Substation"], answerText: "HVDC Converter Station" }, // [cite: 1]
+            { category: "Electrical Substation", q: "ปัจจัยสำคัญที่ต้องคำนึงถึงในการออกแบบ Grounding System ของสถานีไฟฟ้าย่อยคืออะไร?", options: ["ความต้านทานของดิน", "ความสามารถในการระบายกระแสฟ้าผ่า", "การลดผลกระทบของ Ground Potential Rise (GPR)", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" }, // [cite: 1]
+            { category: "Electrical Substation", q: "อะไรเป็นข้อเสียหลักของการใช้ Air Insulated Substation (AIS) เมื่อเทียบกับ GIS?", options: ["มีความต้านทานไฟฟ้าต่ำกว่า", "ต้องการพื้นที่ติดตั้งมากกว่า", "ไม่สามารถใช้กับระบบไฟฟ้าแรงสูงได้", "มีต้นทุนสูงกว่า GIS"], answerText: "ต้องการพื้นที่ติดตั้งมากกว่า" }, // [cite: 1]
+            { category: "Electrical Substation", q: "การใช้ Current Transformer (CT) ในสถานีไฟฟ้ามีวัตถุประสงค์หลักคืออะไร?", options: ["แปลงกระแสสูงให้เป็นค่าต่ำสำหรับอุปกรณ์ป้องกัน", "เพิ่มค่ากระแสให้สูงขึ้นเพื่อส่งกำลังไฟฟ้า", "ควบคุมการเปลี่ยนแปลงของแรงดันไฟฟ้า", "ป้องกันการเกิด Arc Flash ในระบบ"], answerText: "แปลงกระแสสูงให้เป็นค่าต่ำสำหรับอุปกรณ์ป้องกัน" }, // [cite: 1]
+            { category: "Electrical Substation", q: "หน้าที่หลักของ Bus Coupler ในสถานีไฟฟ้าย่อยคืออะไร?", options: ["ป้องกันฟ้าผ่าและแรงดันไฟฟ้าเกิน", "เชื่อมต่อหรือแยกส่วนของ Busbar", "ควบคุมระดับแรงดันไฟฟ้า", "ลดกระแสลัดวงจรในสถานีไฟฟ้า"], answerText: "เชื่อมต่อหรือแยกส่วนของ Busbar" }, // [cite: 1]
+            { category: "Electrical Substation", q: "อุปกรณ์ใดทำหน้าที่ตัดกระแสไฟฟ้ากระแสตรงในระบบไฟฟ้า HVDC?", options: ["SF6 Circuit Breaker", "Vacuum Circuit Breaker", "DC Circuit Breaker", "Load Break Switch"], answerText: "DC Circuit Breaker" }, // [cite: 1]
+            { category: "Electrical Substation", q: "สถานีไฟฟ้าประเภทใดที่ใช้ในการจ่ายพลังงานไฟฟ้าจากแหล่งผลิตไปยังลูกค้าขนาดใหญ่โดยตรง?", options: ["Switching Substation", "Customer Substation", "Transmission Substation", "Collector Substation"], answerText: "Customer Substation" }, // [cite: 1]
+            { category: "Electrical Substation", q: "อุปกรณ์ที่ใช้วัดค่าแรงดันไฟฟ้าในสถานีไฟฟ้าย่อยคืออะไร?", options: ["Potential Transformer (PT)", "Current Transformer (CT)", "Voltage Regulator", "Circuit Breaker"], answerText: "Potential Transformer (PT)" }, // [cite: 1]
+            { category: "Electrical Substation", q: "ข้อใดเป็นเหตุผลหลักที่ Gas Insulated Substation (GIS) นิยมใช้ในเมืองใหญ่?", options: ["สามารถติดตั้งในพื้นที่จำกัดได้", "ค่าใช้จ่ายในการบำรุงรักษาต่ำ", "ไม่มีความเสี่ยงในการเกิด Short Circuit", "ไม่มีการใช้ SF6 Gas"], answerText: "สามารถติดตั้งในพื้นที่จำกัดได้" }, // [cite: 1]
+            { category: "Electrical Substation", q: "อะไรคือข้อเสียที่สำคัญของ Vacuum Circuit Breaker (VCB) เมื่อเทียบกับ SF6 Circuit Breaker?", options: ["ไม่สามารถใช้ในระบบแรงดันสูงมาก ๆ ได้", "ต้องบำรุงรักษาบ่อยกว่า", "มีต้นทุนสูงกว่า", "ใช้พื้นที่มากกว่า"], answerText: "ไม่สามารถใช้ในระบบแรงดันสูงมาก ๆ ได้" }, // [cite: 1]
+            { category: "Electrical Substation", q: "กระแสไฟฟ้าที่เกิดจากการลัดวงจรในสถานีไฟฟ้าจะถูกควบคุมโดยอุปกรณ์ใด?", options: ["Circuit Breaker", "Load Break Switch", "Voltage Regulator", "Disconnect Switch"], answerText: "Circuit Breaker" }, // [cite: 1]
+            { category: "Electrical Substation", q: "การออกแบบสถานีไฟฟ้าย่อยต้องคำนึงถึงปัจจัยด้านสิ่งแวดล้อมอย่างไร?", options: ["การป้องกันเสียงรบกวนจากอุปกรณ์ไฟฟ้า", "การลดการปล่อยก๊าซ SF6 ที่มีผลต่อภาวะโลกร้อน", "การออกแบบให้อุปกรณ์มีประสิทธิภาพสูงสุดในพื้นที่จำกัด", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" }, // [cite: 1]
+            { category: "Electrical Substation", q: "ข้อใดเป็นข้อเสียของระบบ Busbar แบบ Ring Bus?", options: ["มีความน่าเชื่อถือต่ำ", "มีค่าใช้จ่ายสูงกว่าระบบ Single Bus", "ถ้าเกิดปัญหาในวงจรอาจทำให้การจ่ายไฟฟ้าหยุดชะงัก", "ใช้พื้นที่มากเกินไป"], answerText: "ถ้าเกิดปัญหาในวงจรอาจทำให้การจ่ายไฟฟ้าหยุดชะงัก" }, // [cite: 1]
+            { category: "Electrical Substation", q: "ในสถานีไฟฟ้าแรงสูง อุปกรณ์ใดที่ใช้สำหรับป้องกันกระแสเกินชั่วคราว?", options: ["Circuit Breaker", "Load Break Switch", "High Voltage Fuse", "Voltage Regulator"], answerText: "High Voltage Fuse" }, // [cite: 1]
+            { category: "Electrical Substation", q: "อุปกรณ์ใดทำหน้าที่ควบคุมแรงดันไฟฟ้าในระบบจำหน่ายไฟฟ้าแรงต่ำ?", options: ["Transformer", "Voltage Regulator", "Surge Arrester", "Disconnect Switch"], answerText: "Voltage Regulator" }, // [cite: 1]
+            { category: "Electrical Substation", q: "ทำไมสถานีไฟฟ้าย่อยต้องมีระบบสำรองพลังงาน?", options: ["เพื่อให้แน่ใจว่าระบบป้องกันและควบคุมยังคงทำงานได้ในกรณีไฟฟ้าดับ", "ป้องกันไม่ให้แรงดันไฟฟ้าตกต่ำเกินไป", "ลดความเสี่ยงในการเกิด Short Circuit", "ป้องกันความร้อนสะสมในหม้อแปลงไฟฟ้า"], answerText: "เพื่อให้แน่ใจว่าระบบป้องกันและควบคุมยังคงทำงานได้ในกรณีไฟฟ้าดับ" }, // [cite: 1]
+            { category: "Electrical Substation", q: "การเลือกใช้ Insulated Busbar ในสถานีไฟฟ้ามีข้อดีหลักข้อใด?", options: ["ลดความสูญเสียพลังงานไฟฟ้า", "ลดความเสี่ยงของ Flashover", "เพิ่มความสามารถในการระบายความร้อน", "ใช้พื้นที่ติดตั้งน้อยกว่า"], answerText: "ลดความเสี่ยงของ Flashover" }, // [cite: 1]
+            { category: "Electrical Substation", q: "ปัจจัยใดมีผลกระทบโดยตรงต่อค่าความต้านทานของระบบต่อลงดินในสถานีไฟฟ้า?", options: ["ปริมาณน้ำฝนเฉลี่ยในพื้นที่", "ขนาดและรูปแบบของแท่งกราวด์ (Ground Rod)", "ความหนาของฉนวนสายไฟในระบบแรงสูง", "อุณหภูมิของตัวนำในสถานีไฟฟ้า"], answerText: "ขนาดและรูปแบบของแท่งกราวด์ (Ground Rod)" }, // [cite: 1]
+            { category: "Electrical Substation", q: "วิธีใดช่วยลดค่าความต้านทานของระบบกราวด์ได้อย่างมีประสิทธิภาพมากที่สุด?", options: ["ใช้แท่งกราวด์ที่มีขนาดสั้นแต่หลายแห่ง", "ใช้สารปรับปรุงค่าการนำไฟฟ้าของดิน เช่น Bentonite หรือ Graphite", "ใช้สายกราวด์ขนาดเล็กเพื่อลดพื้นที่สัมผัสกับดิน", "ต่อสายกราวด์เข้ากับตัวนำเฟสโดยตรง"], answerText: "ใช้สารปรับปรุงค่าการนำไฟฟ้าของดิน เช่น Bentonite หรือ Graphite" }, // [cite: 1]
+            { category: "Electrical Substation", q: "สถานีไฟฟ้าที่มีดินที่มีค่าความต้านทานสูงมาก ควรใช้วิธีใดเพื่อปรับปรุงระบบต่อลงดิน?", options: ["เพิ่มจำนวนสายดินให้มากขึ้นโดยไม่เปลี่ยนวิธีการติดตั้ง", "ใช้กริด (Grid) กราวด์ที่มีขนาดใหญ่ขึ้นเพื่อกระจายกระแสฟอลต์ให้กว้างขึ้น", "ใช้ตัวนำที่เป็นฉนวนแทนตัวนำโลหะเปลือยในระบบกราวด์", "ฝังแท่งกราวด์ให้ลึกขึ้นโดยไม่เพิ่มจำนวนจุดต่อลงดิน"], answerText: "ใช้กริด (Grid) กราวด์ที่มีขนาดใหญ่ขึ้นเพื่อกระจายกระแสฟอลต์ให้กว้างขึ้น" }, // [cite: 1]
+            { category: "Electrical Substation", q: "ค่า Step Voltage และ Touch Voltage มีความสำคัญอย่างไรในการออกแบบระบบต่อลงดิน?", options: ["ใช้เป็นค่ากำหนดขนาดของตัวนำสายดิน", "ใช้เป็นเกณฑ์ในการออกแบบเพื่อความปลอดภัยของบุคลากร", "มีผลต่อค่าความต้านทานของสายตัวนำหลักในระบบ", "เป็นค่าที่ใช้กำหนดตำแหน่งติดตั้ง Circuit Breaker"], answerText: "ใช้เป็นเกณฑ์ในการออกแบบเพื่อความปลอดภัยของบุคลากร" }, // [cite: 1]
+            { category: "Electrical Substation", q: "องค์ประกอบหลักของระบบต่อลงดินในสถานีไฟฟ้าคืออะไร?", options: ["Main Earth Mat, Ground Rods, และ Ground Grid", "Phase Conductor, Neutral Wire และ Surge Arrester", "Lightning Rod, Ground Transformer และ Protective Relay", "Isolator, Circuit Breaker และ Potential Transformer"], answerText: "Main Earth Mat, Ground Rods, และ Ground Grid" }, // [cite: 1]
+            { category: "Electrical Substation", q: "ค่าความต้านทานของระบบต่อลงดินของสถานีไฟฟ้าควรอยู่ในช่วงใดเพื่อให้มีความปลอดภัยสูงสุด?", options: ["ไม่เกิน 10 โอห์ม", "ไม่เกิน 1 โอห์ม", "ระหว่าง 10-50 โอห์ม", "ไม่เกิน 100 โอห์ม"], answerText: "ไม่เกิน 1 โอห์ม" }, // [cite: 1]
+            { category: "Electrical Substation", q: "การใช้ตัวนำทองแดงแทนตัวนำอลูมิเนียมในระบบต่อลงดินมีข้อดีอะไร?", options: ["ลดความร้อนสะสมในระบบกราวด์", "มีค่าการนำไฟฟ้าดีกว่าและทนต่อการกัดกร่อนได้ดีกว่า", "ลดต้นทุนในการติดตั้งระบบกราวด์", "ลดค่าความต้านทานดินโดยตรง"], answerText: "มีค่าการนำไฟฟ้าดีกว่าและทนต่อการกัดกร่อนได้ดีกว่า" }, // [cite: 1]
+            { category: "Electrical Substation", q: "ค่า Step Voltage ที่สูงเกินไปจะก่อให้เกิดอันตรายอย่างไร?", options: ["ทำให้เกิดการลัดวงจรภายในระบบสถานีไฟฟ้า", "ทำให้กระแสไฟฟ้าไหลผ่านร่างกายมนุษย์จากเท้าข้างหนึ่งไปอีกข้างหนึ่ง", "ทำให้ค่าความต้านทานของระบบกราวด์เพิ่มขึ้น", "ทำให้ค่าความเป็นฉนวนของตัวนำลดลง"], answerText: "ทำให้กระแสไฟฟ้าไหลผ่านร่างกายมนุษย์จากเท้าข้างหนึ่งไปอีกข้างหนึ่ง" }, // [cite: 1]
+            { category: "Electrical Substation", q: "ระบบต่อลงดินที่ดีควรมีคุณสมบัติใด?", options: ["มีค่าความต้านทานสูงเพื่อป้องกันกระแสไหลผ่านมากเกินไป", "สามารถกระจายกระแสฟอลต์และแรงดันเกินได้อย่างมีประสิทธิภาพ", "ต้องมีค่าแรงดันไฟฟ้าสูงกว่าระบบตัวนำเฟส", "ต้องเป็นระบบปิดเพื่อป้องกันกระแสไฟฟ้ารั่ว"], answerText: "สามารถกระจายกระแสฟอลต์และแรงดันเกินได้อย่างมีประสิทธิภาพ" }, // [cite: 1]
+            { category: "Electrical Substation", q: "การใช้ตะแกรงกราวด์ (Ground Grid) ในสถานีไฟฟ้ามีวัตถุประสงค์หลักเพื่ออะไร?", options: ["ป้องกันอุปกรณ์ไฟฟ้าจากแรงดันเกิน", "ลดค่าความต้านทานของระบบกราวด์และกระจายกระแสได้ดีขึ้น", "ลดต้นทุนในการติดตั้งระบบต่อลงดิน", "ลดค่าแรงดันตกคร่อมในสายตัวนำหลัก"], answerText: "ลดค่าความต้านทานของระบบกราวด์และกระจายกระแสได้ดีขึ้น" }, // [cite: 1]
+            { category: "Electrical Substation", q: "องค์ประกอบใดที่ส่งผลต่อค่าความต้านทานของดินในสถานีไฟฟ้า?", options: ["อุณหภูมิของอากาศโดยรอบ", "ความชื้นและชนิดของดิน", "ชนิดของตัวนำในสายกราวด์", "ความยาวของตัวนำไฟฟ้า"], answerText: "ความชื้นและชนิดของดิน" }, // [cite: 1]
+            { category: "Electrical Substation", q: "ในกรณีที่พื้นที่ติดตั้งมีค่าความต้านทานดินสูงมาก ควรเลือกใช้วิธีปรับปรุงใด?", options: ["ใช้แท่งกราวด์ที่ฝังลึกมากขึ้น", "เปลี่ยนชนิดของตัวนำที่ใช้ในระบบกราวด์", "ใช้ตัวนำที่เป็นฉนวนแทนตัวนำโลหะเปลือย", "เพิ่มจำนวน Isolator ในระบบ"], answerText: "ใช้แท่งกราวด์ที่ฝังลึกมากขึ้น" }, // [cite: 1]
+            { category: "Electrical Substation", q: "ค่า Touch Voltage คืออะไร?", options: ["แรงดันไฟฟ้าตกคร่อมที่เกิดขึ้นระหว่างมือกับพื้น", "กระแสไฟฟ้าสูงสุดที่ไหลผ่านตัวนำหลัก", "ความต่างศักย์ที่เกิดขึ้นระหว่างตัวนำเฟสและกราวด์", "ค่าความเป็นฉนวนของสายไฟฟ้า"], answerText: "แรงดันไฟฟ้าตกคร่อมที่เกิดขึ้นระหว่างมือกับพื้น" }, // [cite: 1]
+            { category: "Electrical Substation", q: "วัสดุใดเหมาะสมที่สุดสำหรับใช้เป็นตัวนำในระบบต่อลงดิน?", options: ["เหล็กกล้า", "อลูมิเนียม", "ทองแดง", "สแตนเลส"], answerText: "ทองแดง" }, // [cite: 1]
+            { category: "Electrical Substation", q: "ข้อใดคือวัตถุประสงค์หลักของ Grounding Electrode?", options: ["กระจายกระแสฟอลต์ลงสู่ดินอย่างปลอดภัย", "ป้องกันแรงดันเกินในสายตัวนำหลัก", "ลดการสูญเสียพลังงานไฟฟ้าในระบบ", "เพิ่มความเป็นฉนวนให้กับระบบ"], answerText: "กระจายกระแสฟอลต์ลงสู่ดินอย่างปลอดภัย" }, // [cite: 1]
+            { category: "Electrical Substation", q: "ทำไมต้องใช้สารปรับปรุงค่าความต้านทานของดิน (Ground Enhancement Material - GEM) ในบางพื้นที่?", options: ["เพื่อเพิ่มค่าความต้านทานของระบบกราวด์", "เพื่อลดค่าความต้านทานของดินและเพิ่มประสิทธิภาพการกระจายกระแสฟอลต์", "เพื่อป้องกันแรงดันเกินที่อาจทำให้เกิด Flashover", "เพื่อเพิ่มความแข็งแรงของสายดินและลดการสึกกร่อน"], answerText: "เพื่อลดค่าความต้านทานของดินและเพิ่มประสิทธิภาพการกระจายกระแสฟอลต์" }, // [cite: 1]
+            { category: "Electrical Substation", q: "วิธีใดที่สามารถลดค่า Touch Voltage ได้อย่างมีประสิทธิภาพ?", options: ["การเพิ่มจำนวนแท่งกราวด์ให้มากขึ้น", "การใช้ฉนวนไฟฟ้าหุ้มสายดิน", "การเพิ่มความลึกของแท่งกราวด์เพียงอย่างเดียว", "การออกแบบ Grid Grounding ให้ครอบคลุมพื้นที่ที่มีการเดินผ่านของบุคลากร"], answerText: "การออกแบบ Grid Grounding ให้ครอบคลุมพื้นที่ที่มีการเดินผ่านของบุคลากร" }, // [cite: 1]
+            { category: "Electrical Substation", q: "การเชื่อมต่อแท่งกราวด์หลายแห่งเข้าด้วยกันมีวัตถุประสงค์หลักเพื่ออะไร?", options: ["เพิ่มค่าความต้านทานของระบบกราวด์เพื่อป้องกันกระแสฟอลต์", "ลดค่าความต้านทานของระบบกราวด์และเพิ่มประสิทธิภาพการระบายกระแสฟอลต์", "ป้องกันแรงดันไฟฟ้าตกคร่อมในสถานีไฟฟ้า", "ลดความจำเป็นในการใช้ Surge Arrester"], answerText: "ลดค่าความต้านทานของระบบกราวด์และเพิ่มประสิทธิภาพการระบายกระแสฟอลต์" }, // [cite: 1]
+            { category: "Electrical Substation", q: "ปัจจัยใดส่งผลต่อการกัดกร่อนของตัวนำที่ใช้ในระบบต่อลงดินมากที่สุด?", options: ["อุณหภูมิของตัวนำ", "ความเป็นกรด-ด่าง (pH) ของดิน", "ความยาวของสายตัวนำ", "ชนิดของฉนวนที่ใช้หุ้มสายดิน"], answerText: "ความเป็นกรด-ด่าง (pH) ของดิน" }, // [cite: 1]
+            { category: "Electrical Substation", q: "ข้อใดเป็นหลักการออกแบบระบบต่อลงดินที่ดีสำหรับสถานีไฟฟ้า?", options: ["ต้องออกแบบให้ค่าความต้านทานสูงสุดเพื่อลดกระแสไหลลงดิน", "ต้องลดค่า Step Voltage และ Touch Voltage ให้อยู่ในเกณฑ์ปลอดภัย", "ต้องใช้วัสดุที่มีค่าความต้านทานสูงเพื่อป้องกันการกัดกร่อน", "ต้องออกแบบให้มีความเป็นฉนวนสูงสุดเพื่อป้องกันการลัดวงจร"], answerText: "ต้องลดค่า Step Voltage และ Touch Voltage ให้อยู่ในเกณฑ์ปลอดภัย" }, // [cite: 1]
+            { category: "Electrical Substation", q: "Bus Configuration แบบใดที่มีความซับซ้อนมากที่สุดแต่มีความน่าเชื่อถือสูงสุด?", options: ["Single Bus", "Sectionalized Bus", "Breaker-and-a-Half Bus", "Ring Bus"], answerText: "Breaker-and-a-Half Bus" }, // [cite: 1]
+            { category: "Electrical Substation", q: "จุดอ่อนที่สำคัญของ Single Bus Configuration คืออะไร?", options: ["ถ้า Bus มีปัญหาจะทำให้ระบบทั้งหมดหยุดทำงาน", "ต้นทุนสูงและต้องใช้ Breaker จำนวนมาก", "ไม่สามารถใช้ในสถานีไฟฟ้าแรงสูงได้", "ต้องใช้พื้นที่ติดตั้งมากเกินไป"], answerText: "ถ้า Bus มีปัญหาจะทำให้ระบบทั้งหมดหยุดทำงาน" }, // [cite: 1]
+            { category: "Electrical Substation", q: "ทำไม Ring Bus Configuration จึงมีความน่าเชื่อถือสูงกว่าระบบ Single Bus?", options: ["มีความสามารถในการรองรับโหลดสูงกว่า", "สามารถตัดส่วนของระบบที่มีปัญหาออกโดยไม่กระทบส่วนที่เหลือ", "ไม่ต้องใช้ Circuit Breaker", "ไม่มีข้อจำกัดเรื่องแรงดันไฟฟ้า"], answerText: "สามารถตัดส่วนของระบบที่มีปัญหาออกโดยไม่กระทบส่วนที่เหลือ" }, // [cite: 1]
+            { category: "Electrical Substation", q: "ระบบ Breaker-and-a-Half ได้รับการออกแบบมาเพื่อลดปัญหาใด?", options: ["การสูญเสียพลังงานในสถานีไฟฟ้า", "การหยุดทำงานของระบบเมื่อมี Breaker ตัวใดตัวหนึ่งขัดข้อง", "ค่าใช้จ่ายในการติดตั้งระบบ", "ความซับซ้อนในการควบคุมโหลด"], answerText: "การหยุดทำงานของระบบเมื่อมี Breaker ตัวใดตัวหนึ่งขัดข้อง" }, // [cite: 1]
+            { category: "Electrical Substation", q: "ข้อใดเป็นข้อเสียของ Double Bus Double Breaker Scheme?", options: ["ใช้ Breaker จำนวนมากทำให้ต้นทุนสูง", "ไม่สามารถรองรับโหลดสูงได้", "ไม่สามารถขยายระบบได้", "ต้องใช้พื้นที่ติดตั้งน้อยกว่าระบบอื่น"], answerText: "ใช้ Breaker จำนวนมากทำให้ต้นทุนสูง" }, // [cite: 1]
+            { category: "Electrical Substation", q: "ข้อใดไม่ใช่ประเภทของ Bus Configuration?", options: ["Single Bus", "Ring Bus", "Hybrid Bus", "Cascade Bus"], answerText: "Cascade Bus" }, // [cite: 1]
+            { category: "Electrical Substation", q: "ข้อดีของ Sectionalized Bus เมื่อเทียบกับ Single Bus คืออะไร?", options: ["ลดโอกาสที่ Bus Fault จะทำให้ระบบทั้งหมดล้มเหลว", "มีต้นทุนต่ำกว่า Single Bus", "ต้องการ Breaker น้อยกว่า", "ไม่มีปัญหาเรื่อง Reliability"], answerText: "ลดโอกาสที่ Bus Fault จะทำให้ระบบทั้งหมดล้มเหลว" }, // [cite: 1]
+            { category: "Electrical Substation", q: "ในสถานีไฟฟ้าแรงสูงที่ต้องการความเสถียรสูง ควรเลือกใช้ Bus Configuration แบบใด?", options: ["Single Bus", "Breaker-and-a-Half Bus", "Sectionalized Bus", "Radial Bus"], answerText: "Breaker-and-a-Half Bus" }, // [cite: 1]
+            { category: "Electrical Substation", q: "Double Bus Single Breaker Scheme มีข้อได้เปรียบอะไรเมื่อเทียบกับ Single Bus?", options: ["สามารถสลับโหลดระหว่าง Bus ได้โดยไม่ต้องหยุดระบบ", "ใช้ Breaker น้อยกว่า", "ติดตั้งง่ายกว่าระบบ Single Bus", "ลดปัญหาการสลับโหลดผิดพลาด"], answerText: "สามารถสลับโหลดระหว่าง Bus ได้โดยไม่ต้องหยุดระบบ" }, // [cite: 1]
+            { category: "Electrical Substation", q: "Ring Bus Configuration เหมาะกับการใช้งานประเภทใด?", options: ["สถานีไฟฟ้าขนาดเล็กที่ต้องการความยืดหยุ่นสูง", "โรงไฟฟ้าขนาดใหญ่ที่มีโหลดสูง", "ระบบส่งกำลังไฟฟ้าแรงสูงที่ต้องการความเสถียรสูง", "ระบบไฟฟ้าภายในอาคารขนาดเล็ก"], answerText: "สถานีไฟฟ้าขนาดเล็กที่ต้องการความยืดหยุ่นสูง" }, // [cite: 1]
+            { category: "Electrical Substation", q: "จุดอ่อนของ Main and Transfer Bus Configuration คืออะไร?", options: ["ถ้า Transfer Bus Breaker มีปัญหาจะกระทบทุกวงจร", "ต้องใช้ Circuit Breaker เพิ่มขึ้นเป็น 2 เท่า", "ไม่สามารถรองรับการขยายสถานีไฟฟ้าได้", "ใช้พื้นที่มากกว่าระบบอื่น"], answerText: "ถ้า Transfer Bus Breaker มีปัญหาจะกระทบทุกวงจร" }, // [cite: 1]
+            { category: "Electrical Substation", q: "Bus Configuration แบบใดต้องใช้ Circuit Breaker มากที่สุด?", options: ["Ring Bus", "Double Bus Double Breaker", "Breaker-and-a-Half", "Sectionalized Bus"], answerText: "Double Bus Double Breaker" }, // [cite: 1]
+            { category: "Electrical Substation", q: "ระบบ Bus แบบใดต้องการพื้นที่ติดตั้งมากที่สุด?", options: ["Single Bus", "Breaker-and-a-Half", "Ring Bus", "Sectionalized Bus"], answerText: "Breaker-and-a-Half" }, // [cite: 1]
+            { category: "Electrical Substation", q: "ระบบ Bus ใดเหมาะสมที่สุดสำหรับสถานีไฟฟ้าขนาดใหญ่ที่มีความสำคัญสูง?", options: ["Single Bus", "Breaker-and-a-Half Bus", "Sectionalized Bus", "Hybrid Bus"], answerText: "Breaker-and-a-Half Bus" }, // [cite: 1]
+            { category: "Electrical Substation", q: "ข้อใดเป็นจุดเด่นของ Hybrid Bus Configuration?", options: ["เป็นการผสมผสานข้อดีของหลายระบบเพื่อให้เหมาะสมกับการใช้งาน", "ไม่ต้องใช้ Circuit Breaker", "ค่าใช้จ่ายในการติดตั้งต่ำที่สุด", "ไม่มีปัญหาเกี่ยวกับ Bus Fault"], answerText: "เป็นการผสมผสานข้อดีของหลายระบบเพื่อให้เหมาะสมกับการใช้งาน" }, // [cite: 1]
+            { category: "Electrical Substation", q: "ในระบบ Breaker-and-a-Half แต่ละวงจรจะมี Breaker กี่ตัว?", options: ["1", "1.5", "2", "2.5"], answerText: "1.5" }, // [cite: 1]
+            { category: "Electrical Substation", q: "ข้อเสียหลักของ Ring Bus Configuration คืออะไร?", options: ["ถ้า Breaker ตัวหนึ่งล้มเหลว อาจทำให้เกิดการแบ่งวงจรที่ไม่เหมาะสม", "มีต้นทุนสูงมาก", "ต้องใช้พื้นที่ติดตั้งมาก", "ต้องใช้ Breaker เพิ่มขึ้นเป็น 2 เท่าของ Single Bus"], answerText: "ถ้า Breaker ตัวหนึ่งล้มเหลว อาจทำให้เกิดการแบ่งวงจรที่ไม่เหมาะสม" }, // [cite: 1]
+            { category: "Electrical Substation", q: "หากต้องการให้แต่ละวงจรสามารถแยกตัวออกได้โดยอิสระ ควรเลือกใช้ Bus Scheme แบบใด?", options: ["Single Bus", "Sectionalized Bus", "Double Bus Double Breaker", "Radial Bus"], answerText: "Double Bus Double Breaker" }, // [cite: 1]
+            { category: "Electrical Substation", q: "จุดประสงค์หลักของ Bus Coupler คืออะไร?", options: ["เชื่อมต่อระหว่าง Busbars และช่วยให้สามารถเปลี่ยนแปลงระบบได้ง่ายขึ้น", "ลดค่าใช้จ่ายในการติดตั้งระบบ", "ลดค่าความต้านทานของระบบ", "ใช้สำหรับเพิ่มแรงดันไฟฟ้าในระบบ"], answerText: "เชื่อมต่อระหว่าง Busbars และช่วยให้สามารถเปลี่ยนแปลงระบบได้ง่ายขึ้น" }, // [cite: 1]
+            { category: "Electrical Substation", q: "ถ้าต้องการออกแบบระบบที่สามารถขยายตัวได้ง่ายและมีความยืดหยุ่นสูง ควรเลือก Bus Configuration แบบใด?", options: ["Single Bus", "Sectionalized Bus", "Hybrid Bus", "Double Bus Single Breaker"], answerText: "Hybrid Bus" }, // [cite: 1]
+
+            // --- PDP2018 ---
+            { category: "PDP2018", q: "แผน PDP2018 มีชื่อเต็มว่าอะไร?", options: ["แผนพัฒนาพลังงานทดแทนของประเทศไทย", "แผนพัฒนากำลังผลิตไฟฟ้าของประเทศไทย", "แผนอนุรักษ์พลังงานของประเทศไทย", "แผนยุทธศาสตร์ชาติด้านพลังงานของประเทศไทย"], answerText: "แผนพัฒนากำลังผลิตไฟฟ้าของประเทศไทย" },
+            { category: "PDP2018", q: "ข้อใดคือวิสัยทัศน์ของแผน PDP2018?", options: ["สร้างความมั่นคง มั่งคั่ง และยั่งยืนด้านพลังงานไฟฟ้าของประเทศ", "ลดการพึ่งพาพลังงานจากต่างประเทศ", "ส่งเสริมการใช้พลังงานทดแทนในทุกภาคส่วน", "พัฒนาเทคโนโลยีพลังงานให้ทันสมัย"], answerText: "สร้างความมั่นคง มั่งคั่ง และยั่งยืนด้านพลังงานไฟฟ้าของประเทศ" },
+            { category: "PDP2018", q: "ข้อใดคือเป้าหมายหลักของแผน PDP2018?", options: ["เพิ่มสัดส่วนการใช้พลังงานทดแทนเป็น 50% ภายในปี พ.ศ. 2580", "ลดการปล่อยก๊าซเรือนกระจกจากภาคพลังงานลง 30% ภายในปี พ.ศ. 2580", "สร้างความสมดุลระหว่างความมั่นคงด้านพลังงาน เศรษฐกิจ และสิ่งแวดล้อม", "พัฒนาระบบไฟฟ้าอัจฉริยะให้ครอบคลุมทั่วประเทศ"], answerText: "สร้างความสมดุลระหว่างความมั่นคงด้านพลังงาน เศรษฐกิจ และสิ่งแวดล้อม" },
+            { category: "PDP2018", q: "ข้อใดคือเชื้อเพลิงหลักที่ใช้ในการผลิตไฟฟ้าตามแผน PDP2018?", options: ["ก๊าซธรรมชาติ", "พลังงานแสงอาทิตย์", "พลังงานลม", "พลังงานน้ำ"], answerText: "ก๊าซธรรมชาติ" },
+            { category: "PDP2018", q: "ข้อใดคือแนวทางการส่งเสริมพลังงานทดแทนตามแผน PDP2018?", options: ["สนับสนุนการผลิตไฟฟ้าจากพลังงานแสงอาทิตย์และพลังงานลมในระดับครัวเรือน", "ส่งเสริมการลงทุนในโรงไฟฟ้าพลังงานทดแทนขนาดใหญ่", "กำหนดอัตราการรับซื้อไฟฟ้าจากพลังงานทดแทนในราคาที่เหมาะสม", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "PDP2018", q: "ข้อใดคือความท้าทายในการพัฒนาพลังงานทดแทนตามแผน PDP2018?", options: ["ต้นทุนการผลิตไฟฟ้าจากพลังงานทดแทนยังสูง", "แหล่งพลังงานทดแทนมีความไม่แน่นอน", "เทคโนโลยีการผลิตไฟฟ้าจากพลังงานทดแทนยังไม่เสถียร", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "PDP2018", q: "ข้อใดคือแนวทางการอนุรักษ์พลังงานตามแผน PDP2018?", options: ["ส่งเสริมการใช้เทคโนโลยีประหยัดพลังงานในภาคอุตสาหกรรมและครัวเรือน", "รณรงค์ให้ประชาชนปรับเปลี่ยนพฤติกรรมการใช้พลังงาน", "กำหนดมาตรฐานประสิทธิภาพพลังงานสำหรับอุปกรณ์ไฟฟ้า", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "PDP2018", q: "ข้อใดคือเป้าหมายการลดการปล่อยก๊าซเรือนกระจกตามแผน PDP2018?", options: ["ลดการปล่อยก๊าซเรือนกระจก 10% ภายในปี พ.ศ. 2580", "ลดการปล่อยก๊าซเรือนกระจก 20% ภายในปี พ.ศ. 2580", "ลดการปล่อยก๊าซเรือนกระจก 30% ภายในปี พ.ศ. 2580", "ลดการปล่อยก๊าซเรือนกระจก 40% ภายในปี พ.ศ. 2580"], answerText: "ลดการปล่อยก๊าซเรือนกระจก 30% ภายในปี พ.ศ. 2580" },
+            { category: "PDP2018", q: "ข้อใดคือแนวทางการพัฒนาระบบไฟฟ้าอัจฉริยะตามแผน PDP2018?", options: ["ติดตั้งมิเตอร์อัจฉริยะในทุกครัวเรือน", "พัฒนาระบบบริหารจัดการพลังงานแบบกระจายศูนย์", "ส่งเสริมการใช้ยานยนต์ไฟฟ้า", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "PDP2018", q: "ข้อใดคือประโยชน์ของการพัฒนาระบบไฟฟ้าอัจฉริยะตามแผน PDP2018?", options: ["เพิ่มประสิทธิภาพการใช้พลังงานไฟฟ้า", "ลดความสูญเสียในระบบส่งและจำหน่ายไฟฟ้า", "รองรับการผลิตไฟฟ้าจากพลังงานทดแทนที่มีความไม่แน่นอน", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "PDP2018", q: "ข้อใดคือความหมายของ 'Prosumer' ตามแผน PDP2018?", options: ["ผู้ผลิตและจำหน่ายไฟฟ้า", "ผู้ผลิตและใช้ไฟฟ้า", "ผู้ใช้ไฟฟ้าอย่างมีประสิทธิภาพ", "ผู้ลงทุนในโรงไฟฟ้าพลังงานทดแทน"], answerText: "ผู้ผลิตและใช้ไฟฟ้า" },
+            { category: "PDP2018", q: "ข้อใดคือแนวทางการส่งเสริม Prosumer ตามแผน PDP2018?", options: ["สนับสนุนการติดตั้งโซลาร์รูฟท็อปในครัวเรือนและภาคธุรกิจ", "พัฒนาระบบซื้อขายไฟฟ้าแบบ Peer-to-Peer", "ส่งเสริมการใช้แบตเตอรี่สำรองไฟฟ้า", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "PDP2018", q: "ข้อใดคือประโยชน์ของการส่งเสริม Prosumer ตามแผน PDP2018?", options: ["ลดภาระการลงทุนสร้างโรงไฟฟ้าของภาครัฐ", "เพิ่มความมั่นคงด้านพลังงานในระดับครัวเรือนและชุมชน", "ส่งเสริมการใช้พลังงานทดแทนในระดับฐานราก", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "PDP2018", q: "ข้อใดคือความหมายของ 'Energy Storage' ตามแผน PDP2018?", options: ["การกักเก็บพลังงานในรูปแบบต่างๆ", "การผลิตพลังงานจากแหล่งกักเก็บ", "การใช้พลังงานอย่างมีประสิทธิภาพ", "การซื้อขายพลังงานในตลาด"], answerText: "การกักเก็บพลังงานในรูปแบบต่างๆ" },
+            { category: "PDP2018", q: "ข้อใดคือแนวทางการส่งเสริม Energy Storage ตามแผน PDP2018?", options: ["สนับสนุนการวิจัยและพัฒนาเทคโนโลยี Energy Storage", "ส่งเสริมการติดตั้ง Energy Storage ในโรงไฟฟ้าพลังงานทดแทน", "กำหนดอัตราการรับซื้อไฟฟ้าจาก Energy Storage ในราคาที่เหมาะสม", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "PDP2018", q: "ข้อใดคือประโยชน์ของ Energy Storage ตามแผน PDP2018?", options: ["เพิ่มความมั่นคงของระบบไฟฟ้า", "ลดความผันผวนของพลังงานทดแทน", "รองรับการใช้งานยานยนต์ไฟฟ้า", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "PDP2018", q: "ข้อใดคือความหมายของ 'Smart Grid' ตามแผน PDP2018?", options: ["ระบบโครงข่ายไฟฟ้าอัจฉริยะ", "ระบบผลิตไฟฟ้าพลังงานทดแทน", "ระบบกักเก็บพลังงาน", "ระบบซื้อขายไฟฟ้า"], answerText: "ระบบโครงข่ายไฟฟ้าอัจฉริยะ" },
+            { category: "PDP2018", q: "ข้อใดคือแนวทางการพัฒนา Smart Grid ตามแผน PDP2018?", options: ["ติดตั้งเซ็นเซอร์และอุปกรณ์ควบคุมในระบบไฟฟ้า", "พัฒนาระบบสื่อสารและบริหารจัดการข้อมูล", "ส่งเสริมการมีส่วนร่วมของผู้ใช้ไฟฟ้าในการบริหารจัดการพลังงาน", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "PDP2018", q: "ข้อใดคือประโยชน์ของ Smart Grid ตามแผน PDP2018?", options: ["เพิ่มประสิทธิภาพและความมั่นคงของระบบไฟฟ้า", "ลดต้นทุนการดำเนินงานของระบบไฟฟ้า", "รองรับการเชื่อมต่อของพลังงานทดแทนและยานยนต์ไฟฟ้า", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "PDP2018", q: "ข้อใดคือความหมายของ 'Decentralized Energy' ตามแผน PDP2018?", options: ["การผลิตพลังงานแบบกระจายศูนย์", "การผลิตพลังงานแบบรวมศูนย์", "การใช้พลังงานอย่างมีประสิทธิภาพ", "การอนุรักษ์พลังงาน"], answerText: "การผลิตพลังงานแบบกระจายศูนย์" },
+            { category: "PDP2018", q: "ข้อใดคือแนวทางการส่งเสริม Decentralized Energy ตามแผน PDP2018?", options: ["สนับสนุนการผลิตไฟฟ้าจากพลังงานทดแทนในระดับชุมชน", "ส่งเสริมการใช้ Microgrid และ Minigrid", "พัฒนาระบบซื้อขายไฟฟ้าแบบ Peer-to-Peer", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "PDP2018", q: "ข้อใดคือประโยชน์ของ Decentralized Energy ตามแผน PDP2018?", options: ["เพิ่มความมั่นคงด้านพลังงานในระดับชุมชน", "ลดการพึ่งพาโครงข่ายไฟฟ้าขนาดใหญ่", "ส่งเสริมการมีส่วนร่วมของชุมชนในการบริหารจัดการพลังงาน", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "PDP2018", q: "ข้อใดคือความหมายของ 'Energy Efficiency' ตามแผน PDP2018?", options: ["การใช้พลังงานอย่างมีประสิทธิภาพ", "การผลิตพลังงานอย่างมีประสิทธิภาพ", "การอนุรักษ์พลังงาน", "การลดการใช้พลังงาน"], answerText: "การใช้พลังงานอย่างมีประสิทธิภาพ" },
+            { category: "PDP2018", q: "ข้อใดคือแนวทางการส่งเสริม Energy Efficiency ตามแผน PDP2018?", options: ["กำหนดมาตรฐานประสิทธิภาพพลังงานสำหรับอุปกรณ์ไฟฟ้า", "ส่งเสริมการใช้เทคโนโลยีประหยัดพลังงานในภาคอุตสาหกรรมและครัวเรือน", "รณรงค์ให้ประชาชนปรับเปลี่ยนพฤติกรรมการใช้พลังงาน", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "PDP2018", q: "ข้อใดคือประโยชน์ของ Energy Efficiency ตามแผน PDP2018?", options: ["ลดการใช้พลังงานและค่าใช้จ่าย", "ลดการปล่อยก๊าซเรือนกระจก", "เพิ่มความมั่นคงด้านพลังงาน", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "PDP2018", q: "ข้อใดคือความหมายของ 'Demand Response' ตามแผน PDP2018?", options: ["การตอบสนองต่อความต้องการใช้ไฟฟ้า", "การผลิตไฟฟ้าตามความต้องการ", "การบริหารจัดการความต้องการใช้ไฟฟ้า", "การลดความต้องการใช้ไฟฟ้า"], answerText: "การตอบสนองต่อความต้องการใช้ไฟฟ้า" },
+            { category: "PDP2018", q: "ข้อใดคือแนวทางการส่งเสริม Demand Response ตามแผน PDP2018?", options: ["กำหนดอัตราค่าไฟฟ้าที่แตกต่างกันตามช่วงเวลา", "ส่งเสริมการใช้ระบบบริหารจัดการพลังงานในอาคาร", "ให้รางวัลแก่ผู้ที่ลดการใช้ไฟฟ้าในช่วงที่มีความต้องการสูง", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "PDP2018", q: "ข้อใดคือประโยชน์ของ Demand Response ตามแผน PDP2018?", options: ["ลดความต้องการใช้ไฟฟ้าสูงสุด (Peak Demand)", "ลดความจำเป็นในการสร้างโรงไฟฟ้าใหม่", "เพิ่มความมั่นคงของระบบไฟฟ้า", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "PDP2018", q: "ข้อใดคือความหมายของ 'Carbon Capture and Storage (CCS)' ตามแผน PDP2018?", options: ["การดักจับและกักเก็บก๊าซคาร์บอนไดออกไซด์", "การลดการปล่อยก๊าซคาร์บอนไดออกไซด์", "การใช้พลังงานสะอาด", "การปลูกป่าเพื่อดูดซับก๊าซคาร์บอนไดออกไซด์"], answerText: "การดักจับและกักเก็บก๊าซคาร์บอนไดออกไซด์" },
+            { category: "PDP2018", q: "ข้อใดคือแนวทางการส่งเสริม CCS ตามแผน PDP2018?", options: ["สนับสนุนการวิจัยและพัฒนาเทคโนโลยี CCS", "ส่งเสริมการลงทุนในโครงการ CCS", "กำหนดมาตรการจูงใจให้ภาคอุตสาหกรรมใช้เทคโนโลยี CCS", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "PDP2018", q: "ข้อใดคือประโยชน์ของ CCS ตามแผน PDP2018?", options: ["ลดการปล่อยก๊าซเรือนกระจกจากภาคอุตสาหกรรม", "ลดผลกระทบจากการเปลี่ยนแปลงสภาพภูมิอากาศ", "สนับสนุนการใช้เชื้อเพลิงฟอสซิลอย่างยั่งยืน", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "PDP2018", q: "ข้อใดคือความหมายของ 'Green Hydrogen' ตามแผน PDP2018?", options: ["ไฮโดรเจนที่ผลิตจากพลังงานทดแทน", "ไฮโดรเจนที่ผลิตจากก๊าซธรรมชาติ", "ไฮโดรเจนที่ผลิตจากถ่านหิน", "ไฮโดรเจนที่ผลิตจากนิวเคลียร์"], answerText: "ไฮโดรเจนที่ผลิตจากพลังงานทดแทน" },
+            { category: "PDP2018", q: "ข้อใดคือแนวทางการส่งเสริม Green Hydrogen ตามแผน PDP2018?", options: ["สนับสนุนการวิจัยและพัฒนาเทคโนโลยีการผลิต Green Hydrogen", "ส่งเสริมการใช้ Green Hydrogen ในภาคอุตสาหกรรมและคมนาคม", "กำหนดมาตรการจูงใจให้ภาคเอกชนลงทุนใน Green Hydrogen", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "PDP2018", q: "ข้อใดคือประโยชน์ของ Green Hydrogen ตามแผน PDP2018?", options: ["ลดการปล่อยก๊าซเรือนกระจกจากภาคพลังงานและอุตสาหกรรม", "เป็นแหล่งพลังงานสะอาดสำหรับอนาคต", "สร้างโอกาสทางเศรษฐกิจใหม่ๆ", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "PDP2018", q: "ข้อใดคือความหมายของ 'Energy Transition' ตามแผน PDP2018?", options: ["การเปลี่ยนผ่านสู่ระบบพลังงานที่ยั่งยืน", "การเปลี่ยนแปลงเทคโนโลยีพลังงาน", "การปรับโครงสร้างอุตสาหกรรมพลังงาน", "การอนุรักษ์พลังงาน"], answerText: "การเปลี่ยนผ่านสู่ระบบพลังงานที่ยั่งยืน" },
+            { category: "PDP2018", q: "ข้อใดคือแนวทางการส่งเสริม Energy Transition ตามแผน PDP2018?", options: ["ส่งเสริมการใช้พลังงานทดแทนและเทคโนโลยีสะอาด", "ลดการพึ่งพาเชื้อเพลิงฟอสซิล", "สร้างความสมดุลระหว่างความมั่นคงด้านพลังงาน เศรษฐกิจ และสิ่งแวดล้อม", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "PDP2018", q: "ข้อใดคือความท้าทายของ Energy Transition ตามแผน PDP2018?", options: ["การเปลี่ยนแปลงโครงสร้างพื้นฐานด้านพลังงาน", "การปรับตัวของภาคอุตสาหกรรมและแรงงาน", "การสร้างความเข้าใจและการยอมรับจากประชาชน", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "PDP2018", q: "ข้อใดคือเป้าหมายสูงสุดของแผน PDP2018?", options: ["สร้างความมั่นคง มั่งคั่ง และยั่งยืนด้านพลังงานไฟฟ้าของประเทศ", "ลดการปล่อยก๊าซเรือนกระจกจากภาคพลังงาน", "เพิ่มสัดส่วนการใช้พลังงานทดแทน", "พัฒนาระบบไฟฟ้าอัจฉริยะ"], answerText: "สร้างความมั่นคง มั่งคั่ง และยั่งยืนด้านพลังงานไฟฟ้าของประเทศ" },
+            { category: "PDP2018", q: "ข้อใดคือกลไกสำคัญในการขับเคลื่อนแผน PDP2018?", options: ["การมีส่วนร่วมของทุกภาคส่วน", "การพัฒนาเทคโนโลยีและนวัตกรรม", "การสร้างความร่วมมือระหว่างประเทศ", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "PDP2018", q: "ข้อใดคือผลลัพธ์ที่คาดหวังจากแผน PDP2018?", options: ["ประเทศไทยมีระบบพลังงานไฟฟ้าที่มั่นคง สะอาด และเป็นธรรม", "ประเทศไทยสามารถบรรลุเป้าหมายการลดก๊าซเรือนกระจก", "ประเทศไทยเป็นผู้นำด้านพลังงานทดแทนในภูมิภาค", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "PDP2018", q: "แผน AEDP ล่าสุดของประเทศไทยครอบคลุมช่วงปีใด?", options: ["พ.ศ. 2560-2575", "พ.ศ. 2565-2580", "พ.ศ. 2570-2585", "พ.ศ. 2575-2590"], answerText: "พ.ศ. 2565-2580" },
+            { category: "PDP2018", q: "เป้าหมายหลักของแผน AEDP คืออะไร?", options: ["เพิ่มการใช้พลังงานฟอสซิล", "ลดการใช้พลังงานทดแทน", "เพิ่มสัดส่วนการใช้พลังงานหมุนเวียน", "ลดการใช้พลังงานทั้งหมด"], answerText: "เพิ่มสัดส่วนการใช้พลังงานหมุนเวียน" },
+            { category: "PDP2018", q: "แผน AEDP มีเป้าหมายในการบรรลุความเป็นกลางทางคาร์บอนภายในปีใด?", options: ["ปี พ.ศ. 2575", "ปี พ.ศ. 2580", "ปี พ.ศ. 2593", "ปี พ.ศ. 2608"], answerText: "ปี พ.ศ. 2608" },
+            { category: "PDP2018", q: "พลังงานหมุนเวียนประเภทใดที่แผน AEDP ให้ความสำคัญเป็นพิเศษ?", options: ["พลังงานนิวเคลียร์", "พลังงานแสงอาทิตย์และพลังงานลม", "พลังงานฟอสซิล", "พลังงานน้ำมันดิบ"], answerText: "พลังงานแสงอาทิตย์และพลังงานลม" },
+            { category: "PDP2018", q: "แผน AEDP ตั้งเป้าหมายการผลิตไฟฟ้าจากพลังงานหมุนเวียนทั้งหมดกี่เมกะวัตต์?", options: ["20,000 เมกะวัตต์", "25,000 เมกะวัตต์", "29,411 เมกะวัตต์", "35,000 เมกะวัตต์"], answerText: "29,411 เมกะวัตต์" },
+            { category: "PDP2018", q: "ในแผน AEDP พลังงานแสงอาทิตย์มีเป้าหมายการผลิตไฟฟ้ากี่เมกะวัตต์?", options: ["10,000 เมกะวัตต์", "12,139 เมกะวัตต์", "15,000 เมกะวัตต์", "18,000 เมกะวัตต์"], answerText: "12,139 เมกะวัตต์" },
+            { category: "PDP2018", q: "พลังงานแสงอาทิตย์ลอยน้ำมีเป้าหมายการผลิตไฟฟ้ากี่เมกะวัตต์ตามแผน AEDP?", options: ["1,500 เมกะวัตต์", "2,000 เมกะวัตต์", "2,725 เมกะวัตต์", "3,000 เมกะวัตต์"], answerText: "2,725 เมกะวัตต์" },
+            { category: "PDP2018", q: "แผน AEDP กำหนดเป้าหมายการผลิตไฟฟ้าจากชีวมวลไว้ที่เท่าใด?", options: ["4,500 เมกะวัตต์", "5,000 เมกะวัตต์", "5,790 เมกะวัตต์", "6,000 เมกะวัตต์"], answerText: "5,790 เมกะวัตต์" },
+            { category: "PDP2018", q: "เป้าหมายการผลิตไฟฟ้าจากพลังงานลมในแผน AEDP คือเท่าใด?", options: ["1,500 เมกะวัตต์", "2,500 เมกะวัตต์", "3,000 เมกะวัตต์", "3,500 เมกะวัตต์"], answerText: "2,500 เมกะวัตต์" },
+            { category: "PDP2018", q: "พลังงานชีวภาพมีเป้าหมายการผลิตไฟฟ้ากี่เมกะวัตต์?", options: ["1,000 เมกะวัตต์", "1,500 เมกะวัตต์", "2,380 เมกะวัตต์", "3,000 เมกะวัตต์"], answerText: "2,380 เมกะวัตต์" },
+            { category: "PDP2018", q: "แผน AEDP มีเป้าหมายลดการปล่อยก๊าซเรือนกระจกจากภาคพลังงานกี่ล้านตันคาร์บอนไดออกไซด์ต่อปี?", options: ["50 ล้านตัน", "75 ล้านตัน", "100 ล้านตัน", "120 ล้านตัน"], answerText: "75 ล้านตัน" },
+            { category: "PDP2018", q: "ภายใต้แผน AEDP พลังงานขยะมีเป้าหมายผลิตไฟฟ้ากี่เมกะวัตต์?", options: ["400 เมกะวัตต์", "500 เมกะวัตต์", "800 เมกะวัตต์", "1,000 เมกะวัตต์"], answerText: "800 เมกะวัตต์" },
+            { category: "PDP2018", q: "เป้าหมายการใช้พลังงานทดแทนในภาคขนส่งของแผน AEDP คือร้อยละเท่าใดในปี 2580?", options: ["15%", "20%", "25%", "30%"], answerText: "20%" },
+            { category: "PDP2018", q: "เชื้อเพลิงชีวภาพ เช่น ไบโอดีเซลและเอทานอล มีเป้าหมายการใช้กี่ล้านลิตรต่อวัน?", options: ["8 ล้านลิตร", "10 ล้านลิตร", "12 ล้านลิตร", "14 ล้านลิตร"], answerText: "12 ล้านลิตร" },
+            { category: "PDP2018", q: "เป้าหมายการผลิตไฟฟ้าจากพลังงานน้ำขนาดเล็กคือกี่เมกะวัตต์?", options: ["300 เมกะวัตต์", "500 เมกะวัตต์", "700 เมกะวัตต์", "1,000 เมกะวัตต์"], answerText: "500 เมกะวัตต์" },
+            { category: "PDP2018", q: "ในปี 2580 พลังงานทดแทนจะมีสัดส่วนกี่เปอร์เซ็นต์ของการใช้พลังงานขั้นสุดท้ายของประเทศ?", options: ["30%", "35%", "40%", "45%"], answerText: "35%" },
+            { category: "PDP2018", q: "พลังงานความร้อนใต้พิภพ (Geothermal) มีเป้าหมายกี่เมกะวัตต์?", options: ["10 เมกะวัตต์", "20 เมกะวัตต์", "30 เมกะวัตต์", "50 เมกะวัตต์"], answerText: "20 เมกะวัตต์" },
+            { category: "PDP2018", q: "แผน AEDP สนับสนุนการผลิตพลังงานไฟฟ้าแบบใดในชุมชน?", options: ["พลังงานฟอสซิล", "พลังงานนิวเคลียร์", "โครงการโรงไฟฟ้าชุมชน", "พลังงานแก๊สธรรมชาติ"], answerText: "โครงการโรงไฟฟ้าชุมชน" },
+            { category: "PDP2018", q: "เป้าหมายการติดตั้งระบบกักเก็บพลังงาน (Energy Storage) ในปี 2580 คือเท่าใด?", options: ["1,000 เมกะวัตต์", "2,000 เมกะวัตต์", "3,000 เมกะวัตต์", "4,000 เมกะวัตต์"], answerText: "2,000 เมกะวัตต์" },
+            { category: "PDP2018", q: "ในภาคอุตสาหกรรม เป้าหมายการใช้พลังงานทดแทนคือร้อยละเท่าใด?", options: ["15%", "20%", "25%", "30%"], answerText: "25%" },
+            { category: "PDP2018", q: "ประเทศไทยตั้งเป้าลดการนำเข้าน้ำมันเชื้อเพลิงภายในปี 2580 คิดเป็นมูลค่าเท่าใด?", options: ["100,000 ล้านบาทต่อปี", "200,000 ล้านบาทต่อปี", "300,000 ล้านบาทต่อปี", "400,000 ล้านบาทต่อปี"], answerText: "300,000 ล้านบาทต่อปี" },
+            { category: "PDP2018", q: "โครงการผลิตไฟฟ้าจากพลังงานขยะชุมชนได้รับการสนับสนุนภายใต้แผน AEDP หรือไม่?", options: ["ไม่สนับสนุน", "สนับสนุนบางส่วน", "สนับสนุนเต็มรูปแบบ", "ไม่มีข้อมูล"], answerText: "สนับสนุนเต็มรูปแบบ" },
+            { category: "PDP2018", q: "เป้าหมายการผลิตพลังงานจากเชื้อเพลิงชีวมวลในภาคความร้อนคือเท่าใด?", options: ["10,000 กิโลตันน้ำมันดิบเทียบเท่า", "12,000 กิโลตันน้ำมันดิบเทียบเท่า", "15,000 กิโลตันน้ำมันดิบเทียบเท่า", "18,000 กิโลตันน้ำมันดิบเทียบเท่า"], answerText: "12,000 กิโลตันน้ำมันดิบเทียบเท่า" },
+            { category: "PDP2018", q: "แผน AEDP มีแนวทางสนับสนุนการผลิตไฟฟ้าแบบกระจายศูนย์ (Decentralized Energy) หรือไม่?", options: ["ไม่สนับสนุน", "สนับสนุนบางส่วน", "สนับสนุนเต็มรูปแบบ", "ไม่มีข้อมูล"], answerText: "สนับสนุนเต็มรูปแบบ" },
+            { category: "PDP2018", q: "เป้าหมายการผลิตก๊าซชีวภาพ (Biogas) ในแผน AEDP คือกี่ล้านลูกบาศก์เมตรต่อวัน?", options: ["1 ล้านลูกบาศก์เมตร", "2 ล้านลูกบาศก์เมตร", "3 ล้านลูกบาศก์เมตร", "4 ล้านลูกบาศก์เมตร"], answerText: "2 ล้านลูกบาศก์เมตร" },
+            { category: "PDP2018", q: "พลังงานทดแทนประเภทใดที่มีสัดส่วนสูงสุดในแผน AEDP?", options: ["พลังงานแสงอาทิตย์", "พลังงานลม", "ชีวมวล", "พลังงานขยะ"], answerText: "พลังงานแสงอาทิตย์" },
+            { category: "PDP2018", q: "ในแผน AEDP มีเป้าหมายลดการใช้ถ่านหินในภาคการผลิตไฟฟ้าหรือไม่?", options: ["ไม่มีเป้าหมาย", "ลดบางส่วน", "ลดทั้งหมด", "เพิ่มขึ้น"], answerText: "ลดบางส่วน" },
+            { category: "PDP2018", q: "พลังงานจากน้ำมันพืชใช้ในรูปแบบใดตามแผน AEDP?", options: ["ไบโอดีเซล (B100)", "เอทานอล", "ไฮโดรเจน", "ไบโอแก๊ส"], answerText: "ไบโอดีเซล (B100)" },
+            { category: "PDP2018", q: "ภายใต้แผน AEDP มีการสนับสนุนพลังงานไฮโดรเจนหรือไม่?", options: ["ไม่สนับสนุน", "สนับสนุนบางส่วน", "สนับสนุนเต็มรูปแบบ", "ไม่มีข้อมูล"], answerText: "สนับสนุนบางส่วน" },
+            { category: "PDP2018", q: "เป้าหมายสุดท้ายของแผน AEDP คืออะไร?", options: ["เพิ่มการใช้พลังงานฟอสซิล", "ลดค่าไฟฟ้าของประชาชน", "บรรลุความเป็นกลางทางคาร์บอน", "ลดการใช้พลังงานทั้งหมด"], answerText: "บรรลุความเป็นกลางทางคาร์บอน" },        
+            { category: "PDP2018", q: "ประเทศไทยมีหน่วยงานใดเป็นผู้รับผิดชอบหลักในการส่งจ่ายกำลังไฟฟ้า?", options: ["การไฟฟ้านครหลวง (กฟน.)", "การไฟฟ้าส่วนภูมิภาค (กฟภ.)", "การไฟฟ้าฝ่ายผลิตแห่งประเทศไทย (กฟผ.)", "กระทรวงพลังงาน"], answerText: "การไฟฟ้าฝ่ายผลิตแห่งประเทศไทย (กฟผ.)" },
+            { category: "PDP2018", q: "ความถี่มาตรฐานของระบบไฟฟ้าในประเทศไทยอยู่ที่เท่าใด?", options: ["50 Hz", "60 Hz", "110 Hz", "220 Hz"], answerText: "50 Hz" },
+            { category: "PDP2018", q: "แหล่งพลังงานหลักที่ใช้ในการผลิตไฟฟ้าในประเทศไทยคืออะไร?", options: ["พลังงานน้ำ", "พลังงานถ่านหิน", "ก๊าซธรรมชาติ", "พลังงานแสงอาทิตย์"], answerText: "ก๊าซธรรมชาติ" },
+            { category: "PDP2018", q: "แรงดันไฟฟ้าที่ใช้ในระบบส่งไฟฟ้าแรงสูงหลักของประเทศไทยคือเท่าใด?", options: ["115 kV", "230 kV", "500 kV", "11 kV"], answerText: "500 kV" },
+            { category: "PDP2018", q: "หน่วยงานใดเป็นผู้รับผิดชอบในการจัดจำหน่ายไฟฟ้าให้กับประชาชนในเขตกรุงเทพฯ และปริมณฑล?", options: ["การไฟฟ้านครหลวง (กฟน.)", "การไฟฟ้าส่วนภูมิภาค (กฟภ.)", "การไฟฟ้าฝ่ายผลิตแห่งประเทศไทย (กฟผ.)", "กระทรวงพลังงาน"], answerText: "การไฟฟ้านครหลวง (กฟน.)" },
+            { category: "PDP2018", q: "ประเทศไทยมีการเชื่อมโยงระบบส่งไฟฟ้ากับประเทศใดเพื่อเสริมความมั่นคงทางพลังงาน?", options: ["มาเลเซีย, ลาว, เมียนมา", "สิงคโปร์, เวียดนาม, กัมพูชา", "ลาว, เมียนมา, กัมพูชา", "มาเลเซีย, ลาว, กัมพูชา"], answerText: "มาเลเซีย, ลาว, เมียนมา" },
+            { category: "PDP2018", q: "โครงการพลังงานหมุนเวียนที่มีการติดตั้งมากที่สุดในประเทศไทยคืออะไร?", options: ["พลังงานน้ำ", "พลังงานลม", "พลังงานแสงอาทิตย์", "พลังงานชีวมวล"], answerText: "พลังงานแสงอาทิตย์" },
+            { category: "PDP2018", q: "Peak Load (ความต้องการใช้ไฟฟ้าสูงสุด) ของประเทศไทยมักเกิดขึ้นในช่วงเวลาใด?", options: ["ช่วงเช้า (06.00-09.00 น.)", "ช่วงกลางวัน (12.00-14.00 น.)", "ช่วงเย็น (19.00-21.00 น.)", "ช่วงดึก (22.00-24.00 น.)"], answerText: "ช่วงเย็น (19.00-21.00 น.)" },
+            { category: "PDP2018", q: "ประเทศไทยมีแผนพัฒนาพลังงานทดแทนภายใต้แผนใด?", options: ["PDP", "AEDP", "EEP", "SEP"], answerText: "AEDP" },
+            { category: "PDP2018", q: "หน่วยงานใดมีหน้าที่กำกับดูแลกิจการพลังงานไฟฟ้าของประเทศไทย?", options: ["การไฟฟ้าฝ่ายผลิตแห่งประเทศไทย (กฟผ.)", "การไฟฟ้านครหลวง (กฟน.)", "สำนักงานคณะกรรมการกำกับกิจการพลังงาน (กกพ.)", "กระทรวงพลังงาน"], answerText: "สำนักงานคณะกรรมการกำกับกิจการพลังงาน (กกพ.)" },
+            { category: "PDP2018", q: "ข้อใดคือรูปแบบโครงสร้างกิจการไฟฟ้าของประเทศไทยในปัจจุบัน?", options: ["Single Buyer Model", "Enhanced Single Buyer Model", "Independent Power Producer", "Merchant Model"], answerText: "Enhanced Single Buyer Model" },
+            { category: "PDP2018", q: "กฟผ. มีหน้าที่หลักในกิจการไฟฟ้าอย่างไร?", options: ["ผลิต ส่ง และจำหน่ายไฟฟ้า", "ผลิตและส่งไฟฟ้า", "จำหน่ายไฟฟ้า", "กำกับดูแลการผลิตไฟฟ้า"], answerText: "ผลิตและส่งไฟฟ้า" },
+            { category: "PDP2018", q: "ข้อใดคือความหมายของ IPP (Independent Power Producer)?", options: ["ผู้ผลิตไฟฟ้าอิสระ", "ผู้ผลิตไฟฟ้าขนาดใหญ่", "ผู้ผลิตไฟฟ้าพลังงานหมุนเวียน", "ผู้ผลิตไฟฟ้าจากต่างประเทศ"], answerText: "ผู้ผลิตไฟฟ้าขนาดใหญ่" },
+            { category: "PDP2018", q: "ข้อใดคือความหมายของ VSPP (Very Small Power Producer)?", options: ["ผู้ผลิตไฟฟ้าขนาดเล็กมาก", "ผู้ผลิตไฟฟ้าขนาดเล็ก", "ผู้ผลิตไฟฟ้าขนาดกลาง", "ผู้ผลิตไฟฟ้าขนาดใหญ่"], answerText: "ผู้ผลิตไฟฟ้าขนาดเล็กมาก" },
+            { category: "PDP2018", q: "ข้อใดคือแหล่งพลังงานหลักที่ใช้ในการผลิตไฟฟ้าในประเทศไทย?", options: ["ก๊าซธรรมชาติ", "ถ่านหิน", "พลังงานน้ำ", "พลังงานแสงอาทิตย์"], answerText: "ก๊าซธรรมชาติ" },
+            { category: "PDP2018", q: "ข้อใดไม่ใช่พลังงานหมุนเวียนที่ใช้ในการผลิตไฟฟ้าในประเทศไทย?", options: ["พลังงานลม", "พลังงานแสงอาทิตย์", "พลังงานนิวเคลียร์", "พลังงานชีวมวล"], answerText: "พลังงานนิวเคลียร์" },
+            { category: "PDP2018", q: "โรงไฟฟ้าใดเป็นโรงไฟฟ้าพลังงานนิวเคลียร์แห่งแรกของประเทศไทย?", options: ["โรงไฟฟ้าพลังงานนิวเคลียร์ระยอง", "โรงไฟฟ้าพลังงานนิวเคลียร์สระบุรี", "โรงไฟฟ้าพลังงานนิวเคลียร์นครนายก", "ประเทศไทยยังไม่มีโรงไฟฟ้าพลังงานนิวเคลียร์"], answerText: "ประเทศไทยยังไม่มีโรงไฟฟ้าพลังงานนิวเคลียร์" },
+            { category: "PDP2018", q: "โครงการใดเป็นโครงการพัฒนาพลังงานไฟฟ้าที่สำคัญในประเทศไทย?", options: ["โครงการโรงไฟฟ้าพลังน้ำเขื่อนภูมิพล", "โครงการโรงไฟฟ้าพลังงานแสงอาทิตย์", "โครงการโรงไฟฟ้าพลังงานลม", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "PDP2018", q: "ข้อใดคือเป้าหมายของการอนุรักษ์พลังงานไฟฟ้า?", options: ["ลดการใช้พลังงานไฟฟ้า", "เพิ่มประสิทธิภาพการใช้พลังงานไฟฟ้า", "ลดค่าใช้จ่ายด้านพลังงานไฟฟ้า", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "PDP2018", q: "ข้อใดคือผลกระทบจากการใช้พลังงานไฟฟ้า?", options: ["การปล่อยก๊าซเรือนกระจก", "ปัญหามลพิษทางอากาศ", "การเปลี่ยนแปลงสภาพภูมิอากาศ", "ถูกทุกข้อ"], answerText: "การปล่อยก๊าซเรือนกระจก" },
+            { category: "PDP2018", q: "ข้อใดคือแนวทางการแก้ไขปัญหาผลกระทบจากการใช้พลังงานไฟฟ้า?", options: ["การใช้พลังงานหมุนเวียน", "การอนุรักษ์พลังงาน", "การเพิ่มประสิทธิภาพการผลิตไฟฟ้า", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "PDP2018", q: "ข้อใดคือความหมายของ 'Smart Grid'?", options: ["โครงข่ายไฟฟ้าอัจฉริยะ", "โรงไฟฟ้าอัจฉริยะ", "มิเตอร์ไฟฟ้าอัจฉริยะ", "การใช้พลังงานไฟฟ้าอย่างอัจฉริยะ"], answerText: "โครงข่ายไฟฟ้าอัจฉริยะ" },
+            { category: "PDP2018", q: "ข้อใดคือประโยชน์ของ Smart Grid?", options: ["เพิ่มความมั่นคงของระบบไฟฟ้า", "ลดการสูญเสียพลังงานไฟฟ้า", "บริหารจัดการพลังงานไฟฟ้าได้อย่างมีประสิทธิภาพ", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "PDP2018", q: "ข้อใดคือความหมายของ 'EV'?", options: ["ยานยนต์ไฟฟ้า", "สถานีชาร์จไฟฟ้า", "แบตเตอรี่ไฟฟ้า", "มอเตอร์ไฟฟ้า"], answerText: "ยานยนต์ไฟฟ้า" },
+            { category: "PDP2018", q: "ข้อใดคือประโยชน์ของการใช้ EV?", options: ["ลดการปล่อยมลพิษ", "ประหยัดค่าใช้จ่ายด้านพลังงาน", "ลดการพึ่งพาน้ำมัน", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "PDP2018", q: "ข้อใดคือความท้าทายของการใช้ EV?", options: ["ราคา EV ยังสูง", "สถานีชาร์จไฟฟ้ายังมีจำนวนจำกัด", "ระยะทางวิ่งของ EV ยังสั้น", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "PDP2018", q: "ข้อใดคือแนวทางการส่งเสริมการใช้ EV ในประเทศไทย?", options: ["การลดหย่อนภาษี", "การสร้างสถานีชาร์จไฟฟ้า", "การให้ความรู้เกี่ยวกับ EV", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "PDP2018", q: "ข้อใดคือความหมายของ 'Demand Response'?", options: ["การตอบสนองต่อความต้องการใช้ไฟฟ้า", "การลดการใช้ไฟฟ้าในช่วงเวลาที่มีความต้องการสูง", "การเพิ่มการใช้ไฟฟ้าในช่วงเวลาที่มีความต้องการต่ำ", "ถูกทุกข้อ"], answerText: "การตอบสนองต่อความต้องการใช้ไฟฟ้า" },
+            { category: "PDP2018", q: "ข้อใดคือประโยชน์ของ Demand Response?", options: ["ลดความต้องการใช้ไฟฟ้าสูงสุด", "ลดการลงทุนในโรงไฟฟ้าใหม่", "ลดค่าไฟฟ้า", "ถูกทุกข้อ"], answerText: "ลดความต้องการใช้ไฟฟ้าสูงสุด" },
+            { category: "PDP2018", q: "ข้อใดคือความหมายของ 'Energy Storage'?", options: ["การเก็บสะสมพลังงานไฟฟ้า", "การผลิตไฟฟ้า", "การส่งไฟฟ้า", "การจำหน่ายไฟฟ้า"], answerText: "การเก็บสะสมพลังงานไฟฟ้า" },
+            { category: "PDP2018", q: "ข้อใดคือประโยชน์ของ Energy Storage?", options: ["เพิ่มความมั่นคงของระบบไฟฟ้า", "รองรับพลังงานหมุนเวียน", "บริหารจัดการพลังงานไฟฟ้าได้อย่างมีประสิทธิภาพ", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "PDP2018", q: "ข้อใดคือเทคโนโลยี Energy Storage ที่นิยมใช้ในปัจจุบัน?", options: ["แบตเตอรี่", "Pumped Hydro", "Compressed Air Energy Storage", "ถูกทุกข้อ"], answerText: "แบตเตอรี่" },
+            { category: "PDP2018", q: "ข้อใดคือความหมายของ 'Microgrid'?", options: ["ระบบไฟฟ้าขนาดเล็ก", "โรงไฟฟ้าขนาดเล็ก", "สายส่งไฟฟ้าขนาดเล็ก", "มิเตอร์ไฟฟ้าขนาดเล็ก"], answerText: "ระบบไฟฟ้าขนาดเล็ก" },
+            { category: "PDP2018", q: "ข้อใดคือประโยชน์ของ Microgrid?", options: ["เพิ่มความมั่นคงของระบบไฟฟ้า", "รองรับพลังงานหมุนเวียน", "ลดการสูญเสียพลังงานไฟฟ้า", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "PDP2018", q: "ข้อใดคือความท้าทายของการพัฒนา Microgrid?", options: ["เทคโนโลยี", "กฎระเบียบ", "การลงทุน", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "PDP2018", q: "ข้อใดคือแนวทางการส่งเสริมการพัฒนา Microgrid ในประเทศไทย?", options: ["การสนับสนุนด้านเทคโนโลยี", "การปรับปรุงกฎระเบียบ", "การส่งเสริมการลงทุน", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "PDP2018", q: "ข้อใดคือความหมายของ 'Peer-to-Peer Energy Trading'?", options: ["การซื้อขายพลังงานไฟฟ้าโดยตรงระหว่างผู้ผลิตและผู้บริโภค", "การซื้อขายพลังงานไฟฟ้าผ่านตัวกลาง", "การผลิตไฟฟ้าใช้เอง", "การอนุรักษ์พลังงาน"], answerText: "การซื้อขายพลังงานไฟฟ้าโดยตรงระหว่างผู้ผลิตและผู้บริโภค" },
+            { category: "PDP2018", q: "ข้อใดคือประโยชน์ของ Peer-to-Peer Energy Trading?", options: ["เพิ่มความโปร่งใสในการซื้อขายพลังงานไฟฟ้า", "ลดค่าไฟฟ้า", "ส่งเสริมการผลิตไฟฟ้าพลังงานหมุนเวียน", "ถูกทุกข้อ"], answerText: "เพิ่มความโปร่งใสในการซื้อขายพลังงานไฟฟ้า" },
+            { category: "PDP2018", q: "ข้อใดคือความท้าทายของการพัฒนา Peer-to-Peer Energy Trading?", options: ["เทคโนโลยี", "กฎระเบียบ", "ความปลอดภัย", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "PDP2018", q: "ข้อใดคือแนวทางการส่งเสริมการพัฒนา Peer-to-Peer Energy Trading ในประเทศไทย?", options: ["การสนับสนุนด้านเทคโนโลยี", "การปรับปรุงกฎระเบียบ", "การส่งเสริมความเข้าใจ", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "PDP2018", q: "ข้อใดคือความหมายของ 'Energy Efficiency'?", options: ["การใช้พลังงานไฟฟ้าอย่างมีประสิทธิภาพ", "การลดการใช้พลังงานไฟฟ้า", "การผลิตพลังงานไฟฟ้า", "การส่งพลังงานไฟฟ้า"], answerText: "การใช้พลังงานไฟฟ้าอย่างมีประสิทธิภาพ" },
+            { category: "PDP2018", q: "ข้อใดคือแนวทางการเพิ่ม Energy Efficiency?", options: ["การใช้เครื่องใช้ไฟฟ้าประหยัดพลังงาน", "การปรับปรุงระบบไฟฟ้า", "การใช้พลังงานหมุนเวียน", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "PDP2018", q: "ข้อใดคือประโยชน์ของการเพิ่ม Energy Efficiency?", options: ["ลดค่าไฟฟ้า", "ลดการปล่อยก๊าซเรือนกระจก", "ประหยัดทรัพยากร", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "PDP2018", q: "ข้อใดคือความหมายของ 'Demand-Side Management'?", options: ["การบริหารจัดการความต้องการใช้ไฟฟ้า", "การลดความต้องการใช้ไฟฟ้า", "การเพิ่มการใช้ไฟฟ้า", "การผลิตไฟฟ้า"], answerText: "การบริหารจัดการความต้องการใช้ไฟฟ้า" },
+            { category: "PDP2018", q: "ข้อใดคือเครื่องมือของ Demand-Side Management?", options: ["การให้ข้อมูล", "การจูงใจ", "การควบคุม", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "PDP2018", q: "ข้อใดคือเป้าหมายของ Demand-Side Management?", options: ["ลดความต้องการใช้ไฟฟ้าสูงสุด", "เพิ่มประสิทธิภาพการใช้ไฟฟ้า", "ลดค่าไฟฟ้า", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "PDP2018", q: "ข้อใดคือความหมายของ 'Renewable Energy Certificate' (REC)?", options: ["ใบรับรองการผลิตพลังงานหมุนเวียน", "ใบอนุญาตผลิตไฟฟ้า", "ใบรับรองการใช้ไฟฟ้า", "ใบอนุญาตขายไฟฟ้า"], answerText: "ใบรับรองการผลิตพลังงานหมุนเวียน" },
+            { category: "PDP2018", q: "ข้อใดคือประโยชน์ของ REC?", options: ["สนับสนุนการผลิตพลังงานหมุนเวียน", "ลดต้นทุนการผลิตไฟฟ้าพลังงานหมุนเวียน", "เพิ่มความน่าสนใจในการลงทุนพลังงานหมุนเวียน", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "PDP2018", q: "กกพ. มีชื่อเต็มว่าอะไร?", options: ["คณะกรรมการกำกับกิจการพลังงาน", "การไฟฟ้าฝ่ายผลิตแห่งประเทศไทย", "การไฟฟ้านครหลวง", "กระทรวงพลังงาน"], answerText: "คณะกรรมการกำกับกิจการพลังงาน" },
+            { category: "PDP2018", q: "กกพ. เป็นหน่วยงานประเภทใด?", options: ["หน่วยงานภาครัฐ", "รัฐวิสาหกิจ", "องค์กรอิสระ", "บริษัทเอกชน"], answerText: "หน่วยงานภาครัฐ" },
+            { category: "PDP2018", q: "กกพ. มีหน้าที่หลักในการกำกับดูแลกิจการใด?", options: ["กิจการพลังงานไฟฟ้า", "กิจการพลังงานน้ำมัน", "กิจการพลังงานก๊าซธรรมชาติ", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "PDP2018", q: "ข้อใดไม่ใช่หน้าที่ของ กกพ.?", options: ["กำหนดอัตราค่าไฟฟ้า", "อนุญาตประกอบกิจการไฟฟ้า", "ผลิตไฟฟ้า", "กำกับดูแลคุณภาพบริการ"], answerText: "ผลิตไฟฟ้า" },
+            { category: "PDP2018", q: "กกพ. มีอำนาจในการกำหนดอัตราค่าไฟฟ้าอย่างไร?", options: ["กำหนดโดยอิสระ", "กำหนดตามนโยบายรัฐบาล", "กำหนดโดยคำนึงถึงต้นทุนและผลประโยชน์ของผู้บริโภค", "กำหนดตามราคาตลาดโลก"], answerText: "กำหนดโดยคำนึงถึงต้นทุนและผลประโยชน์ของผู้บริโภค" },
+            { category: "PDP2018", q: "กกพ. มีบทบาทในการส่งเสริมการแข่งขันในตลาดไฟฟ้าอย่างไร?", options: ["ส่งเสริมการผลิตไฟฟ้าจากพลังงานหมุนเวียน", "เปิดโอกาสให้ผู้ผลิตไฟฟ้าอิสระเข้ามาแข่งขัน", "กำกับดูแลการผูกขาดตลาด", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "PDP2018", q: "กกพ. มีหน้าที่ในการคุ้มครองผู้บริโภคอย่างไร?", options: ["กำหนดมาตรฐานคุณภาพไฟฟ้า", "รับเรื่องร้องเรียนจากผู้บริโภค", "ให้ข้อมูลและคำแนะนำแก่ผู้บริโภค", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "PDP2018", q: "กกพ. มีส่วนร่วมในการกำหนดนโยบายพลังงานของประเทศอย่างไร?", options: ["ให้ข้อเสนอแนะแก่รัฐบาล", "จัดทำแผนแม่บทพลังงาน", "กำกับดูแลการดำเนินงานตามนโยบาย", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "PDP2018", q: "กกพ. มีความสัมพันธ์กับหน่วยงานอื่นอย่างไร?", options: ["ร่วมมือกับกระทรวงพลังงาน", "ประสานงานกับการไฟฟ้าฝ่ายผลิตแห่งประเทศไทย", "ทำงานร่วมกับองค์กรผู้บริโภค", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "PDP2018", q: "กกพ. มีการเปิดเผยข้อมูลต่อสาธารณะอย่างไร?", options: ["เผยแพร่ข้อมูลผ่านเว็บไซต์", "จัดกิจกรรมให้ข้อมูลแก่ประชาชน", "รับฟังความคิดเห็นจากสาธารณะ", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "PDP2018", q: "ข้อใดคือวิสัยทัศน์ของ กกพ.?", options: ["เป็นองค์กรกำกับกิจการพลังงานที่เป็นเลิศในระดับสากล", "เป็นผู้นำด้านการพัฒนาพลังงานที่ยั่งยืน", "เป็นผู้สร้างความมั่นคงทางพลังงานของประเทศ", "เป็นผู้พิทักษ์สิทธิผู้บริโภคด้านพลังงาน"], answerText: "เป็นองค์กรกำกับกิจการพลังงานที่เป็นเลิศในระดับสากล" },
+            { category: "PDP2018", q: "ข้อใดคือพันธกิจของ กกพ.?", options: ["กำกับและส่งเสริมการประกอบกิจการพลังงานอย่างเป็นธรรม โปร่งใส และมีประสิทธิภาพ", "พัฒนาระบบพลังงานของประเทศให้มีความมั่นคง ยั่งยืน และเป็นมิตรต่อสิ่งแวดล้อม", "คุ้มครองสิทธิผู้บริโภคและส่งเสริมการมีส่วนร่วมของประชาชน", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "PDP2018", q: "กกพ. มีการดำเนินงานตามหลักธรรมาภิบาลอย่างไร?", options: ["มีความโปร่งใสในการดำเนินงาน", "มีการตรวจสอบและประเมินผลการปฏิบัติงาน", "มีการเปิดเผยข้อมูลต่อสาธารณะ", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "PDP2018", q: "กกพ. มีการส่งเสริมการมีส่วนร่วมของประชาชนอย่างไร?", options: ["เปิดโอกาสให้ประชาชนแสดงความคิดเห็น", "จัดกิจกรรมรับฟังความคิดเห็น", "เปิดช่องทางการร้องเรียน", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "PDP2018", q: "กกพ. มีการพัฒนาบุคลากรอย่างไร?", options: ["ฝึกอบรมและพัฒนาความรู้", "ส่งเสริมการเรียนรู้ตลอดชีวิต", "สร้างวัฒนธรรมองค์กรที่เข้มแข็ง", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "PDP2018", q: "ข้อใดคือความท้าทายของ กกพ. ในอนาคต?", options: ["การเปลี่ยนแปลงเทคโนโลยีพลังงาน", "การเพิ่มขึ้นของพลังงานหมุนเวียน", "การแข่งขันในตลาดพลังงาน", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "PDP2018", q: "กกพ. มีแนวทางการรับมือกับความท้าทายอย่างไร?", options: ["พัฒนากฎระเบียบที่ทันสมัย", "ส่งเสริมการใช้เทคโนโลยีใหม่", "สร้างความร่วมมือกับทุกภาคส่วน", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "PDP2018", q: "ข้อใดคือเป้าหมายของ กกพ. ในการพัฒนาพลังงานที่ยั่งยืน?", options: ["สร้างความมั่นคงทางพลังงาน", "ลดผลกระทบต่อสิ่งแวดล้อม", "ส่งเสริมการใช้พลังงานอย่างมีประสิทธิภาพ", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "PDP2018", q: "กกพ. มีการประเมินผลการดำเนินงานอย่างไร?", options: ["ประเมินผลการปฏิบัติงานตามแผน", "ประเมินความพึงพอใจของผู้มีส่วนได้ส่วนเสีย", "ประเมินผลกระทบต่อสังคมและสิ่งแวดล้อม", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "PDP2018", q: "ข้อใดคือประโยชน์ที่ประชาชนได้รับจาก กกพ.?", options: ["มีไฟฟ้าใช้ในราคาที่เป็นธรรม", "มีไฟฟ้าใช้ที่มีคุณภาพ", "มีส่วนร่วมในการตัดสินใจเกี่ยวกับพลังงาน", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" },
+            { category: "PDP2018", q: "กฟผ. มีชื่อเต็มว่าอะไร?", options: ["การไฟฟ้าฝ่ายผลิตแห่งประเทศไทย", "การไฟฟ้านครหลวง", "การไฟฟ้าส่วนภูมิภาค", "กระทรวงพลังงาน"], answerText: "การไฟฟ้าฝ่ายผลิตแห่งประเทศไทย" },
+            { category: "PDP2018", q: "กฟผ. เป็นหน่วยงานประเภทใด?", options: ["หน่วยงานภาครัฐ", "รัฐวิสาหกิจ", "องค์กรอิสระ", "บริษัทเอกชน"], answerText: "รัฐวิสาหกิจ" },
+            { category: "PDP2018", q: "กฟผ. มีหน้าที่หลักในการผลิตไฟฟ้าจากแหล่งพลังงานใด?", options: ["พลังงานน้ำ", "พลังงานความร้อน", "พลังงานหมุนเวียน", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" }, //
+            { category: "PDP2018", q: "ข้อใดไม่ใช่หน้าที่ของ กฟผ.?", options: ["จำหน่ายไฟฟ้าให้กับผู้บริโภคโดยตรง", "ผลิตและส่งไฟฟ้า", "บริหารจัดการระบบส่งไฟฟ้า", "พัฒนาแหล่งพลังงานใหม่"], answerText: "จำหน่ายไฟฟ้าให้กับผู้บริโภคโดยตรง" }, //
+            { category: "PDP2018", q: "กฟผ. มีบทบาทสำคัญในการรักษาความมั่นคงทางพลังงานของประเทศอย่างไร?", options: ["ผลิตไฟฟ้าอย่างเพียงพอต่อความต้องการ", "รักษาเสถียรภาพของระบบไฟฟ้า", "พัฒนาแหล่งพลังงานสำรอง", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" }, //
+            { category: "PDP2018", q: "กฟผ. มีส่วนร่วมในการพัฒนาพลังงานหมุนเวียนอย่างไร?", options: ["ลงทุนในโครงการผลิตไฟฟ้าจากพลังงานหมุนเวียน", "วิจัยและพัฒนาเทคโนโลยีพลังงานหมุนเวียน", "ส่งเสริมการมีส่วนร่วมของประชาชนในการผลิตไฟฟ้าจากพลังงานหมุนเวียน", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" }, //
+            { category: "PDP2018", q: "กฟผ. มีความรับผิดชอบต่อสังคมและสิ่งแวดล้อมอย่างไร?", options: ["ลดผลกระทบต่อสิ่งแวดล้อมจากการผลิตไฟฟ้า", "พัฒนาชุมชนรอบโรงไฟฟ้า", "สนับสนุนกิจกรรมเพื่อสังคม", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" }, //
+            { category: "PDP2018", q: "กฟผ. มีการบริหารจัดการต้นทุนการผลิตไฟฟ้าอย่างไร?", options: ["เพิ่มประสิทธิภาพการผลิตไฟฟ้า", "ลดการสูญเสียพลังงาน", "ใช้เทคโนโลยีที่ทันสมัย", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" }, //
+            { category: "PDP2018", q: "กฟผ. มีการพัฒนาบุคลากรอย่างไร?", options: ["ฝึกอบรมและพัฒนาความรู้", "ส่งเสริมการเรียนรู้ตลอดชีวิต", "สร้างวัฒนธรรมองค์กรที่เข้มแข็ง", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" }, //
+            { category: "PDP2018", q: "ข้อใดคือวิสัยทัศน์ของ กฟผ.?", options: ["เป็นองค์กรชั้นนำด้านพลังงานไฟฟ้าของประเทศ", "เป็นผู้ผลิตไฟฟ้าที่ใหญ่ที่สุดในประเทศไทย", "นวัตกรรมพลังงานไฟฟ้าเพื่อชีวิตที่ดีกว่า", "เป็นผู้พัฒนาพลังงานที่ยั่งยืน"], answerText: "นวัตกรรมพลังงานไฟฟ้าเพื่อชีวิตที่ดีกว่า" }, //
+            { category: "PDP2018", q: "ข้อใดคือพันธกิจของ กฟผ.?", options: ["ผลิตและส่งไฟฟ้าเพื่อความสุขของคนไทย", "พัฒนาระบบไฟฟ้าของประเทศให้มีความทันสมัย", "สร้างความมั่นคงทางพลังงานของประเทศ", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" }, //
+            { category: "PDP2018", q: "กฟผ. มีการกำกับดูแลการดำเนินงานของโรงไฟฟ้าอย่างไร?", options: ["ควบคุมคุณภาพการผลิตไฟฟ้า", "ตรวจสอบความปลอดภัยของโรงไฟฟ้า", "ประเมินผลกระทบต่อสิ่งแวดล้อม", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" }, //
+            { category: "PDP2018", q: "กฟผ. มีการสื่อสารกับประชาชนอย่างไร?", options: ["เผยแพร่ข้อมูลผ่านช่องทางต่างๆ", "จัดกิจกรรมให้ข้อมูลแก่ประชาชน", "รับฟังความคิดเห็นจากประชาชน", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" }, //
+            { category: "PDP2018", q: "กฟผ. มีการวางแผนการผลิตไฟฟ้าในอนาคตอย่างไร?", options: ["คาดการณ์ความต้องการใช้ไฟฟ้า", "พัฒนาแหล่งพลังงานใหม่", "ลงทุนในเทคโนโลยีที่ทันสมัย", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" }, //
+            { category: "PDP2018", q: "ข้อใดคือความท้าทายของ กฟผ. ในอนาคต?", options: ["การเปลี่ยนแปลงเทคโนโลยีพลังงาน", "การเพิ่มขึ้นของพลังงานหมุนเวียน", "การแข่งขันในตลาดพลังงาน", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" }, //
+            { category: "PDP2018", q: "กฟผ. มีแนวทางการรับมือกับความท้าทายอย่างไร?", options: ["พัฒนากฎระเบียบที่ทันสมัย", "ส่งเสริมการใช้เทคโนโลยีใหม่", "สร้างความร่วมมือกับทุกภาคส่วน", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" }, //
+            { category: "PDP2018", q: "ข้อใดคือเป้าหมายของ กฟผ. ในการพัฒนาพลังงานที่ยั่งยืน?", options: ["สร้างความมั่นคงทางพลังงาน", "ลดผลกระทบต่อสิ่งแวดล้อม", "ส่งเสริมการใช้พลังงานอย่างมีประสิทธิภาพ", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" }, //
+            { category: "PDP2018", q: "กฟผ. มีการประเมินผลการดำเนินงานอย่างไร?", options: ["ประเมินผลการปฏิบัติงานตามแผน", "ประเมินความพึงพอใจของผู้มีส่วนได้ส่วนเสีย", "ประเมินผลกระทบต่อสังคมและสิ่งแวดล้อม", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" }, //
+            { category: "PDP2018", q: "ข้อใดคือประโยชน์ที่ประชาชนได้รับจาก กฟผ.?", options: ["มีไฟฟ้าใช้ในราคาที่เป็นธรรม", "มีไฟฟ้าใช้ที่มีคุณภาพ", "มีส่วนร่วมในการตัดสินใจเกี่ยวกับพลังงาน", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" }, //
+            { category: "PDP2018", q: "กฟผ. มีการดำเนินงานตามหลักธรรมาภิบาลอย่างไร?", options: ["มีความโปร่งใสในการดำเนินงาน", "มีการตรวจสอบและประเมินผลการปฏิบัติงาน", "มีการเปิดเผยข้อมูลต่อสาธารณะ", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" }, //
+            { category: "PDP2018", q: "กฟน. มีชื่อเต็มว่าอะไร?", options: ["การไฟฟ้าฝ่ายผลิตแห่งประเทศไทย", "การไฟฟ้านครหลวง", "การไฟฟ้าส่วนภูมิภาค", "กระทรวงพลังงาน"], answerText: "การไฟฟ้านครหลวง" }, //
+            { category: "PDP2018", q: "กฟน. เป็นหน่วยงานประเภทใด?", options: ["หน่วยงานภาครัฐ", "รัฐวิสาหกิจ", "องค์กรอิสระ", "บริษัทเอกชน"], answerText: "รัฐวิสาหกิจ" }, //
+            { category: "PDP2018", q: "กฟน. มีหน้าที่หลักในการจำหน่ายไฟฟ้าในพื้นที่ใด?", options: ["กรุงเทพมหานคร นนทบุรี และสมุทรปราการ", "ทั่วประเทศ", "ภาคเหนือ", "ภาคใต้"], answerText: "กรุงเทพมหานคร นนทบุรี และสมุทรปราการ" }, //
+            { category: "PDP2018", q: "ข้อใดไม่ใช่หน้าที่ของ กฟน.?", options: ["ผลิตไฟฟ้า", "จำหน่ายไฟฟ้า", "ติดตั้งและบำรุงรักษามิเตอร์ไฟฟ้า", "ให้บริการลูกค้า"], answerText: "ผลิตไฟฟ้า" }, //
+            { category: "PDP2018", q: "กฟน. มีบทบาทสำคัญในการพัฒนาโครงข่ายไฟฟ้าในพื้นที่รับผิดชอบอย่างไร?", options: ["ขยายและปรับปรุงระบบจำหน่ายไฟฟ้า", "เพิ่มความมั่นคงและเสถียรภาพของระบบไฟฟ้า", "นำเทคโนโลยีที่ทันสมัยมาใช้", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" }, //
+            { category: "PDP2018", q: "กฟน. มีส่วนร่วมในการส่งเสริมการใช้พลังงานอย่างมีประสิทธิภาพอย่างไร?", options: ["ให้คำแนะนำแก่ผู้บริโภค", "จัดกิจกรรมส่งเสริมการอนุรักษ์พลังงาน", "สนับสนุนการใช้พลังงานหมุนเวียน", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" }, //
+            { category: "PDP2018", q: "กฟน. มีความรับผิดชอบต่อสังคมและสิ่งแวดล้อมอย่างไร?", options: ["ลดผลกระทบต่อสิ่งแวดล้อมจากการดำเนินงาน", "พัฒนาชุมชนรอบสถานีไฟฟ้า", "สนับสนุนกิจกรรมเพื่อสังคม", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" }, //
+            { category: "PDP2018", q: "กฟน. มีการบริหารจัดการค่าไฟฟ้าอย่างไร?", options: ["กำหนดอัตราค่าไฟฟ้าที่เป็นธรรม", "ให้ข้อมูลเกี่ยวกับค่าไฟฟ้าแก่ผู้บริโภค", "ให้ความช่วยเหลือผู้บริโภคที่มีปัญหาค่าไฟฟ้า", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" }, //
+            { category: "PDP2018", q: "กฟน. มีการพัฒนาบุคลากรอย่างไร?", options: ["ฝึกอบรมและพัฒนาความรู้", "ส่งเสริมการเรียนรู้ตลอดชีวิต", "สร้างวัฒนธรรมองค์กรที่เข้มแข็ง", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" }, //
+            { category: "PDP2018", q: "ข้อใดคือวิสัยทัศน์ของ กฟน.?", options: ["เป็นองค์กรชั้นนำด้านการจำหน่ายไฟฟ้าในภูมิภาค", "เป็นผู้ให้บริการไฟฟ้าที่ดีที่สุดในประเทศ", "พลังงานเพื่อวิถีชีวิตเมืองมหานคร", "เป็นผู้สร้างความมั่นคงทางพลังงาน"], answerText: "พลังงานเพื่อวิถีชีวิตเมืองมหานคร" }, //
+            { category: "PDP2018", q: "ข้อใดคือพันธกิจของ กฟน.?", options: ["จำหน่ายไฟฟ้าอย่างมีคุณภาพและเชื่อถือได้", "ให้บริการลูกค้าอย่างประทับใจ", "พัฒนาระบบไฟฟ้าให้ทันสมัย", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" }, //
+            { category: "PDP2018", q: "กฟน. มีการกำกับดูแลการติดตั้งและบำรุงรักษามิเตอร์ไฟฟ้าอย่างไร?", options: ["ตรวจสอบความถูกต้องของมิเตอร์", "ให้บริการเปลี่ยนมิเตอร์", "ให้คำแนะนำเกี่ยวกับการใช้มิเตอร์", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" }, //
+            { category: "PDP2018", q: "กฟน. มีการสื่อสารกับประชาชนอย่างไร?", options: ["เผยแพร่ข้อมูลผ่านช่องทางต่างๆ", "จัดกิจกรรมให้ข้อมูลแก่ประชาชน", "รับฟังความคิดเห็นจากประชาชน", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" }, //
+            { category: "PDP2018", q: "กฟน. มีการวางแผนการจำหน่ายไฟฟ้าในอนาคตอย่างไร?", options: ["คาดการณ์ความต้องการใช้ไฟฟ้า", "พัฒนาระบบจำหน่ายไฟฟ้าให้มีประสิทธิภาพ", "ลงทุนในเทคโนโลยีที่ทันสมัย", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" }, //
+            { category: "PDP2018", q: "ข้อใดคือความท้าทายของ กฟน. ในอนาคต?", options: ["การเปลี่ยนแปลงเทคโนโลยีพลังงาน", "การเพิ่มขึ้นของพลังงานหมุนเวียน", "การแข่งขันในตลาดพลังงาน", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" }, //
+            { category: "PDP2018", q: "กฟน. มีแนวทางการรับมือกับความท้าทายอย่างไร?", options: ["พัฒนากฎระเบียบที่ทันสมัย", "ส่งเสริมการใช้เทคโนโลยีใหม่", "สร้างความร่วมมือกับทุกภาคส่วน", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" }, //
+            { category: "PDP2018", q: "ข้อใดคือเป้าหมายของ กฟน. ในการพัฒนาพลังงานที่ยั่งยืน?", options: ["สร้างความมั่นคงทางพลังงาน", "ลดผลกระทบต่อสิ่งแวดล้อม", "ส่งเสริมการใช้พลังงานอย่างมีประสิทธิภาพ", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" }, //
+            { category: "PDP2018", q: "กฟน. มีการประเมินผลการดำเนินงานอย่างไร?", options: ["ประเมินผลการปฏิบัติงานตามแผน", "ประเมินความพึงพอใจของผู้มีส่วนได้ส่วนเสีย", "ประเมินผลกระทบต่อสังคมและสิ่งแวดล้อม", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" }, //
+            { category: "PDP2018", q: "ข้อใดคือประโยชน์ที่ประชาชนได้รับจาก กฟน.?", options: ["มีไฟฟ้าใช้ในราคาที่เป็นธรรม", "มีไฟฟ้าใช้ที่มีคุณภาพ", "มีส่วนร่วมในการตัดสินใจเกี่ยวกับพลังงาน", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" }, //
+            { category: "PDP2018", q: "กฟน. มีการดำเนินงานตามหลักธรรมาภิบาลอย่างไร?", options: ["มีความโปร่งใสในการดำเนินงาน", "มีการตรวจสอบและประเมินผลการปฏิบัติงาน", "มีการเปิดเผยข้อมูลต่อสาธารณะ", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" }, //
+            { category: "PDP2018", q: "กฟภ. มีชื่อเต็มว่าอะไร?", options: ["การไฟฟ้าฝ่ายผลิตแห่งประเทศไทย", "การไฟฟ้านครหลวง", "การไฟฟ้าส่วนภูมิภาค", "กระทรวงพลังงาน"], answerText: "การไฟฟ้าส่วนภูมิภาค" }, //
+            { category: "PDP2018", q: "กฟภ. เป็นหน่วยงานประเภทใด?", options: ["หน่วยงานภาครัฐ", "รัฐวิสาหกิจ", "องค์กรอิสระ", "บริษัทเอกชน"], answerText: "รัฐวิสาหกิจ" }, //
+            { category: "PDP2018", q: "กฟภ. มีหน้าที่หลักในการจำหน่ายไฟฟ้าในพื้นที่ใด?", options: ["ทั่วประเทศ ยกเว้น กรุงเทพมหานคร นนทบุรี และสมุทรปราการ", "กรุงเทพมหานคร นนทบุรี และสมุทรปราการ", "ภาคเหนือ", "ภาคใต้"], answerText: "ทั่วประเทศ ยกเว้น กรุงเทพมหานคร นนทบุรี และสมุทรปราการ" }, //
+            { category: "PDP2018", q: "ข้อใดไม่ใช่หน้าที่ของ กฟภ.?", options: ["ผลิตไฟฟ้า", "จำหน่ายไฟฟ้า", "ติดตั้งและบำรุงรักษามิเตอร์ไฟฟ้า", "ให้บริการลูกค้า"], answerText: "ผลิตไฟฟ้า" }, //
+            { category: "PDP2018", q: "กฟภ. มีบทบาทสำคัญในการพัฒนาโครงข่ายไฟฟ้าในพื้นที่รับผิดชอบอย่างไร?", options: ["ขยายและปรับปรุงระบบจำหน่ายไฟฟ้า", "เพิ่มความมั่นคงและเสถียรภาพของระบบไฟฟ้า", "นำเทคโนโลยีที่ทันสมัยมาใช้", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" }, //
+            { category: "PDP2018", q: "กฟภ. มีส่วนร่วมในการส่งเสริมการใช้พลังงานอย่างมีประสิทธิภาพอย่างไร?", options: ["ให้คำแนะนำแก่ผู้บริโภค", "จัดกิจกรรมส่งเสริมการอนุรักษ์พลังงาน", "สนับสนุนการใช้พลังงานหมุนเวียน", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" }, //
+            { category: "PDP2018", q: "กฟภ. มีความรับผิดชอบต่อสังคมและสิ่งแวดล้อมอย่างไร?", options: ["ลดผลกระทบต่อสิ่งแวดล้อมจากการดำเนินงาน", "พัฒนาชุมชนรอบสถานีไฟฟ้า", "สนับสนุนกิจกรรมเพื่อสังคม", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" }, //
+            { category: "PDP2018", q: "กฟภ. มีการบริหารจัดการค่าไฟฟ้าอย่างไร?", options: ["กำหนดอัตราค่าไฟฟ้าที่เป็นธรรม", "ให้ข้อมูลเกี่ยวกับค่าไฟฟ้าแก่ผู้บริโภค", "ให้ความช่วยเหลือผู้บริโภคที่มีปัญหาค่าไฟฟ้า", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" }, //
+            { category: "PDP2018", q: "กฟภ. มีการพัฒนาบุคลากรอย่างไร?", options: ["ฝึกอบรมและพัฒนาความรู้", "ส่งเสริมการเรียนรู้ตลอดชีวิต", "สร้างวัฒนธรรมองค์กรที่เข้มแข็ง", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" }, //
+            { category: "PDP2018", q: "ข้อใดคือวิสัยทัศน์ของ กฟภ.?", options: ["เป็นองค์กรชั้นนำด้านการจำหน่ายไฟฟ้าในภูมิภาค", "เป็นผู้ให้บริการไฟฟ้าที่ดีที่สุดในประเทศ", "เป็นผู้พัฒนาพลังงานที่ยั่งยืน", "เป็นผู้สร้างความมั่นคงทางพลังงาน"], answerText: "เป็นองค์กรชั้นนำด้านการจำหน่ายไฟฟ้าในภูมิภาค" }, //
+            { category: "PDP2018", q: "ข้อใดคือพันธกิจของ กฟภ.?", options: ["จำหน่ายไฟฟ้าอย่างมีคุณภาพและเชื่อถือได้", "ให้บริการลูกค้าอย่างประทับใจ", "พัฒนาระบบไฟฟ้าให้ทันสมัย", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" }, //
+            { category: "PDP2018", q: "กฟภ. มีการกำกับดูแลการติดตั้งและบำรุงรักษามิเตอร์ไฟฟ้าอย่างไร?", options: ["ตรวจสอบความถูกต้องของมิเตอร์", "ให้บริการเปลี่ยนมิเตอร์", "ให้คำแนะนำเกี่ยวกับการใช้มิเตอร์", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" }, //
+            { category: "PDP2018", q: "กฟภ. มีการสื่อสารกับประชาชนอย่างไร?", options: ["เผยแพร่ข้อมูลผ่านช่องทางต่างๆ", "จัดกิจกรรมให้ข้อมูลแก่ประชาชน", "รับฟังความคิดเห็นจากประชาชน", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" }, //
+            { category: "PDP2018", q: "กฟภ. มีการวางแผนการจำหน่ายไฟฟ้าในอนาคตอย่างไร?", options: ["คาดการณ์ความต้องการใช้ไฟฟ้า", "พัฒนาระบบจำหน่ายไฟฟ้าให้มีประสิทธิภาพ", "ลงทุนในเทคโนโลยีที่ทันสมัย", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" }, //
+            { category: "PDP2018", q: "ข้อใดคือความท้าทายของ กฟภ. ในอนาคต?", options: ["การเปลี่ยนแปลงเทคโนโลยีพลังงาน", "การเพิ่มขึ้นของพลังงานหมุนเวียน", "การแข่งขันในตลาดพลังงาน", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" }, //
+            { category: "PDP2018", q: "กฟภ. มีแนวทางการรับมือกับความท้าทายอย่างไร?", options: ["พัฒนากฎระเบียบที่ทันสมัย", "ส่งเสริมการใช้เทคโนโลยีใหม่", "สร้างความร่วมมือกับทุกภาคส่วน", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" }, //
+            { category: "PDP2018", q: "ข้อใดคือเป้าหมายของ กฟภ. ในการพัฒนาพลังงานที่ยั่งยืน?", options: ["สร้างความมั่นคงทางพลังงาน", "ลดผลกระทบต่อสิ่งแวดล้อม", "ส่งเสริมการใช้พลังงานอย่างมีประสิทธิภาพ", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" }, //
+            { category: "PDP2018", q: "กฟภ. มีการประเมินผลการดำเนินงานอย่างไร?", options: ["ประเมินผลการปฏิบัติงานตามแผน", "ประเมินความพึงพอใจของผู้มีส่วนได้ส่วนเสีย", "ประเมินผลกระทบต่อสังคมและสิ่งแวดล้อม", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" }, //
+            { category: "PDP2018", q: "ข้อใดคือประโยชน์ที่ประชาชนได้รับจาก กฟภ.?", options: ["มีไฟฟ้าใช้ในราคาที่เป็นธรรม", "มีไฟฟ้าใช้ที่มีคุณภาพ", "มีส่วนร่วมในการตัดสินใจเกี่ยวกับพลังงาน", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" }, //
+            { category: "PDP2018", q: "กฟภ. มีการดำเนินงานตามหลักธรรมาภิบาลอย่างไร?", options: ["มีความโปร่งใสในการดำเนินงาน", "มีการตรวจสอบและประเมินผลการปฏิบัติงาน", "มีการเปิดเผยข้อมูลต่อสาธารณะ", "ถูกทุกข้อ"], answerText: "ถูกทุกข้อ" } //
+
+
+        ];
+
+        // ตัวแปรสถานะของแอปพลิเคชัน
+        let currentSessionQuestions = [];
+        let userAnswers = {};
+        let currentMode = "";
+        let currentQuestionIndex = 0;
+        let wrongQuestionsForRetry = [];
+
+        // ฟังก์ชันสุ่ม Array
+        function shuffleArray(array) {
+            let shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        // 1. เริ่มทำข้อสอบ
+        function startQuiz(isRetry = false) {
+            userAnswers = {};
+            currentQuestionIndex = 0;
+            currentMode = document.querySelector('input[name="quizMode"]:checked').value;
+            
+            if(!isRetry) {
+                if(currentMode === 'random50') {
+                    // โหมดสุ่ม 50 ข้อ สุ่มลำดับข้อสอบ
+                    currentSessionQuestions = shuffleArray(allQuestionsDb).slice(0, 50);
+                } else {
+                    // โหมดอื่นๆ ไม่สุ่มลำดับ ดึงมาทั้งหมดตามหมวดที่เลือก
+                    const selectedCategories = Array.from(document.querySelectorAll('.category-cb:checked')).map(cb => cb.value);
+                    if(selectedCategories.length === 0) {
+                        alert("พี่อย่าลืมติ๊กเลือกหมวดวิชาอย่างน้อย 1 หมวดนะคะ!");
+                        return;
+                    }
+                    currentSessionQuestions = allQuestionsDb.filter(q => selectedCategories.includes(q.category));
+                }
+            }
+
+            if(currentSessionQuestions.length === 0) {
+                alert("ขออภัยค่ะ ไม่มีข้อสอบในหมวดที่เลือกเลย 😭");
+                return;
+            }
+
+            // เตรียมตัวเลือกโดย *ไม่สลับลำดับตัวเลือก*
+            currentSessionQuestions = currentSessionQuestions.map(q => {
+                let displayOptions = [...q.options]; // ใช้ลำดับเดิม
+                let correctIndex = displayOptions.indexOf(q.answerText);
+                return { ...q, displayOptions, correctIndex };
+            });
+
+            // สลับหน้าจอ
+            document.getElementById('setup-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.add('hidden');
+            document.getElementById('review-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            
+            document.getElementById('header-subtitle').innerText = isRetry ? "🎯 โหมดซ่อมข้อที่ผิด (สู้ๆ นะคะพี่!)" : "📝 กำลังทำข้อสอบ ขอให้ได้คะแนนเยอะๆ น้า";
+
+            renderCurrentQuestion();
+        }
+
+        // 2. แสดงผลข้อสอบทีละข้อ
+        function renderCurrentQuestion() {
+            const q = currentSessionQuestions[currentQuestionIndex];
+            
+            // อัปเดต Progress
+            const total = currentSessionQuestions.length;
+            document.getElementById('progress-text').innerText = `ข้อ ${currentQuestionIndex + 1} / ${total}`;
+            document.getElementById('progress-bar').style.width = `${((currentQuestionIndex + 1) / total) * 100}%`;
+            document.getElementById('current-category').innerText = q.category;
+            document.getElementById('question-text').innerText = `${currentQuestionIndex + 1}. ${q.q}`;
+
+            // สร้างตัวเลือก
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+            
+            const hasAnswered = userAnswers[currentQuestionIndex] !== undefined;
+            const selectedVal = userAnswers[currentQuestionIndex];
+
+            // สร้าง Prefix ก. ข. ค. ง. สำหรับแสดงผล
+            const prefixArr = ['ก.', 'ข.', 'ค.', 'ง.', 'จ.', 'ฉ.'];
+
+            q.displayOptions.forEach((opt, oIndex) => {
+                const isSelected = selectedVal === oIndex;
+                const prefix = prefixArr[oIndex] || '';
+                
+                // สำหรับโหมด Instant ถ้าตอบไปแล้วให้ล็อค input ทันที
+                let labelClasses = "block relative cursor-pointer group";
+                if (hasAnswered && currentMode === 'instant') labelClasses += " disabled-label";
+
+                // จัดการสีของกล่องตัวเลือก (สำหรับโหมด Instant ที่ตอบแล้ว)
+                let boxClasses = "p-4 border-2 rounded-xl transition duration-200 group-hover:bg-teal-50 peer-checked:border-teal-500 peer-checked:bg-teal-50 peer-checked:shadow-sm";
+                if (hasAnswered && currentMode === 'instant') {
+                    if (oIndex === q.correctIndex) {
+                        boxClasses = "p-4 border-2 rounded-xl transition duration-200 border-green-500 bg-green-50 border-2 font-bold text-green-800 shadow-sm"; // สีเขียวข้อที่ถูก
+                    } else if (isSelected && oIndex !== q.correctIndex) {
+                        boxClasses = "p-4 border-2 rounded-xl transition duration-200 border-red-500 bg-red-50 text-red-800 shadow-sm"; // สีแดงข้อที่ผิด
+                    } else {
+                        boxClasses = "p-4 border-2 rounded-xl transition duration-200 bg-gray-50 opacity-60"; // ข้อที่ไม่ได้เลือก
+                    }
+                }
+
+                optionsContainer.innerHTML += `
+                    <label class="${labelClasses}" id="label-${currentQuestionIndex}-${oIndex}">
+                        <input type="radio" name="q-option" value="${oIndex}" class="peer sr-only radio-custom" 
+                            onchange="handleSelect(${oIndex})" ${isSelected ? 'checked' : ''} ${hasAnswered && currentMode === 'instant' ? 'disabled' : ''}>
+                        <div class="${boxClasses} flex">
+                            <span class="font-bold mr-3">${prefix}</span>
+                            <span class="text-lg">${opt}</span>
+                        </div>
+                    </label>
+                `;
+            });
+
+            // จัดการปุ่ม
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const submitBtn = document.getElementById('submit-btn');
+
+            prevBtn.disabled = currentQuestionIndex === 0;
+            
+            if (currentQuestionIndex === total - 1) {
+                nextBtn.classList.add('hidden');
+                submitBtn.classList.remove('hidden');
+            } else {
+                nextBtn.classList.remove('hidden');
+                submitBtn.classList.add('hidden');
+            }
+
+            // จัดการกล่องเฉลย (Instant Mode)
+            const explanationBox = document.getElementById('explanation-box');
+            if (hasAnswered && currentMode === 'instant') {
+                explanationBox.classList.remove('hidden');
+                if (selectedVal === q.correctIndex) {
+                    explanationBox.innerHTML = "✅ ถูกต้องค่ะ! เยี่ยมมาก";
+                    explanationBox.className = "mt-6 p-5 rounded-xl text-md font-medium border bg-green-50 border-green-200 text-green-700 block shadow-inner";
+                } else {
+                    const correctPrefix = prefixArr[q.correctIndex] || '';
+                    explanationBox.innerHTML = `❌ ผิดค่ะ ข้อที่ถูกคือ: <span class="font-bold underline">${correctPrefix} ${q.answerText}</span>`;
+                    explanationBox.className = "mt-6 p-5 rounded-xl text-md font-medium border bg-red-50 border-red-200 text-red-700 block shadow-inner";
+                }
+            } else {
+                explanationBox.classList.add('hidden');
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // 3. บันทึกคำตอบ
+        function handleSelect(selectedValue) {
+            userAnswers[currentQuestionIndex] = selectedValue;
+            
+            if (currentMode === 'instant') {
+                renderCurrentQuestion(); // รีเฟรชเพื่อโชว์เฉลยและล็อคข้อ
+            }
+        }
+
+        // 4. เปลี่ยนข้อ
+        function nextQuestion() {
+            if (currentQuestionIndex < currentSessionQuestions.length - 1) {
+                currentQuestionIndex++;
+                renderCurrentQuestion();
+            }
+        }
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                renderCurrentQuestion();
+            }
+        }
+
+        // 5. ส่งคำตอบ
+        function submitQuiz() {
+            let score = 0;
+            let skipped = 0;
+            let wrong = 0;
+            wrongQuestionsForRetry = [];
+
+            // ตรวจสอบว่าตอบครบไหม (เตือนสำหรับโหมดที่ไม่ได้เฉลยทันที)
+            if (currentMode !== 'instant') {
+                const answeredCount = Object.keys(userAnswers).length;
+                if (answeredCount < currentSessionQuestions.length) {
+                    if(!confirm(`พี่ยังเหลือข้อที่ไม่ได้ตอบอีก ${currentSessionQuestions.length - answeredCount} ข้อนะคะ ยืนยันที่จะส่งเลยไหมคะ?`)) {
+                        return;
+                    }
+                }
+            }
+
+            currentSessionQuestions.forEach((q, index) => {
+                if(userAnswers[index] === undefined) {
+                    skipped++;
+                    wrongQuestionsForRetry.push(q);
+                } else if(userAnswers[index] === q.correctIndex) {
+                    score++;
+                } else {
+                    wrong++;
+                    wrongQuestionsForRetry.push(q);
+                }
+            });
+
+            // เปลี่ยนหน้าจอ
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+            document.getElementById('header-subtitle').innerText = "สรุปผลคะแนน เก่งมากค่ะที่ตั้งใจทำจนจบ!";
+            
+            // แสดงผลสถิติ
+            let percent = Math.round((score / currentSessionQuestions.length) * 100);
+            
+            // Animation ขยับตัวเลขคะแนน
+            animateValue("score-display", 0, percent, 1000);
+            document.getElementById('score-fraction').innerText = `ทำได้ ${score} จาก ${currentSessionQuestions.length} ข้อ`;
+            
+            document.getElementById('stat-correct').innerText = score;
+            document.getElementById('stat-wrong').innerText = wrong;
+            document.getElementById('stat-skipped').innerText = skipped;
+
+            const feedbackMsg = document.getElementById('feedback-msg');
+            if (percent === 100) feedbackMsg.innerText = "🎉 เพอร์เฟกต์! พี่คือวิศวกรตัวท็อป!";
+            else if (percent >= 80) feedbackMsg.innerText = "👍 เก่งมากๆ ค่ะพี่ ความรู้แน่นสุดๆ";
+            else if (percent >= 50) feedbackMsg.innerText = "💪 ครึ่งทางแล้วค่ะ ทบทวนอีกนิดก็เป๊ะแล้ว!";
+            else feedbackMsg.innerText = "📚 ไม่เป็นไรนะคะน้องเป็นกำลังใจให้ ลองทบทวนแล้วทำใหม่น้า";
+
+            // จัดการปุ่มซ่อม
+            const retryBtn = document.getElementById('retry-wrong-btn');
+            if(wrongQuestionsForRetry.length > 0) {
+                retryBtn.classList.remove('hidden');
+            } else {
+                retryBtn.classList.add('hidden');
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // เอฟเฟกต์ตัวเลขวิ่ง
+        function animateValue(id, start, end, duration) {
+            const obj = document.getElementById(id);
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                obj.innerHTML = Math.floor(progress * (end - start) + start) + "%";
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        // 6. ดูทบทวนเฉลยรวดเดียว
+        function showReviewScreen() {
+            document.getElementById('result-screen').classList.add('hidden');
+            document.getElementById('review-screen').classList.remove('hidden');
+
+            const container = document.getElementById('review-container');
+            container.innerHTML = '';
+
+            const prefixArr = ['ก.', 'ข.', 'ค.', 'ง.', 'จ.', 'ฉ.'];
+
+            currentSessionQuestions.forEach((q, index) => {
+                const selectedVal = userAnswers[index];
+                let optionsHtml = '';
+
+                q.displayOptions.forEach((opt, oIndex) => {
+                    let boxStyle = "p-3 border rounded-lg text-gray-600 bg-white";
+                    const prefix = prefixArr[oIndex] || '';
+                    
+                    if (oIndex === q.correctIndex) {
+                        // ข้อที่ถูก
+                        boxStyle = "p-3 border-2 border-green-500 bg-green-50 text-green-800 font-bold shadow-sm";
+                    } else if (selectedVal === oIndex && oIndex !== q.correctIndex) {
+                        // ข้อที่เลือกผิด
+                        boxStyle = "p-3 border-2 border-red-500 bg-red-50 text-red-800 line-through";
+                    }
+
+                    optionsHtml += `
+                        <div class="${boxStyle} mb-2 flex items-center">
+                            <span class="mr-2">${oIndex === q.correctIndex ? '✅' : (selectedVal === oIndex ? '❌' : '⚪')}</span>
+                            <span class="font-bold mr-2">${prefix}</span> ${opt}
+                        </div>
+                    `;
+                });
+
+                let statusBadge = '';
+                if(selectedVal === undefined) statusBadge = '<span class="bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-xs font-bold">ข้าม</span>';
+                else if(selectedVal === q.correctIndex) statusBadge = '<span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold">ตอบถูก</span>';
+                else statusBadge = '<span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-bold">ตอบผิด</span>';
+
+                container.innerHTML += `
+                    <div class="bg-white p-6 rounded-xl border shadow-sm">
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="text-xs font-bold text-teal-600 uppercase tracking-wider">${q.category}</span>
+                            ${statusBadge}
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-800 mb-4">${index + 1}. ${q.q}</h3>
+                        <div>${optionsHtml}</div>
+                    </div>
+                `;
+            });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function backToResult() {
+            document.getElementById('review-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+        }
+
+        function retryWrongQuestions() {
+            currentSessionQuestions = [...wrongQuestionsForRetry];
+            startQuiz(true); 
+        }
+
+        function goHome() {
+            location.reload(); 
+        }
+    </script>
+</body>
+</html>
