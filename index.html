@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบฝึกทำข้อสอบอาจารย์บุญเรือง</title>
+    <title>ระบบฝึกทำข้อสอบ วิศวกรรมไฟฟ้าแบบจัดเต็ม (ทีละข้อ)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -18,8 +18,8 @@
     <div class="w-full max-w-4xl bg-white rounded-2xl shadow-xl overflow-hidden">
         
         <div class="bg-teal-600 text-white p-6 text-center shadow-md relative">
-            <h1 class="text-2xl md:text-3xl font-bold tracking-wide">🎓 ระบบฝึกทำข้อสอบอาจารย์บุญเรือง</h1>
-            <p class="mt-2 text-teal-100 text-sm md:text-base" id="header-subtitle">จัดทำโดยโยโยโย และน้อง Google Gemini</p>
+            <h1 class="text-2xl md:text-3xl font-bold tracking-wide">🎓 ระบบฝึกทำข้อสอบวิศวกรรมไฟฟ้า</h1>
+            <p class="mt-2 text-teal-100 text-sm md:text-base" id="header-subtitle">เลือกหมวดหมู่ ปรับแต่งโหมด และลุยเลยค่ะพี่!</p>
         </div>
 
         <div id="setup-screen" class="p-6 md:p-10">
@@ -49,14 +49,14 @@
                     <input type="radio" name="quizMode" value="instant" class="w-5 h-5 text-teal-600 focus:ring-teal-500" checked>
                     <div class="ml-3">
                         <p class="font-bold text-gray-800">⚡ เฉลยทันที (Instant Feedback)</p>
-                        <p class="text-sm text-gray-500">เรียงตามลำดับเดิม เลือกคำตอบปุ๊บ ระบบจะเฉลยให้ทันที เหมาะสำหรับฝึกจำ</p>
+                        <p class="text-sm text-gray-500">เลือกคำตอบปุ๊บ ระบบจะเฉลยให้ทันที เหมาะสำหรับฝึกจำ</p>
                     </div>
                 </label>
                 <label class="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:bg-teal-50 transition">
                     <input type="radio" name="quizMode" value="end" class="w-5 h-5 text-teal-600 focus:ring-teal-500">
                     <div class="ml-3">
                         <p class="font-bold text-gray-800">📝 เฉลยท้ายสุด (Mock Exam)</p>
-                        <p class="text-sm text-gray-500">เรียงตามลำดับเดิม ทำรวดเดียวให้เสร็จ แล้วค่อยดูคะแนนตอนกดส่ง</p>
+                        <p class="text-sm text-gray-500">ทำรวดเดียวให้เสร็จ แล้วค่อยดูคะแนนตอนกดส่ง</p>
                     </div>
                 </label>
                 <label class="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:bg-teal-50 transition">
@@ -66,6 +66,20 @@
                         <p class="text-sm text-gray-500">ระบบจะสุ่มดึงข้อสอบจากทุกหมวดมารวมกัน 50 ข้อ แล้วเฉลยตอนท้าย</p>
                     </div>
                 </label>
+            </div>
+
+            <div id="order-mode-container" class="mb-8 bg-gray-50 p-5 rounded-xl border border-gray-200">
+                <h2 class="text-lg font-bold mb-4 text-teal-800">3. การเรียงลำดับข้อสอบ</h2>
+                <div class="flex flex-col md:flex-row gap-4">
+                    <label class="flex items-center p-3 border-2 rounded-xl cursor-pointer hover:bg-white transition bg-white flex-1">
+                        <input type="radio" name="orderMode" value="sequential" class="w-5 h-5 text-teal-600 focus:ring-teal-500" checked>
+                        <span class="ml-3 font-bold text-gray-800">🔢 เรียงตามลำดับเดิม</span>
+                    </label>
+                    <label class="flex items-center p-3 border-2 rounded-xl cursor-pointer hover:bg-white transition bg-white flex-1">
+                        <input type="radio" name="orderMode" value="random" class="w-5 h-5 text-teal-600 focus:ring-teal-500">
+                        <span class="ml-3 font-bold text-gray-800">🔀 สุ่มลำดับข้อสอบ</span>
+                    </label>
+                </div>
             </div>
 
             <div class="mt-8 text-center">
@@ -152,7 +166,7 @@
 
     <script>
         // -------------------------------------------------------------------------
-        // 📌 พี่สามารถเอา Array ข้อสอบทั้ง 628 ข้อที่น้องทำให้ มาวางต่อกันในนี้ได้เลยค่ะ!
+        // 📌 เอาข้อมูลข้อสอบ 628 ข้อ มาใส่ในตัวแปร allQuestionsDb นี้ได้เลยค่ะ
         // -------------------------------------------------------------------------
         const allQuestionsDb = [
             // --- Transmission Line ---
@@ -802,6 +816,18 @@
         let currentQuestionIndex = 0;
         let wrongQuestionsForRetry = [];
 
+        // ซ่อนตัวเลือกการเรียงลำดับ ถ้าเลือกโหมดสุ่ม 50 ข้อ
+        document.querySelectorAll('input[name="quizMode"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                const orderContainer = document.getElementById('order-mode-container');
+                if(this.value === 'random50') {
+                    orderContainer.classList.add('hidden');
+                } else {
+                    orderContainer.classList.remove('hidden');
+                }
+            });
+        });
+
         // ฟังก์ชันสุ่ม Array
         function shuffleArray(array) {
             let shuffled = [...array];
@@ -817,19 +843,27 @@
             userAnswers = {};
             currentQuestionIndex = 0;
             currentMode = document.querySelector('input[name="quizMode"]:checked').value;
+            const isRandomOrder = document.querySelector('input[name="orderMode"]:checked').value === 'random';
             
             if(!isRetry) {
                 if(currentMode === 'random50') {
-                    // โหมดสุ่ม 50 ข้อ สุ่มลำดับข้อสอบ
+                    // โหมดสุ่ม 50 ข้อ สุ่มลำดับข้อสอบเสมอ
                     currentSessionQuestions = shuffleArray(allQuestionsDb).slice(0, 50);
                 } else {
-                    // โหมดอื่นๆ ไม่สุ่มลำดับ ดึงมาทั้งหมดตามหมวดที่เลือก
+                    // ดึงข้อสอบตามหมวดที่เลือก
                     const selectedCategories = Array.from(document.querySelectorAll('.category-cb:checked')).map(cb => cb.value);
                     if(selectedCategories.length === 0) {
                         alert("พี่อย่าลืมติ๊กเลือกหมวดวิชาอย่างน้อย 1 หมวดนะคะ!");
                         return;
                     }
-                    currentSessionQuestions = allQuestionsDb.filter(q => selectedCategories.includes(q.category));
+                    let filtered = allQuestionsDb.filter(q => selectedCategories.includes(q.category));
+                    
+                    // จัดการการเรียงลำดับข้อสอบตามที่เลือก
+                    if (isRandomOrder) {
+                        currentSessionQuestions = shuffleArray(filtered);
+                    } else {
+                        currentSessionQuestions = filtered;
+                    }
                 }
             }
 
@@ -838,7 +872,7 @@
                 return;
             }
 
-            // เตรียมตัวเลือกโดย *ไม่สลับลำดับตัวเลือก*
+            // เตรียมตัวเลือกโดย *ไม่สลับลำดับตัวเลือก* เสมอ (ก ข ค ง เหมือนเดิม)
             currentSessionQuestions = currentSessionQuestions.map(q => {
                 let displayOptions = [...q.options]; // ใช้ลำดับเดิม
                 let correctIndex = displayOptions.indexOf(q.answerText);
@@ -929,7 +963,7 @@
             if (hasAnswered && currentMode === 'instant') {
                 explanationBox.classList.remove('hidden');
                 if (selectedVal === q.correctIndex) {
-                    explanationBox.innerHTML = "✅ ถูกต้องค่ะ! เยี่ยมมาก";
+                    explanationBox.innerHTML = "✅ ถูกต้องค่ะพี่! เยี่ยมมาก";
                     explanationBox.className = "mt-6 p-5 rounded-xl text-md font-medium border bg-green-50 border-green-200 text-green-700 block shadow-inner";
                 } else {
                     const correctPrefix = prefixArr[q.correctIndex] || '';
@@ -998,7 +1032,7 @@
             // เปลี่ยนหน้าจอ
             document.getElementById('quiz-screen').classList.add('hidden');
             document.getElementById('result-screen').classList.remove('hidden');
-            document.getElementById('header-subtitle').innerText = "สรุปผลคะแนน เก่งมากค่ะที่ตั้งใจทำจนจบ!";
+            document.getElementById('header-subtitle').innerText = "สรุปผลคะแนน เก่งมากค่ะพี่ที่ตั้งใจทำจนจบ!";
             
             // แสดงผลสถิติ
             let percent = Math.round((score / currentSessionQuestions.length) * 100);
